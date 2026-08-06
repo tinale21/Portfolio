@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Inria_Serif } from "next/font/google";
+import Script from "next/script";
 import { NavBar } from "@/components/NavBar";
 import "./globals.css";
 
@@ -30,6 +31,16 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${inter.variable} ${inriaSerif.variable} antialiased`}
     >
       <body className="flex flex-col">
+        {/* Browsers restore the pre-refresh scroll position by default
+            (history.scrollRestoration defaults to "auto"), which reads as
+            "refresh didn't reset the page." Opting into manual restoration
+            here — before the browser applies its own — makes a refresh
+            behave like a fresh page load, starting at the top. Runs via
+            beforeInteractive so it executes as the HTML streams in, ahead
+            of the browser's own restoration and ahead of hydration. */}
+        <Script id="disable-scroll-restoration" strategy="beforeInteractive">
+          {`if ("scrollRestoration" in history) { history.scrollRestoration = "manual"; }`}
+        </Script>
         <NavBar />
         {children}
       </body>
