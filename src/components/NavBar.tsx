@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { LogoMark } from "@/components/icons/LogoMark";
 
 const NAV_LINKS = [
@@ -15,11 +15,13 @@ function NavLink({
   href,
   label,
   active,
+  dark,
   onClick,
 }: {
   href: string;
   label: string;
   active: boolean;
+  dark: boolean;
   onClick?: () => void;
 }) {
   return (
@@ -28,9 +30,9 @@ function NavLink({
       onClick={onClick}
       aria-label={label}
       aria-current={active ? "page" : undefined}
-      className={`text-sm tracking-normal text-black uppercase ${
-        active ? "font-medium" : "font-light"
-      }`}
+      className={`text-sm tracking-normal uppercase transition-colors duration-300 ${
+        dark ? "text-white" : "text-black"
+      } ${active ? "font-medium" : "font-light"}`}
     >
       {label}
     </Link>
@@ -40,13 +42,56 @@ function NavLink({
 export function NavBar() {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [dark, setDark] = useState(false);
+  const headerRef = useRef<HTMLElement>(null);
 
   const isActive = (href: string) => pathname === href;
 
+  // Switches the nav's color scheme to match whatever section currently
+  // sits behind it — dark text/logo on a dark section's own background
+  // color, dark-on-white otherwise — so the nav never renders dark-on-dark
+  // or light-on-light as the page scrolls through sections with different
+  // backgrounds. Each top-level section opts in via a `data-nav-theme`
+  // ("dark" | "light") attribute; sections that don't set one are treated
+  // as light. Checked against the nav's own rendered height (not a
+  // hardcoded constant) so it keeps working if that height changes again.
+  useEffect(() => {
+    function updateTheme() {
+      const header = headerRef.current;
+      if (!header) return;
+      const navBottom = header.getBoundingClientRect().height;
+      const sections = document.querySelectorAll<HTMLElement>("[data-nav-theme]");
+      for (const section of sections) {
+        const rect = section.getBoundingClientRect();
+        if (rect.top <= navBottom && rect.bottom > navBottom) {
+          setDark(section.dataset.navTheme === "dark");
+          return;
+        }
+      }
+    }
+
+    updateTheme();
+    window.addEventListener("scroll", updateTheme, { passive: true });
+    window.addEventListener("resize", updateTheme);
+    return () => {
+      window.removeEventListener("scroll", updateTheme);
+      window.removeEventListener("resize", updateTheme);
+    };
+  }, []);
+
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-[#E7E9EB] bg-white">
+    <header
+      ref={headerRef}
+      className={`sticky top-0 z-50 w-full border-b transition-colors duration-300 ${
+        dark ? "border-[#313132] bg-[#262626]" : "border-[#E7E9EB] bg-white"
+      }`}
+    >
       <div className="flex h-[64px] items-center justify-between px-5 sm:px-8 lg:px-[68px]">
-        <Link href="/" aria-label="Home" className="shrink-0 text-black">
+        <Link
+          href="/"
+          aria-label="Home"
+          className={`shrink-0 transition-colors duration-300 ${dark ? "text-white" : "text-black"}`}
+        >
           <LogoMark className="h-[28px] w-auto" />
         </Link>
 
@@ -66,6 +111,7 @@ export function NavBar() {
                 href={link.href}
                 label={link.label}
                 active={isActive(link.href)}
+                dark={dark}
               />
             </span>
           ))}
@@ -93,10 +139,10 @@ export function NavBar() {
               y1="1"
               x2="21"
               y2="1"
-              stroke="black"
+              stroke={dark ? "white" : "black"}
               strokeWidth="1.5"
               strokeLinecap="round"
-              className={`origin-center transition-transform ${
+              className={`origin-center transition-[transform,stroke] duration-300 ${
                 menuOpen ? "translate-y-[7px] rotate-45" : ""
               }`}
             />
@@ -105,20 +151,20 @@ export function NavBar() {
               y1="8"
               x2="21"
               y2="8"
-              stroke="black"
+              stroke={dark ? "white" : "black"}
               strokeWidth="1.5"
               strokeLinecap="round"
-              className={`transition-opacity ${menuOpen ? "opacity-0" : "opacity-100"}`}
+              className={`transition-[opacity,stroke] duration-300 ${menuOpen ? "opacity-0" : "opacity-100"}`}
             />
             <line
               x1="1"
               y1="15"
               x2="21"
               y2="15"
-              stroke="black"
+              stroke={dark ? "white" : "black"}
               strokeWidth="1.5"
               strokeLinecap="round"
-              className={`origin-center transition-transform ${
+              className={`origin-center transition-[transform,stroke] duration-300 ${
                 menuOpen ? "-translate-y-[7px] -rotate-45" : ""
               }`}
             />
@@ -130,9 +176,9 @@ export function NavBar() {
       <nav
         id="mobile-nav-menu"
         aria-label="Primary"
-        className={`overflow-hidden border-t border-[#E7E9EB] bg-white transition-[max-height] duration-300 ease-in-out md:hidden ${
-          menuOpen ? "max-h-60" : "max-h-0 border-t-0"
-        }`}
+        className={`overflow-hidden border-t transition-[max-height,background-color,border-color] duration-300 ease-in-out md:hidden ${
+          dark ? "border-[#313132] bg-[#262626]" : "border-[#E7E9EB] bg-white"
+        } ${menuOpen ? "max-h-60" : "max-h-0 border-t-0"}`}
       >
         <div className="flex flex-col gap-6 px-5 py-6 sm:px-8">
           {NAV_LINKS.map((link) => (
@@ -141,6 +187,7 @@ export function NavBar() {
               href={link.href}
               label={link.label}
               active={isActive(link.href)}
+              dark={dark}
               onClick={() => setMenuOpen(false)}
             />
           ))}

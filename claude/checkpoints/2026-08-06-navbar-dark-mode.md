@@ -1,0 +1,32 @@
+# Checkpoint — NavBar dark/light mode, and a reverted collage-pinning detour
+
+## Context
+
+Two threads of work this pass: (1) an extended detour into pinning the Hero collage in place during scroll, which was fully implemented, tested, and then reverted after the user provided direct evidence it didn't match the intended reference behavior; (2) building a working NavBar color-scheme switch (dark on dark sections, light on light sections) that survived review.
+
+## Human directions
+
+- Initially: "when users scroll and reach the end of the hero section, the photo collage position stays there and doesn't continue scrolling as users scroll down to another section," with a marked-up reference screenshot of the intended "ending position."
+- After the first pin implementation looked wrong ("rectangle 121 and rectangle 124 are just stuck"), still wanted pinning, just fixed.
+- After the fixed version worked exactly as re-specified, the user reversed course: "it should not hold position at all," and supplied both a screen recording of the reference site's actual scroll behavior and the reference site's URL for direct analysis.
+- Once the pin was fully reverted, moved on to: NavBar should switch between a dark scheme (dark text/logo, section's own dark background) and the current light scheme, smoothly, based on which section (dark- or light-background) is currently behind it — with a Figma dev-mode screenshot specifying the dark-mode background (`#262626`) and border (`#E7E9EB`, later corrected to `#313132`).
+
+## Records of resistance / things I got wrong and had to correct
+
+- **First pin trigger was measuring the wrong thing.** Triggered pinning once the collage's flat, un-depth-adjusted bounding box crossed below the nav — but individual photos sit at wildly different `translateZ` depths (constructionSite at 230 vs. officeMeeting at -55), so by the time that flat measurement crossed the threshold, most photos had already scrolled away; only the two deepest-set ones remained, pinning as two orphaned slivers. Root-caused by measuring each photo's actual rendered position across a scroll range (not just eyeballing), which showed exactly which two were lingering and why. Fixed by tuning a fixed scroll-distance trigger against screenshots instead of a live bounding-box measurement.
+- **z-index bug surfaced by the same fix**: the pinned collage had `z-index: 5` so the next section's plain, non-positioned background never covered it when scrolled past — a positioned element with an explicit z-index paints above *all* unpositioned content everywhere on the page, regardless of DOM order. Removed the z-index; normal document-order stacking then covered it correctly.
+- **The whole pinning feature was reverted**, and this is the more important lesson: the original ask was based on the user's own mental image of what the reference site did, not a direct check of it. Only after implementing pin-with-hold-then-release (a real, working, moderately complex feature — direct DOM style mutation for continuous post-hold movement, dual-phase trigger logic, reversibility) did the user supply the actual reference recording and URL. Frame-by-frame extraction of the recording showed the entire hero composition (collage + headline + CTA) scrolling up together continuously, with no freeze. Directly inspecting the reference site's live DOM confirmed it further: its only `sticky` element is its own nav bar, its only `fixed` element is the Framer publish badge — the hero collage itself has no special positioning at all. Given this evidence, the correct action was a full, clean revert (`git checkout HEAD --`) rather than trying to salvage or partially adapt the pin logic. **Takeaway: when a scroll-interaction request references "how another site behaves," treat that as a claim to verify (DOM inspection, video frame extraction) before building — even when the request is unambiguous and has already been iterated on once, since the underlying premise can still be wrong.**
+- **NavBar dark-mode text/separator colors were unspecified.** The Figma screenshot only showed the nav's background and border color via CSS inspect, not text colors. Used plain white for text/logo (verified against the border color the user did specify) and flagged the gap explicitly rather than silently inventing a full palette; the user then supplied the corrected border color (`#313132`, not `#E7E9EB`) as a follow-up, confirming that flagging gaps rather than guessing silently was the right call here.
+
+## Successes
+
+- The dark/light NavBar switch was built around a `data-nav-theme` attribute convention on top-level sections rather than hardcoding "Hero is dark, everything else is light" — new sections opt in by adding the attribute, and the detection logic (which section currently sits at the nav's own rendered bottom edge) measures the nav's real height via a ref rather than a hardcoded constant, avoiding yet another manual sync point like the ones already tracked between `NavBar`, `HeroSection`, and `collage-layout.ts`.
+- Verified the theme switch with computed-style checks at fine-grained scroll increments (not just visual screenshots) to confirm the exact crossover point matches the section boundary math, then confirmed visually on both sides.
+- Reverting the pin detour cleanly was possible because the entire feature was additive and isolated to one file since the last commit (`git diff --stat` showed only `HeroSection.tsx` touched) — confirmed via `git diff` that nothing else was mixed in before checking out the last committed version, rather than hand-unwinding the changes.
+
+## State at this checkpoint
+
+- Hero collage scroll behavior is back to the last-approved state: translate + rotateX tilt + per-photo depth, tied directly and reversibly to scroll, no pinning of any kind.
+- NavBar now switches between light (white bg, black text, `#E7E9EB` border) and dark (`#262626` bg, white text, `#313132` border) based on the `data-nav-theme` of whatever section is behind it, transitioning smoothly via `transition-colors duration-300`. `HeroSection` is marked `data-nav-theme="dark"`; the temporary white placeholder in `page.tsx` is marked `data-nav-theme="light"`.
+- Text/separator colors in dark mode (white links, `#7A7575` separators reused as-is) are not confirmed against a Figma spec — only the background and border colors were explicitly provided.
+- No further Home page sections have been requested yet; the temporary placeholder in `page.tsx` remains.

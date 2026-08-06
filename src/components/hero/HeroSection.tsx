@@ -107,6 +107,7 @@ export function HeroSection() {
   return (
     <section
       ref={sectionRef}
+      data-nav-theme="dark"
       className="overflow-hidden bg-[#262626]"
     >
       {/* First screen: collage only, unchanged from the approved layout. */}
