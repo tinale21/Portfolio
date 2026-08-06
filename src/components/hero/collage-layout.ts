@@ -19,6 +19,7 @@ export type CollagePhotoConfig = {
   height: string;
   rotate?: number;
   z: number;
+  depth?: number;
   priority?: boolean;
 };
 
@@ -51,6 +52,20 @@ export type CollagePhotoConfig = {
 // again, these need to be recomputed (top/height denominators shift).
 export const desktopCollageAspect = "1512 / 650";
 
+// "depth" is a translateZ offset (px) used only by the desktop collage's
+// scroll-linked rotateX effect (see HeroSection) — it gives each photo its
+// own position in 3D space so they foreshorten at different rates as the
+// group tilts, rather than the whole collage reading as one flat plane.
+//
+// IMPORTANT: depth must stay monotonic with z-index (higher z ⇒ depth must
+// be >= the depth of everything below it in z-order). The collage uses
+// transform-style: preserve-3d, so the browser sorts overlapping siblings
+// by *actual* 3D depth, which can override CSS z-index outright. Wall
+// critique (z:16, depth:40) and presentationRoom (z:21) briefly had
+// presentationRoom's depth *below* wallCritique's (35 vs 40) — that
+// contradiction made presentationRoom render behind wallCritique during
+// scroll despite its higher z-index. Keep new depth values consistent
+// with the z column below, especially for photos that spatially overlap.
 export const desktopCollageLayout: CollagePhotoConfig[] = [
   // Background layers — intentionally covered for depth. z-order confirmed
   // by tracing which photo wins at each overlap in the Figma composition.
@@ -62,6 +77,7 @@ export const desktopCollageLayout: CollagePhotoConfig[] = [
     width: "11.111%",
     height: "23.231%",
     z: 3,
+    depth: -55,
   },
   {
     src: aigKiosk,
@@ -71,6 +87,7 @@ export const desktopCollageLayout: CollagePhotoConfig[] = [
     width: "10.185%",
     height: "30.769%",
     z: 5,
+    depth: -45,
   },
   {
     src: workshopTable,
@@ -80,6 +97,7 @@ export const desktopCollageLayout: CollagePhotoConfig[] = [
     width: "10.516%",
     height: "33.077%",
     z: 8,
+    depth: -40,
   },
   // Visible photos
   {
@@ -90,6 +108,7 @@ export const desktopCollageLayout: CollagePhotoConfig[] = [
     width: "24.868%",
     height: "38.923%",
     z: 12,
+    depth: -38,
   },
   {
     src: lobbyWalk,
@@ -99,6 +118,7 @@ export const desktopCollageLayout: CollagePhotoConfig[] = [
     width: "11.574%",
     height: "34.308%",
     z: 15,
+    depth: 50,
   },
   {
     src: wallCritique,
@@ -108,6 +128,7 @@ export const desktopCollageLayout: CollagePhotoConfig[] = [
     width: "17.460%",
     height: "40.308%",
     z: 16,
+    depth: 25,
   },
   {
     src: constructionSite,
@@ -117,6 +138,7 @@ export const desktopCollageLayout: CollagePhotoConfig[] = [
     width: "17.063%",
     height: "36.769%",
     z: 45,
+    depth: 230,
   },
   {
     src: presentationRoom,
@@ -126,6 +148,7 @@ export const desktopCollageLayout: CollagePhotoConfig[] = [
     width: "12.169%",
     height: "23.231%",
     z: 21,
+    depth: 75,
   },
   // Portrait — largest, centered, topmost
   {
@@ -136,6 +159,7 @@ export const desktopCollageLayout: CollagePhotoConfig[] = [
     width: "24.008%",
     height: "78.000%",
     z: 40,
+    depth: 170,
     priority: true,
   },
 ];

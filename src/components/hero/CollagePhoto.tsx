@@ -1,4 +1,7 @@
+"use client";
+
 import Image from "next/image";
+import { motion, MotionValue, useTransform } from "framer-motion";
 import { CollagePhotoConfig } from "./collage-layout";
 
 export function CollagePhoto({
@@ -10,17 +13,28 @@ export function CollagePhoto({
   height,
   rotate,
   z,
+  depth,
   priority,
-}: CollagePhotoConfig) {
+  progress,
+}: CollagePhotoConfig & { progress: MotionValue<number> }) {
+  // Depth ramps from 0 (at rest) up to its full value in sync with the
+  // collage's rotation — so scroll=0 renders identical to the approved
+  // flat composition, and the per-photo 3D separation only appears once
+  // scrolling begins. A constant (always-on) translateZ was tried first
+  // and it shrank/repositioned the smallest background photos even at
+  // rest, since perspective foreshortening applies regardless of rotation.
+  const translateZ = useTransform(progress, [0, 1], [0, depth ?? 0]);
+
   return (
-    <div
+    <motion.div
       className="absolute overflow-hidden rounded-[10px]"
       style={{
         top,
         left,
         width,
         height,
-        transform: rotate ? `rotate(${rotate}deg)` : undefined,
+        rotate: rotate ?? 0,
+        z: translateZ,
         zIndex: z,
       }}
     >
@@ -33,6 +47,6 @@ export function CollagePhoto({
         placeholder="blur"
         priority={priority}
       />
-    </div>
+    </motion.div>
   );
 }

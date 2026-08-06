@@ -23,24 +23,51 @@ import {
 // (359px margins on both sides at the 1512 reference width).
 const DESKTOP_SCALE = "84%";
 
-export function HeroCollage({ y }: { y: MotionValue<number> }) {
+export function HeroCollage({
+  y,
+  rotateX,
+  perspective,
+  progress,
+}: {
+  y: MotionValue<number>;
+  rotateX: MotionValue<number>;
+  perspective: number;
+  progress: MotionValue<number>;
+}) {
   return (
-    <motion.div style={{ y }} className="w-full">
+    <motion.div
+      style={{
+        y,
+        rotateX,
+        transformPerspective: perspective,
+        transformStyle: "preserve-3d",
+      }}
+      className="w-full"
+    >
       {/* Desktop / tablet arrangement — positions are page-width-relative,
-          matching the Figma frame (1512px) coordinate space exactly. */}
+          matching the Figma frame (1512px) coordinate space exactly.
+          preserve-3d so each photo's own translateZ (see collage-layout.ts
+          "depth") renders as real 3D depth within the parent's rotateX,
+          instead of being flattened onto one plane. */}
       <div
         className="relative mx-auto hidden lg:block"
-        style={{ aspectRatio: desktopCollageAspect, width: DESKTOP_SCALE }}
+        style={{
+          aspectRatio: desktopCollageAspect,
+          width: DESKTOP_SCALE,
+          transformStyle: "preserve-3d",
+        }}
       >
         {desktopCollageLayout.map((photo, i) => (
-          <CollagePhoto key={i} {...photo} />
+          <CollagePhoto key={i} {...photo} progress={progress} />
         ))}
       </div>
 
-      {/* Mobile arrangement */}
+      {/* Mobile arrangement — no "depth" set on any of these, so their
+          animated translateZ always resolves to 0; progress is still
+          passed through since CollagePhoto always calls useTransform. */}
       <div className="relative mx-auto aspect-[5/6] w-full max-w-[420px] px-6 lg:hidden">
         {mobileCollageLayout.map((photo, i) => (
-          <CollagePhoto key={i} {...photo} />
+          <CollagePhoto key={i} {...photo} progress={progress} />
         ))}
       </div>
     </motion.div>

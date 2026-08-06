@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Playfair_Display } from "next/font/google";
+import { Inter, Inria_Serif } from "next/font/google";
 import { NavBar } from "@/components/NavBar";
 import "./globals.css";
 
@@ -8,11 +8,11 @@ const inter = Inter({
   subsets: ["latin"],
 });
 
-// Placeholder display serif — matches the reference's general feel
-// (transitional serif, moderate contrast). Swap once the real Figma
-// font is confirmed.
-const playfairDisplay = Playfair_Display({
-  variable: "--font-playfair",
+// Confirmed via Figma dev-mode inspect: the headline's "Tina" (and
+// equivalent word in the other phrases) uses Inria Serif Bold (700).
+const inriaSerif = Inria_Serif({
+  variable: "--font-inria-serif",
+  weight: ["400", "700"],
   subsets: ["latin"],
 });
 
@@ -25,7 +25,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${playfairDisplay.variable} antialiased`}
+      className={`${inter.variable} ${inriaSerif.variable} antialiased`}
     >
       <body className="flex flex-col">
         <NavBar />

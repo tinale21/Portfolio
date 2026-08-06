@@ -7,6 +7,12 @@ const DELETE_MS = 125;
 const HOLD_MS = 1800;
 const BLINK_MS = 275;
 
+// Every phrase starts with this literal prefix. Per Figma dev-mode
+// inspect: "I'm " is Inter SemiBold (600), and everything after it is
+// Inria Serif Bold (700) — confirmed for "Tina" and applied consistently
+// across the other phrases too.
+const PREFIX = "I'm ";
+
 type Phase = "idle" | "typing" | "holding" | "deleting";
 
 export function TypewriterHeadline({
@@ -72,11 +78,14 @@ export function TypewriterHeadline({
   }, [phase]);
 
   const visibleText = phase === "idle" ? "" : phrases[phraseIndex].slice(0, length);
+  const prefixPart = visibleText.slice(0, PREFIX.length);
+  const restPart = visibleText.slice(PREFIX.length);
 
   return (
     <>
       <span aria-hidden="true">
-        {visibleText}
+        <span className="font-sans font-semibold">{prefixPart}</span>
+        <span className="font-serif font-bold">{restPart}</span>
         <span
           className="ml-1 inline-block w-[2px] translate-y-[0.1em] bg-current"
           style={{ height: "0.85em", opacity: cursorOn ? 1 : 0 }}
