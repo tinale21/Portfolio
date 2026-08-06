@@ -139,7 +139,7 @@ export function HeroSection() {
           larger for breathing room before whatever section follows. */}
       <div
         ref={headlineRef}
-        className="px-5 pt-6 pb-24 sm:px-8 sm:pt-8 sm:pb-32 lg:pr-8 lg:pt-12 lg:pb-40 lg:pl-[29.696%]"
+        className="px-5 pt-0 pb-24 sm:px-8 sm:pt-1 sm:pb-32 lg:pr-8 lg:pt-2 lg:pb-40 lg:pl-[29.696%]"
       >
         <h1
           className="text-[#E4E7EC]"
@@ -150,6 +150,17 @@ export function HeroSection() {
           <TypewriterHeadline phrases={PHRASES} start={headlineArrived} />
         </h1>
       </div>
+
+      {/* Extends the section's black background past the headline's own
+          bottom padding so the space below the headline matches the space
+          above it. Once the collage finishes translating (scroll progress
+          reaches 1), both gaps are fixed regardless of further scrolling —
+          measured via Puppeteer at 1512x982: ~219px between the collage's
+          lowest photo and the headline's top, vs. 170px (160px bottom
+          padding + this spacer) below the headline. This spacer's height
+          is set to close that ~49px difference; only verified at the
+          desktop (lg) breakpoint. */}
+      <div className="h-[60px]" />
     </section>
   );
 }

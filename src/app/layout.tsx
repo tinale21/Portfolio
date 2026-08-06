@@ -8,8 +8,10 @@ const inter = Inter({
   subsets: ["latin"],
 });
 
-// Confirmed via Figma dev-mode inspect: the headline's "Tina" (and
-// equivalent word in the other phrases) uses Inria Serif Bold (700).
+// Figma dev-mode inspect originally specified Inria Serif Bold (700) for
+// the headline's "Tina" (and equivalent word in the other phrases), later
+// switched to Regular (400) per design feedback — kept loading both
+// weights in case Bold is needed again.
 const inriaSerif = Inria_Serif({
   variable: "--font-inria-serif",
   weight: ["400", "700"],

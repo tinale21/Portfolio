@@ -7,10 +7,11 @@ const DELETE_MS = 125;
 const HOLD_MS = 1800;
 const BLINK_MS = 275;
 
-// Every phrase starts with this literal prefix. Per Figma dev-mode
-// inspect: "I'm " is Inter SemiBold (600), and everything after it is
-// Inria Serif Bold (700) — confirmed for "Tina" and applied consistently
-// across the other phrases too.
+// Every phrase starts with this literal prefix. Figma dev-mode inspect
+// originally specified "I'm " as Inter SemiBold (600) and the rest as
+// Inria Serif Bold (700); both were dialed back per design feedback —
+// "I'm " to Inter Medium (500), the rest to Inria Serif Regular (400).
+// Inria Serif has no true Semibold (600) cut — only 300/400/700.
 const PREFIX = "I'm ";
 
 type Phase = "idle" | "typing" | "holding" | "deleting";
@@ -49,8 +50,9 @@ export function TypewriterHeadline({
       return () => clearTimeout(t);
     }
 
-    // phase === "deleting"
-    if (length > 0) {
+    // phase === "deleting" — only the part after the shared "I'm " prefix
+    // deletes; the prefix itself stays on screen between phrases.
+    if (length > PREFIX.length) {
       const t = setTimeout(() => setLength((l) => l - 1), DELETE_MS);
       return () => clearTimeout(t);
     }
@@ -84,8 +86,8 @@ export function TypewriterHeadline({
   return (
     <>
       <span aria-hidden="true">
-        <span className="font-sans font-semibold">{prefixPart}</span>
-        <span className="font-serif font-bold">{restPart}</span>
+        <span className="font-sans font-medium">{prefixPart}</span>
+        <span className="font-serif font-normal">{restPart}</span>
         <span
           className="ml-1 inline-block w-[2px] translate-y-[0.1em] bg-current"
           style={{ height: "0.85em", opacity: cursorOn ? 1 : 0 }}
