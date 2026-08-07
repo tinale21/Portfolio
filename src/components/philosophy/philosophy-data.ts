@@ -109,9 +109,9 @@ export const QUOTE_LINES = [
   "how thoughtfully we make it.",
 ];
 
-// Figma dev-mode inspect specified 955px/32px, but a stack of cards sized
-// to comfortably hide a 955px-wide line would have to scale up well past
-// each image's own size. Narrowed instead so the clustered cards can stay
-// closer to their natural size — this deviates from the Figma spec by
-// request, trading final-state width for a more natural starting stack.
-export const QUOTE_WIDTH = 460;
+// Figma dev-mode inspect specified 955px/32px. Since the quote is hidden
+// at the start via opacity (see PhilosophySection's quoteOpacity), not by
+// being physically covered by the image cluster, this width is no longer
+// tied to the cluster's own size — it's set purely to fit the QUOTE_LINES
+// split as exactly 2 lines at the current font size.
+export const QUOTE_WIDTH = 530;
