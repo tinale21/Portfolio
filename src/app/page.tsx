@@ -1,4 +1,5 @@
 import { HeroSection } from "@/components/hero/HeroSection";
+import { ClientLogosSection } from "@/components/logos/ClientLogosSection";
 import { ProjectsSection } from "@/components/projects/ProjectsSection";
 
 export default function Home() {
@@ -6,6 +7,7 @@ export default function Home() {
     <main>
       <HeroSection />
       <ProjectsSection />
+      <ClientLogosSection />
     </main>
   );
 }
