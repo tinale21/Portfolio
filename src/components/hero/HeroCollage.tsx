@@ -10,9 +10,9 @@ import {
 
 // Every photo below is positioned as a % of this container, so shrinking
 // the container scales the whole composition uniformly — positions,
-// spacing, and layering all stay exactly as measured from Figma, just at
-// 84% (10% + a further 6% reduction), per design feedback that the collage
-// read slightly oversized.
+// spacing, and layering all stay exactly as measured from Figma. Went
+// 94% -> 84% per earlier feedback that the collage read oversized, then
+// back up to 88% per later feedback that 84% read a little too small.
 //
 // Note: a previous version of this file shifted the container off-center
 // to compensate for the left cluster's larger combined photo area (an
@@ -21,7 +21,7 @@ import {
 // center — and read as less balanced, not more. Reverted to plain
 // geometric centering, which matches Figma's own bounding box exactly
 // (359px margins on both sides at the 1512 reference width).
-const DESKTOP_SCALE = "84%";
+const DESKTOP_SCALE = "88%";
 
 export function HeroCollage({
   y,

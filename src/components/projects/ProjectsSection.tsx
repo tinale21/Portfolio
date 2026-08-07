@@ -5,7 +5,7 @@ export function ProjectsSection() {
   return (
     <section
       data-nav-theme="light"
-      className="bg-white px-5 py-16 sm:px-8 sm:py-20 lg:px-[68px] lg:py-24"
+      className="bg-white px-5 py-10 sm:px-8 sm:py-14 lg:px-[68px] lg:py-16"
     >
       <h2 className="font-serif text-[36px] text-black">
         Selected projects, <em className="italic">thoughtfully</em> curated.
