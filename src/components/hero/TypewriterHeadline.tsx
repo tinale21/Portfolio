@@ -8,10 +8,11 @@ const HOLD_MS = 1800;
 const BLINK_MS = 275;
 
 // Every phrase starts with this literal prefix. Figma dev-mode inspect
-// originally specified "I'm " as Inter SemiBold (600) and the rest as
-// Inria Serif Bold (700); both were dialed back per design feedback —
-// "I'm " to Inter Medium (500), the rest to Inria Serif Regular (400).
-// Inria Serif has no true Semibold (600) cut — only 300/400/700.
+// originally specified a mixed-font treatment — "I'm " in Inter SemiBold
+// (600), the rest in Inria Serif Bold (700) — later unified to a single
+// font (Inter) and weight (Medium) throughout, with the rest picking up
+// an accent color (#AE62AA) instead while "I'm " stays the headline's
+// base color, per design feedback.
 const PREFIX = "I'm ";
 
 type Phase = "idle" | "typing" | "holding" | "deleting";
@@ -87,9 +88,9 @@ export function TypewriterHeadline({
     <>
       <span aria-hidden="true">
         <span className="font-sans font-medium">{prefixPart}</span>
-        <span className="font-serif font-normal">{restPart}</span>
+        <span className="font-sans font-medium text-[#AE62AA]">{restPart}</span>
         <span
-          className="ml-1 inline-block w-[2px] translate-y-[0.1em] bg-current"
+          className="ml-3 inline-block w-[4px] translate-y-[0.1em] bg-[#AE62AA]"
           style={{ height: "0.85em", opacity: cursorOn ? 1 : 0 }}
         />
       </span>

@@ -105,8 +105,8 @@ export const CLUSTER_CARD_HEIGHT = 310 * CLUSTER_CARD_SCALE_UP;
 export const QUOTE_OPEN = "“";
 export const QUOTE_CLOSE = "”";
 export const QUOTE_LINES = [
-  "Design is not just what we make, but",
-  "how thoughtfully we make it.",
+  "Design is not just what we make, but how",
+  "thoughtfully we make it.",
 ];
 
 // Figma dev-mode inspect specified 955px/32px. Since the quote is hidden
@@ -114,4 +114,4 @@ export const QUOTE_LINES = [
 // being physically covered by the image cluster, this width is no longer
 // tied to the cluster's own size — it's set purely to fit the QUOTE_LINES
 // split as exactly 2 lines at the current font size.
-export const QUOTE_WIDTH = 530;
+export const QUOTE_WIDTH = 570;

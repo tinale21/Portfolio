@@ -6,7 +6,7 @@ import { HeroCollage } from "./HeroCollage";
 import { TypewriterHeadline } from "./TypewriterHeadline";
 
 const PHRASES = [
-  "I'm Tina",
+  "I'm Tina Le!",
   "I'm a designer",
   "I'm a dreamer",
   "I'm a creative",
