@@ -73,8 +73,8 @@ export const ENTRY_AFTER = Math.max(...CONNECT_PHOTOS.map((p) => p.y + p.h)) + 1
 // center in the viewport, never moving — while the photos animate in a
 // separate layer underneath. Rendered centered here the same way, fully
 // decoupled from the FIGMA_WIDTH/HEIGHT photo-positioning system.
-export const HEADING = "Let's Connect";
-export const HEADING_FONT_SIZE_VW = (48 / FIGMA_WIDTH) * 100;
+export const HEADING = "Let's Connect!";
+export const HEADING_FONT_SIZE_VW = (56 / FIGMA_WIDTH) * 100;
 
 // Shared by ConnectSection (which uses `hold`) and ExperiencesSection
 // (which uses `pull`) to produce the "heading scrolls behind the next

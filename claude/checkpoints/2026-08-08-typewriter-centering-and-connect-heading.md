@@ -1,0 +1,36 @@
+# Checkpoint — Typewriter phrase centering, Connect heading tweaks
+
+## Context
+
+Two independent threads: a small "Let's Connect" → "Let's Connect!" + size bump on the Connect section heading, and a much longer back-and-forth getting the Hero's typewriter headline to actually read as centered.
+
+## Human directions
+
+- "For the 'Let's Connect' can you make it 'Let's Connect!' and a little bit bigger text size" — then asked to try Inter, then asked to revert back to Inria Serif.
+- "Can you make the typewriting text on the hero section inria serif" — applied, flagged that Inria Serif only loads weights 400/700 so `font-medium` (500) falls back to Regular.
+- "can you shift the typewriting text 5px to the right" → then, before that landed anywhere near final: "can you shift it so that the longest phrase is centered" — a materially bigger ask (shared anchor point based on measured text width, not a static px nudge).
+- First implementation attempt centered *each phrase individually* (re-measuring per phrase change). User: "no revert that. i meant that the entire phrase should be centered to the longest phrase" — reverted to the single-shared-anchor model, i.e. centering computed once against whichever phrase is longest, with shorter phrases sharing that same anchor (and therefore not themselves perfectly centered — an accepted tradeoff, confirmed explicitly).
+- After reverting: "you still centering the 'I'm' only. you should be centered the entire phrase of the longest" — this is what led to discovering the actual bug (see below), and to asking a clarifying question about the centering *reference* (own column vs. full page) since the discovery reframed the whole problem.
+- User picked "center within current column" — then, immediately upon seeing it, still said "i don't see any change at all. it not horizontally centered" — which is what actually justified switching to full-page-width centering despite the earlier answer, since the "column" was invisible/arbitrary to anyone just looking at the page.
+- "can you make the spacing here 3px smaller" (screenshot showing the gap above and below the headline) → "can you reduce it by 3px more".
+- "let's build and push".
+
+## Records of resistance / things I got wrong and had to correct
+
+- **Per-phrase centering, reverted**: built a version where the anchor point recalculates for whichever phrase is currently typing, so every phrase is individually centered. This wasn't what was asked — the user's original ask ("centered to the longest phrase") meant one shared anchor, not independent per-phrase centering. Reverted cleanly on request rather than arguing for the "more correct" version I'd built.
+- **Measurement bug #1 (real, in the product)**: `getBoundingClientRect().width` on the wrapper element includes its own padding (border-box) — used it directly as "available content width" without subtracting padding, which fed a wildly wrong number into the centering formula (measured 1512px instead of the actual ~1031px content width) for one iteration before catching it via direct numeric verification.
+- **Measurement bug #2 (real, in the product)**: measured the `<h1>` itself for "available width" after giving it a computed `marginLeft` — since the h1 has `width: auto`, applying a margin shrinks its own measured width, creating a feedback loop where each recomputation fed a smaller number back into itself. Fixed by measuring the parent wrapper (unaffected by the h1's own margin) instead.
+- **Measurement bug #3 (this session's actual root cause, but in my *test script*, not the product)**: after the "still only 'I'm' is centered" report, spent significant effort re-deriving whether the underlying centering math was wrong. It wasn't — my Puppeteer verification script was itself buggy twice in a row: first, `querySelector('span[aria-hidden]')` matched one of the *hidden measurement spans* (which also carry `aria-hidden="true"`) instead of the live typewriter text, making it look like the phrase was permanently stuck on "I'm Tina Le!"; second, once that was fixed, the script measured the *outer* wrapper span (which also contains the blinking cursor) as "the text," making a perfectly-centered phrase look like it had a real 16px asymmetry. Traced both down via direct, incremental measurement rather than assuming the product was broken — the actual text was already correctly centered within its column the whole time.
+- **Real, legitimate refinement once the test scripts were fixed**: a person looking at the page does see the blinking cursor, and it sits only on the right side of the text — so even though the bare text was correctly centered, the *visible block* (text + cursor) was not. Added `CURSOR_WIDTH` to the centering calculation so the block a person actually perceives is what's centered, not just the text run.
+- **Reference frame u-turn**: asked a clarifying question (own column vs. full page), user picked "own column," but on actually seeing the result still said it wasn't centered — because the column is invisible/arbitrary to anyone not reading the code, "centered within it" doesn't read as "centered" to a viewer. Switched to full-page centering despite the earlier answer once it was clear that answer didn't resolve what the user was actually seeing. Confirmed the collage sits in its own full-width row above (not beside) the headline, so there was no real layout reason to keep the old Figma-matched offset column at all.
+
+## Successes
+
+- Every "is this actually centered" question in this thread was settled by direct pixel measurement (`getBoundingClientRect`, computed styles) via Puppeteer, not by eyeballing screenshots — this is what surfaced that two rounds of "still not centered" reports were actually caused by bugs in the *verification script*, not the underlying implementation, and prevented chasing a phantom bug in the product.
+- Once the real behavior was understood, explained the mechanism plainly (kerning-at-span-boundary theory floated first, then correctly identified and confirmed the *actual* cause — the cursor being included in the measured box) rather than quietly patching without explaining why the numbers kept not matching expectations.
+
+## State at this checkpoint
+
+- **Connect heading**: text is "Let's Connect!" (was "Let's Connect"), base reference size 56px (was 48px), clamp bounds widened to 2rem–3.5rem (was 1.75rem–3rem) so the larger base size isn't clipped by the ceiling.
+- **Hero typewriter headline**: font is Inria Serif (`font-serif`) throughout, both "I'm " and the rest. Centering: one shared horizontal anchor computed from the *longest* phrase's actual rendered width (measured via hidden spans structurally identical to the live two-span text, matching real kerning) plus the cursor's width (16px), centered against the *full page width* — the old Figma-matched column starting at 29.696% from the left was removed entirely, since the collage above sits in its own row and there was no layout reason to keep it. Verified numerically: 455px on both sides at a 1512px viewport for the longest phrase + cursor.
+- Headline's top padding and the extra bottom spacer (kept matching per an existing design rule) were each trimmed 6px total (two 3px rounds): top `lg:pt-2` (8px) → `lg:pt-[2px]`, bottom spacer `h-[60px]` → `h-[54px]`.

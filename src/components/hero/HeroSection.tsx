@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useMotionValue, useTransform } from "framer-motion";
 import { HeroCollage } from "./HeroCollage";
-import { TypewriterHeadline } from "./TypewriterHeadline";
+import { CURSOR_WIDTH, PREFIX, TypewriterHeadline } from "./TypewriterHeadline";
 
 const PHRASES = [
   "I'm Tina Le!",
@@ -55,18 +55,64 @@ const ROTATE_X_OUTPUT = EASE_STOPS.map(
 const PERSPECTIVE_PX = 800;
 
 // Figma font-size for the headline (90px at the 1512 reference width),
-// expressed as vw so it scales the same way the collage does. (Headline
-// left position — 449/1512 = 29.696% — is applied directly below as a
-// static Tailwind class; see the comment there.)
+// expressed as vw so it scales the same way the collage does.
 const HEADLINE_FONT_SIZE_VW = (90 / 1512) * 100;
 
 export function HeroSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const headlineRef = useRef<HTMLDivElement>(null);
+  const measureRefs = useRef<(HTMLSpanElement | null)[]>([]);
   const progress = useMotionValue(0);
   const collageY = useTransform(progress, EASE_STOPS, EASE_OUTPUT);
   const collageRotateX = useTransform(progress, EASE_STOPS, ROTATE_X_OUTPUT);
   const [headlineArrived, setHeadlineArrived] = useState(false);
+  // Every phrase types in from the same fixed starting point, so left-
+  // aligning them all makes shorter phrases ("I'm a dreamer") sit
+  // noticeably left of where longer ones ("I'm a designer") end up. To
+  // make the *longest* phrase land centered in the available width
+  // instead — everything else then reads as "growing outward from
+  // center" as it types — the actual rendered width of each phrase has to
+  // be measured (character count isn't a reliable proxy for width in a
+  // serif font), which changes with the responsive clamp()'d font-size.
+  // Hidden measurement spans render every phrase off-screen in the exact
+  // same font context (children of the same h1, so font-size/family
+  // inherit identically) purely to read their widths.
+  const [shiftPx, setShiftPx] = useState(0);
+
+  useEffect(() => {
+    function updateShift() {
+      // Measuring headlineRef (the padded wrapper), not the h1 itself:
+      // the h1 has `width: auto`, so once marginLeft is non-zero, the
+      // h1's own rendered width already shrinks to absorb that margin —
+      // measuring it here would feed the shifted width back into
+      // computing the next shift, compounding on every re-run.
+      // headlineRef's width is fixed by the section's layout and never
+      // affected by the h1's margin.
+      const wrapper = headlineRef.current;
+      if (!wrapper) return;
+      // getBoundingClientRect().width is the wrapper's border-box — it
+      // still includes its own left/right padding (the lg:pl-[29.696%]
+      // that positions the whole headline column), so it has to be
+      // subtracted to get the actual content width the h1 renders into.
+      const wrapperStyle = getComputedStyle(wrapper);
+      const containerWidth =
+        wrapper.getBoundingClientRect().width -
+        parseFloat(wrapperStyle.paddingLeft) -
+        parseFloat(wrapperStyle.paddingRight);
+      const maxPhraseWidth = Math.max(
+        0,
+        ...measureRefs.current.map((el) => el?.getBoundingClientRect().width ?? 0),
+      );
+      // + CURSOR_WIDTH: centers the *visible block* a person actually
+      // looks at (text plus the blinking cursor after it), not just the
+      // bare text — see CURSOR_WIDTH's comment in TypewriterHeadline.tsx.
+      setShiftPx(Math.max(0, (containerWidth - maxPhraseWidth - CURSOR_WIDTH) / 2));
+    }
+
+    updateShift();
+    window.addEventListener("resize", updateShift);
+    return () => window.removeEventListener("resize", updateShift);
+  }, []);
 
   useEffect(() => {
     function updateProgress() {
@@ -127,10 +173,14 @@ export function HeroSection() {
           start, simply below the fold on load. It never moves itself —
           scrolling (plus the collage translating out of the way above)
           is what brings it into view. Only its text content animates.
-          lg:pl-[29.696%] is HEADLINE_LEFT_PCT (449/1512) as a static
-          class — Tailwind can't reliably pick up a dynamically
-          interpolated arbitrary value, so it's hardcoded here and kept
-          in sync with the constant above by hand.
+          Used to sit in a Figma-matched column starting at 29.696% from
+          the left (lg:pl-[29.696%]) — dropped per feedback that the
+          typewriter phrase should read as centered across the whole page,
+          not just within that narrower column. The collage above sits in
+          its own full-width row, not beside this one, so there's no
+          layout reason to keep the offset. Padding is now symmetric at
+          every breakpoint; shiftPx (see above) does the actual centering
+          against this now-symmetric content width.
           Top padding is intentionally small — the headline only needs to
           stay below the fold, which is already guaranteed by sitting
           after a full-viewport-tall sibling above, not by its own
@@ -140,14 +190,35 @@ export function HeroSection() {
           larger for breathing room before whatever section follows. */}
       <div
         ref={headlineRef}
-        className="px-5 pt-0 pb-24 sm:px-8 sm:pt-1 sm:pb-32 lg:pr-8 lg:pt-2 lg:pb-40 lg:pl-[29.696%]"
+        className="px-5 pt-0 pb-24 sm:px-8 sm:pt-1 sm:pb-32 lg:px-8 lg:pt-[2px] lg:pb-40"
       >
         <h1
-          className="text-[#E4E7EC]"
+          className="relative text-[#E4E7EC]"
           style={{
             fontSize: `clamp(2.5rem, ${HEADLINE_FONT_SIZE_VW}vw, 5.625rem)`,
+            marginLeft: shiftPx,
           }}
         >
+          {/* Measurement-only, never shown — see shiftPx's comment above.
+              Split into the same two adjacent spans TypewriterHeadline
+              itself renders (rather than one span with the full phrase)
+              — measuring one continuous string came out ~16px narrower
+              than the live two-span version actually renders, since
+              splitting text across an element boundary changes how the
+              browser applies kerning versus one unbroken text run. */}
+          {PHRASES.map((phrase, i) => (
+            <span
+              key={phrase}
+              ref={(el) => {
+                measureRefs.current[i] = el;
+              }}
+              aria-hidden="true"
+              className="invisible absolute whitespace-nowrap"
+            >
+              <span className="font-serif font-medium">{phrase.slice(0, PREFIX.length)}</span>
+              <span className="font-serif font-medium">{phrase.slice(PREFIX.length)}</span>
+            </span>
+          ))}
           <TypewriterHeadline phrases={PHRASES} start={headlineArrived} />
         </h1>
       </div>
@@ -155,13 +226,11 @@ export function HeroSection() {
       {/* Extends the section's black background past the headline's own
           bottom padding so the space below the headline matches the space
           above it. Once the collage finishes translating (scroll progress
-          reaches 1), both gaps are fixed regardless of further scrolling —
-          measured via Puppeteer at 1512x982: ~219px between the collage's
-          lowest photo and the headline's top, vs. 170px (160px bottom
-          padding + this spacer) below the headline. This spacer's height
-          is set to close that ~49px difference; only verified at the
-          desktop (lg) breakpoint. */}
-      <div className="h-[60px]" />
+          reaches 1), both gaps are fixed regardless of further scrolling.
+          Trimmed 3px along with the top padding above per feedback that
+          both gaps (shown to be matching) felt a touch too tall — only
+          verified at the desktop (lg) breakpoint. */}
+      <div className="h-[54px]" />
     </section>
   );
 }

@@ -108,7 +108,7 @@ export function ConnectSection() {
             className="absolute left-1/2 z-[100] -translate-x-1/2 -translate-y-1/2 whitespace-nowrap font-serif font-bold text-white"
             style={{
               top: headingCenterYPx !== null ? `${headingCenterYPx}px` : "50%",
-              fontSize: `clamp(1.75rem, ${HEADING_FONT_SIZE_VW}vw, 3rem)`,
+              fontSize: `clamp(2rem, ${HEADING_FONT_SIZE_VW}vw, 3.5rem)`,
             }}
           >
             {HEADING}

@@ -10,10 +10,22 @@ const BLINK_MS = 275;
 // Every phrase starts with this literal prefix. Figma dev-mode inspect
 // originally specified a mixed-font treatment — "I'm " in Inter SemiBold
 // (600), the rest in Inria Serif Bold (700) — later unified to a single
-// font (Inter) and weight (Medium) throughout, with the rest picking up
-// an accent color (#AE62AA) instead while "I'm " stays the headline's
-// base color, per design feedback.
-const PREFIX = "I'm ";
+// font and weight (Medium) throughout, first Inter then switched to
+// Inria Serif, with the rest picking up an accent color (#AE62AA) instead
+// while "I'm " stays the headline's base color, per design feedback.
+// Exported so HeroSection's hidden measurement spans can split each
+// phrase the same way this component does — measuring one continuous
+// string measures a few px narrower than two adjacent spans actually
+// render, since browsers can apply different kerning within one text run
+// than across an element boundary.
+export const PREFIX = "I'm ";
+
+// ml-3 (12px) + w-[4px] on the cursor span below. Exported so HeroSection
+// can include it when centering — the cursor sits only on the right side
+// of the text, so centering the text alone leaves the *visible* block
+// (text + blinking cursor, which is what a person actually looks at)
+// sitting 16px right of true center.
+export const CURSOR_WIDTH = 12 + 4;
 
 type Phase = "idle" | "typing" | "holding" | "deleting";
 
@@ -87,8 +99,8 @@ export function TypewriterHeadline({
   return (
     <>
       <span aria-hidden="true">
-        <span className="font-sans font-medium">{prefixPart}</span>
-        <span className="font-sans font-medium text-[#AE62AA]">{restPart}</span>
+        <span className="font-serif font-medium">{prefixPart}</span>
+        <span className="font-serif font-medium text-[#AE62AA]">{restPart}</span>
         <span
           className="ml-3 inline-block w-[4px] translate-y-[0.1em] bg-[#AE62AA]"
           style={{ height: "0.85em", opacity: cursorOn ? 1 : 0 }}
