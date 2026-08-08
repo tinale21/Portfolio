@@ -1,3 +1,5 @@
+import { ConnectSection } from "@/components/connect/ConnectSection";
+import { ExperiencesSection } from "@/components/experiences/ExperiencesSection";
 import { HeroSection } from "@/components/hero/HeroSection";
 import { ClientLogosSection } from "@/components/logos/ClientLogosSection";
 import { PhilosophySection } from "@/components/philosophy/PhilosophySection";
@@ -10,6 +12,8 @@ export default function Home() {
       <ProjectsSection />
       <ClientLogosSection />
       <PhilosophySection />
+      <ConnectSection />
+      <ExperiencesSection />
     </main>
   );
 }
