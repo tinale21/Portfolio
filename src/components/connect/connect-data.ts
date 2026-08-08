@@ -75,3 +75,45 @@ export const ENTRY_AFTER = Math.max(...CONNECT_PHOTOS.map((p) => p.y + p.h)) + 1
 // decoupled from the FIGMA_WIDTH/HEIGHT photo-positioning system.
 export const HEADING = "Let's Connect";
 export const HEADING_FONT_SIZE_VW = (48 / FIGMA_WIDTH) * 100;
+
+// Shared by ConnectSection (which uses `hold`) and ExperiencesSection
+// (which uses `pull`) to produce the "heading scrolls behind the next
+// section" exit effect. Both used to be fixed px constants tuned against
+// one 1512x900 test viewport — that broke the moment the heading's own
+// centering was fixed to track the *real* viewport height (a shorter
+// browser window moves the heading up on screen, which changes how much
+// pull is actually needed to reach it). Deriving both from the live
+// viewport dimensions instead keeps the effect correct at any window
+// size.
+//
+// Derivation: `pull` needs to be big enough that Experiences' rising
+// white background reaches the heading's on-screen y-position
+// (viewportHeight/2) no later than the moment Connect's pin releases —
+// working through the same wrapper-height/sticky-release algebra as
+// ConnectSection's own comments, that threshold is
+// `stickyHeight - viewportHeight/2`, plus PULL_MARGIN so it happens
+// clearly before release rather than right at the edge. Clamped to stay
+// under ExperiencesSection's own natural content height (~780px measured)
+// so the pull can never overshoot into whatever comes after it (see
+// ExperiencesSection's own comment for what happens if it does).
+//
+// `hold` then needs to buy enough *extra* pinned scroll distance that the
+// reveal (which always takes exactly one viewport height to go from "just
+// touching the bottom edge" to "fully covers") doesn't start until
+// REVEAL_MARGIN past progress reaching 1 (all photos exited). Derived
+// directly from the actual (possibly clamped) `pull` above, not
+// re-approximated, so it stays correct even at the extremes where the
+// clamp kicks in. Both margins were 100px originally — tightened to 20px
+// after feedback that the stretch of plain dark background between
+// "photos gone" and "next section visibly arriving" felt too long. Below
+// ~15-20px risks the reveal starting while the last photo (per its
+// ENTRY_AFTER exit cushion) hasn't fully cleared the frame.
+const PULL_MARGIN = 20;
+const REVEAL_MARGIN = 20;
+
+export function getConnectExitTiming(viewportWidth: number, viewportHeight: number) {
+  const stickyHeight = viewportWidth * (FIGMA_HEIGHT / FIGMA_WIDTH);
+  const pull = Math.min(750, Math.max(300, stickyHeight - viewportHeight / 2 + PULL_MARGIN));
+  const hold = Math.max(100, REVEAL_MARGIN + pull + viewportHeight - stickyHeight);
+  return { pull, hold };
+}

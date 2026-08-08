@@ -29,6 +29,18 @@ export function PhilosophySection() {
   const containerRef = useRef<HTMLDivElement>(null);
   const progress = useMotionValue(0);
   const [pxScale, setPxScale] = useState(1);
+  // CLUSTER_CENTER_Y is a Figma-frame-relative constant (476.5 out of the
+  // 982-tall reference), but the sticky box's actual rendered height is
+  // width-derived (982/1512 of its own width) and essentially never
+  // matches the real browser viewport height the user is looking at — so
+  // positioning the cluster at a fixed % of the Figma frame's height
+  // lands it slightly off the visual center of the actual screen (a ~26px
+  // offset measured at 1512x900). Converting the true on-screen center
+  // (half the real viewport height) back into Figma-space px — by
+  // dividing by the same pxScale already used to convert Figma px to
+  // screen px everywhere else — lets the existing math in
+  // PhilosophyImage.tsx work unchanged while actually landing on center.
+  const [clusterCenterY, setClusterCenterY] = useState(CLUSTER_CENTER_Y);
   // Confirmed by decomposing the reference site's live computed styles
   // across its full scroll range: the quote isn't static-and-revealed —
   // it fades from opacity 0 to 1 and grows from scale(0.9) to scale(1),
@@ -51,7 +63,9 @@ export function PhilosophySection() {
       const raw = (window.scrollY - wrapperTop) / PIN_SCROLL_DISTANCE;
       progress.set(Math.min(1, Math.max(0, raw)));
 
-      setPxScale(container.getBoundingClientRect().width / FIGMA_WIDTH);
+      const scale = container.getBoundingClientRect().width / FIGMA_WIDTH;
+      setPxScale(scale);
+      setClusterCenterY(window.innerHeight / 2 / scale);
     }
 
     update();
@@ -86,7 +100,7 @@ export function PhilosophySection() {
             className="absolute -translate-x-1/2 -translate-y-1/2"
             style={{
               left: `${(CLUSTER_CENTER_X / FIGMA_WIDTH) * 100}%`,
-              top: `${(CLUSTER_CENTER_Y / FIGMA_HEIGHT) * 100}%`,
+              top: `${(clusterCenterY / FIGMA_HEIGHT) * 100}%`,
               width: `${(QUOTE_WIDTH / FIGMA_WIDTH) * 100}%`,
             }}
           >
@@ -116,7 +130,13 @@ export function PhilosophySection() {
           </div>
 
           {PHILOSOPHY_IMAGES.map((image, i) => (
-            <PhilosophyImage key={i} {...image} progress={progress} pxScale={pxScale} />
+            <PhilosophyImage
+              key={i}
+              {...image}
+              progress={progress}
+              pxScale={pxScale}
+              clusterCenterY={clusterCenterY}
+            />
           ))}
         </div>
       </div>

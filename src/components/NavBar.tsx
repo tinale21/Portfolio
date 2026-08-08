@@ -55,12 +55,20 @@ export function NavBar() {
   // ("dark" | "light") attribute; sections that don't set one are treated
   // as light. Checked against the nav's own rendered height (not a
   // hardcoded constant) so it keeps working if that height changes again.
+  //
+  // Iterates in reverse (last DOM match wins) rather than forward, because
+  // sections can visually overlap — e.g. Connect's exit deliberately pulls
+  // Experiences up over its tail end so the outgoing heading appears to
+  // scroll behind the incoming section. During that overlap, both
+  // sections' rects straddle navBottom at once; the later one in DOM order
+  // is the one actually painted on top (plain sibling stacking, no z-index
+  // involved), so it's the one whose theme should win.
   useEffect(() => {
     function updateTheme() {
       const header = headerRef.current;
       if (!header) return;
       const navBottom = header.getBoundingClientRect().height;
-      const sections = document.querySelectorAll<HTMLElement>("[data-nav-theme]");
+      const sections = [...document.querySelectorAll<HTMLElement>("[data-nav-theme]")].reverse();
       for (const section of sections) {
         const rect = section.getBoundingClientRect();
         if (rect.top <= navBottom && rect.bottom > navBottom) {

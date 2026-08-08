@@ -2,7 +2,14 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useMotionValue } from "framer-motion";
-import { CONNECT_PHOTOS, FIGMA_HEIGHT, FIGMA_WIDTH, HEADING, HEADING_FONT_SIZE_VW } from "./connect-data";
+import {
+  CONNECT_PHOTOS,
+  FIGMA_HEIGHT,
+  FIGMA_WIDTH,
+  HEADING,
+  HEADING_FONT_SIZE_VW,
+  getConnectExitTiming,
+} from "./connect-data";
 import { ConnectPhoto } from "./ConnectPhoto";
 
 // Same pinned-scroll mechanism as PhilosophySection. Confirmed against the
@@ -18,6 +25,32 @@ export function ConnectSection() {
   const containerRef = useRef<HTMLDivElement>(null);
   const progress = useMotionValue(0);
   const [pxScale, setPxScale] = useState(1);
+  // The wrapper's height used to be a flat `100vh + PIN_SCROLL_DISTANCE`,
+  // which assumes the sticky child (the aspect-ratio box below) is
+  // exactly one viewport tall. It isn't — its height is width-derived
+  // (982/1512 of the container's width), and that essentially never
+  // equals the actual viewport height. Measuring the sticky child's real
+  // height and sizing the wrapper as exactly `stickyHeight +
+  // PIN_SCROLL_DISTANCE + hold` makes native release land exactly at
+  // progress=1 plus the extra hold distance, rather than at some
+  // viewport-dependent, arbitrarily-earlier point. `hold` itself comes from
+  // getConnectExitTiming (see connect-data.ts) — it used to be a fixed
+  // constant tuned against one test viewport, which broke once the heading
+  // centering below was fixed to track the *real* viewport height instead
+  // of the aspect-ratio box's height (a shorter browser window moves the
+  // heading, which changes how much hold/pull the cover effect needs).
+  const [wrapperHeightPx, setWrapperHeightPx] = useState<number | null>(null);
+  // The heading was centered via `top-1/2`, i.e. 50% of the aspect-ratio
+  // container's own height — but that container's height is width-derived
+  // (982/1512 of its width) and essentially never matches the actual
+  // browser viewport height, so it landed noticeably off the real visual
+  // center (a ~41px offset measured at 1512x900). Since the container's
+  // top already coincides with the viewport's top while pinned, half the
+  // *real* viewport height is the correct target — same fix as
+  // PhilosophySection's clusterCenterY, just without needing the
+  // Figma-px/pxScale conversion since this isn't threaded through that
+  // system.
+  const [headingCenterYPx, setHeadingCenterYPx] = useState<number | null>(null);
 
   useEffect(() => {
     function update() {
@@ -30,6 +63,9 @@ export function ConnectSection() {
       progress.set(Math.min(1, Math.max(0, raw)));
 
       setPxScale(container.getBoundingClientRect().width / FIGMA_WIDTH);
+      const { hold } = getConnectExitTiming(window.innerWidth, window.innerHeight);
+      setWrapperHeightPx(container.getBoundingClientRect().height + PIN_SCROLL_DISTANCE + hold);
+      setHeadingCenterYPx(window.innerHeight / 2);
     }
 
     update();
@@ -45,7 +81,12 @@ export function ConnectSection() {
     <div
       ref={wrapperRef}
       data-nav-theme="dark"
-      style={{ height: `calc(100vh + ${PIN_SCROLL_DISTANCE}px)` }}
+      style={{
+        // Pre-measurement fallback only (replaced on mount) — hold isn't
+        // known yet without a viewport read, so this just needs to be a
+        // reasonable placeholder to avoid a zero-height flash.
+        height: wrapperHeightPx !== null ? `${wrapperHeightPx}px` : `calc(100vh + ${PIN_SCROLL_DISTANCE + 700}px)`,
+      }}
       // Plain, unanimated bg-color on the outer wrapper — per the brief
       // ("the background remains the same dark color throughout the
       // entire section"), this never changes regardless of scroll
@@ -64,8 +105,11 @@ export function ConnectSection() {
               from the Figma-positioned photo scatter, not at a Figma
               coordinate within it. */}
           <p
-            className="absolute left-1/2 top-1/2 z-[100] -translate-x-1/2 -translate-y-1/2 whitespace-nowrap font-serif font-bold text-white"
-            style={{ fontSize: `clamp(1.75rem, ${HEADING_FONT_SIZE_VW}vw, 3rem)` }}
+            className="absolute left-1/2 z-[100] -translate-x-1/2 -translate-y-1/2 whitespace-nowrap font-serif font-bold text-white"
+            style={{
+              top: headingCenterYPx !== null ? `${headingCenterYPx}px` : "50%",
+              fontSize: `clamp(1.75rem, ${HEADING_FONT_SIZE_VW}vw, 3rem)`,
+            }}
           >
             {HEADING}
           </p>

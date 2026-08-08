@@ -6,7 +6,6 @@ import {
   CLUSTER_CARD_HEIGHT,
   CLUSTER_CARD_WIDTH,
   CLUSTER_CENTER_X,
-  CLUSTER_CENTER_Y,
   FIGMA_HEIGHT,
   FIGMA_WIDTH,
   PhilosophyImage as PhilosophyImageData,
@@ -22,7 +21,8 @@ export function PhilosophyImage({
   z,
   progress,
   pxScale,
-}: PhilosophyImageData & { progress: MotionValue<number>; pxScale: number }) {
+  clusterCenterY,
+}: PhilosophyImageData & { progress: MotionValue<number>; pxScale: number; clusterCenterY: number }) {
   // Independent X/Y scale factors so every card renders at the exact same
   // CLUSTER_CARD_WIDTH x CLUSTER_CARD_HEIGHT at the start, regardless of
   // its own aspect ratio — a single aspect-preserving scale (normalizing
@@ -39,7 +39,7 @@ export function PhilosophyImage({
   const finalCenterX = x + w / 2;
   const finalCenterY = y + h / 2;
   const startTranslateX = (CLUSTER_CENTER_X - finalCenterX) * pxScale;
-  const startTranslateY = (CLUSTER_CENTER_Y - finalCenterY) * pxScale;
+  const startTranslateY = (clusterCenterY - finalCenterY) * pxScale;
 
   const translateX = useTransform(progress, [0, 1], [startTranslateX, 0]);
   const translateY = useTransform(progress, [0, 1], [startTranslateY, 0]);
