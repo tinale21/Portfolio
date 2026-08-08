@@ -1,27 +1,32 @@
 import Image from "next/image";
 import Link from "next/link";
-import blackLogo from "@/assets/footer/blacklogo.svg";
+import { LogoMark } from "@/components/icons/LogoMark";
 import linkedinIcon from "@/assets/footer/linkedin.svg";
 
 // Figma dev-mode inspect: "Rectangle 34" frame, 1512x285, border-top 1px
-// solid #E7E9EB, background #FFF. Labels (Email/Social/Menu) are Inter
-// 24px regular #9AA1AF; all content below them (address, LinkedIn icon,
-// nav links) is Inter 24px regular #000 — everything here is weight 400,
-// nothing bold. Logo sits at x=68, matching the lg:px-[68px] side padding
-// already used by every other section, so it's reused here too. Column
-// gaps use flexbox distribution rather than the Figma frame's exact
-// (non-uniform) px gaps, same tradeoff already made in ExperienceRow.
+// solid #E7E9EB, background #FFF, originally light-mode. Switched to the
+// dark palette per request — background/border flipped to match Hero's
+// dark section (#262626), content text flipped from black to white.
+// Labels (Email/Social/Menu) keep their original #9AA1AF — already a
+// mid-tone gray that reads fine on either background. Logo uses the same
+// LogoMark component NavBar uses for its own dark/light swap
+// (fill="currentColor", recolored via a text-color class) rather than the
+// flat black blacklogo.svg image, which would be invisible on a dark bg.
+// Logo sits at x=68, matching the lg:px-[68px] side padding already used
+// by every other section, so it's reused here too. Column gaps use
+// flexbox distribution rather than the Figma frame's exact (non-uniform)
+// px gaps, same tradeoff already made in ExperienceRow.
 const LABEL_CLASS = "font-sans text-[16px] font-normal text-[#9AA1AF]";
-const CONTENT_CLASS = "font-sans text-[16px] font-normal text-black";
+const CONTENT_CLASS = "font-sans text-[16px] font-normal text-white";
 
 export function Footer() {
   return (
     <footer
-      data-nav-theme="light"
-      className="border-t border-[#E7E9EB] bg-white px-5 py-7 sm:px-8 lg:px-[68px] lg:py-12"
+      data-nav-theme="dark"
+      className="border-t border-white/10 bg-[#262626] px-5 py-7 sm:px-8 lg:px-[68px] lg:py-12"
     >
       <div className="flex flex-col gap-7 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between">
-        <Image src={blackLogo} alt="Tina Le" width={51} height={43} />
+        <LogoMark width={51} height={39} className="text-white" />
 
         <div>
           <p className={LABEL_CLASS}>Email</p>

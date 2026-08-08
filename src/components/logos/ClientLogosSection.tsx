@@ -6,7 +6,7 @@ import { CLIENT_LOGOS } from "./logos-data";
 // percentages, so LOGO_SCALE is a single dial to size the whole thing
 // down uniformly — logos, gaps, and lines all shrink together — instead
 // of re-deriving each value by hand. 1 = exactly the inspected Figma size.
-const LOGO_SCALE = 0.65;
+const LOGO_SCALE = 0.5;
 
 const LINE_HEIGHT_PX = 61 * LOGO_SCALE;
 const LINE_COLOR = "#C2C2C3";
@@ -14,7 +14,7 @@ const LINE_COLOR = "#C2C2C3";
 // Figma spec: a uniform 116px gap between every logo. (An earlier version
 // tightened the two gaps around AIG's lighter-weight mark for optical
 // balance — reverted per request for uniform spacing everywhere.)
-const GAP = 170;
+const GAP = 176;
 
 // One copy's total width (sum of logo widths + one gap after each) is the
 // exact seamless-loop distance — see the logo-marquee keyframe comment in
@@ -39,7 +39,7 @@ export function ClientLogosSection() {
   return (
     <section
       data-nav-theme="light"
-      className="bg-white px-5 py-8 sm:px-8 sm:py-10 lg:px-[114px] lg:py-12"
+      className="bg-white px-5 pt-8 pb-[66px] sm:px-8 sm:pt-10 sm:pb-[82px] lg:px-[114px] lg:pt-12 lg:pb-[98px]"
     >
       {/* This section's own horizontal padding (lg:px-[114px]) is wider
           than the Projects section's (lg:px-[68px]) — the negative margin
@@ -48,7 +48,7 @@ export function ClientLogosSection() {
           Below lg both sections already share the same padding (px-5,
           sm:px-8), so no correction is needed there. */}
       <p className="mb-[26px] text-left font-serif text-[24px] font-bold text-black sm:mb-[34px] lg:-ml-[46px]">
-        Companies I&apos;ve Worked For
+        Trusted By
       </p>
 
       <div className="flex items-center">
