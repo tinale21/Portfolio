@@ -58,7 +58,7 @@ export const ABOUT_ENTRIES: AboutEntry[] = [
     taglineLines: ["led by", "curiosity"],
     captionLines: ["Checking the Washington", "Monument off my list."],
     image: about1,
-    alt: "Tina Le and a friend pointing at the top of the Washington Monument across the reflecting pool",
+    alt: "Tina Le on a bridge over the Chicago River, with the city skyline in the background",
   },
   {
     traitLines: ["Foodie"],
@@ -79,9 +79,9 @@ export const ABOUT_ENTRIES: AboutEntry[] = [
     taglineLines: ["guided by", "empathy"],
     captionLines: ["Probably saying hi to", "every cat."],
     image: about4,
-    alt: "Four cats piled together on a carpet",
-    photoZoom: 1.2,
-    photoPanX: 14,
+    alt: "An orange cat peeking over a stair railing",
+    photoZoom: 1.3,
+    photoPanX: -15,
   },
 ];
 
