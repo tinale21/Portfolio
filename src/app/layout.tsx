@@ -13,10 +13,13 @@ const inter = Inter({
 // Figma dev-mode inspect originally specified Inria Serif Bold (700) for
 // the headline's "Tina" (and equivalent word in the other phrases), later
 // switched to Regular (400) per design feedback — kept loading both
-// weights in case Bold is needed again.
+// weights in case Bold is needed again. Weight 300 + italic style added
+// for the About page's "Tina Le" signature (italic 300) and trait names
+// (italic 400).
 const inriaSerif = Inria_Serif({
   variable: "--font-inria-serif",
-  weight: ["400", "700"],
+  weight: ["300", "400", "700"],
+  style: ["normal", "italic"],
   subsets: ["latin"],
 });
 
