@@ -15,7 +15,7 @@ export function AboutSection() {
 
       <section
         data-nav-theme="light"
-        className="flex min-h-[60vh] items-center justify-center bg-white px-5 py-24 sm:px-8 lg:px-[68px]"
+        className="flex min-h-[60vh] items-center justify-center bg-white px-5 pt-24 pb-72 sm:px-8 lg:px-[68px]"
       >
         <p
           className="max-w-[720px] text-center font-serif text-black italic"
