@@ -49,13 +49,9 @@ export const SIGNATURE = "Tina Le";
 // verbatim, but this one reads as an unintentional typo (missing "i")
 // rather than a deliberate spelling, so it's corrected to "curiosity" here.
 //
-// Foodie/Potterhead/Animal Friend's caption line breaks weren't directly
-// visible in any dev-mode screenshot (only their box's W/H-Fixed size was
-// given) — Explorer's caption was the only one shown mid-wrap ("Checking
-// the Washington" / "Monument off my list."). Split the other three at a
-// similarly balanced word boundary rather than the literal (unconfirmed)
-// Figma break, since matching line *count* was the ask, not the exact
-// word each line ends on.
+// All four captions' line breaks are now the literal Figma breaks (given
+// directly), not inferred/balanced guesses — Foodie and Potterhead's
+// wrap points differ from the earlier balanced-guess version.
 export const ABOUT_ENTRIES: AboutEntry[] = [
   {
     traitLines: ["Explorer"],
@@ -67,14 +63,14 @@ export const ABOUT_ENTRIES: AboutEntry[] = [
   {
     traitLines: ["Foodie"],
     taglineLines: ["finding", "good", "experiences"],
-    captionLines: ["Good food makes", "every day better."],
+    captionLines: ["Good food makes every", "day better."],
     image: about2,
     alt: "Tina Le eating a breakfast sandwich at an outdoor cafe table",
   },
   {
     traitLines: ["Potterhead"],
     taglineLines: ["living for", "the magic"],
-    captionLines: ["Butterbeer is always", "worth the trip."],
+    captionLines: ["Butterbeer is always worth", "the trip."],
     image: about3,
     alt: "Tina Le holding a butterbeer at Universal Studios' Diagon Alley at night",
   },

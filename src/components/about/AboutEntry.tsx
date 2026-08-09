@@ -69,56 +69,65 @@ export function AboutEntry({
       data-nav-theme="light"
       className="flex min-h-screen items-center justify-center bg-white px-5 py-16 sm:px-8 lg:px-[68px]"
     >
-      {/* Every offset below (top margin + gap between the two lines, at
-          lg only) was measured directly off Figma dev-mode's redline
-          coordinates for the Explorer entry, calibrated against the
-          about1 photo's own exact box (x594 y277 w365 h513): "Tina Le"
-          starts 23.1% down the photo's height with a 51px gap before
-          "Explorer" starts beneath it; "led by curiosity" starts 29.8%
-          down with a 131px gap before the caption. Both figures were
-          scaled to each breakpoint's actual rendered photo height (365px
-          wide desktop -> 435.7px tall) rather than reused as flat px, so
-          they'd stay proportionally correct if the photo size ever
-          changes again. Applied at lg only since Figma's own canvas is a
-          desktop-width (1512px) design with no equivalent mobile spec —
-          base/sm keep a simple centered stack instead of guessing. */}
-      <div className="flex w-full max-w-[1100px] flex-col items-center gap-8 lg:flex-row lg:items-start lg:justify-center lg:gap-16">
-        <div className="flex flex-col items-center gap-2 text-center lg:w-[300px] lg:shrink-0 lg:items-end lg:gap-[44px] lg:text-right lg:mt-[101px]">
+      {/* Row is vertically centered as a group (name column / photo /
+          tagline column all share the same center line) per direct
+          feedback — an earlier pass top-aligned everything using offsets
+          measured off Figma dev-mode (text starting 23-30% down the
+          photo's height) to match the reference pixel-for-pixel, but the
+          simpler centered composition was preferred once seen rendered. */}
+      <div
+        className="flex w-full max-w-[1100px] flex-col items-center gap-8 lg:flex-row lg:items-center lg:justify-center lg:gap-16"
+        style={{ transform: "translateY(-10px)" }}
+      >
+        <div className="flex flex-col items-center gap-2 text-center lg:w-[300px] lg:shrink-0 lg:items-end lg:gap-[44px] lg:text-right">
           <p
-            className="font-serif text-black italic"
-            style={{ fontSize: "clamp(1.5rem, 2.5vw, 2.5rem)", fontWeight: 300 }}
+            className="relative z-10 font-serif text-black italic"
+            style={{
+              fontSize: "clamp(1.3rem, 2.2vw, 2.2rem)",
+              fontWeight: 300,
+              transform: "translate(75px, -53px)",
+            }}
           >
             {SIGNATURE}
           </p>
           <p
-            className="font-serif text-black italic"
-            style={{ fontSize: "clamp(2rem, 3.75vw, 3.25rem)", fontWeight: 400 }}
+            className="relative z-10 font-serif text-black italic"
+            style={{
+              fontSize: "clamp(2rem, 3.75vw, 3.25rem)",
+              fontWeight: 400,
+              transform: "translate(10px, -55px)",
+            }}
           >
             <Lines lines={traitLines} />
           </p>
         </div>
 
         <div
-          className="relative w-[205px] shrink-0 overflow-hidden sm:w-[259px] lg:w-[335px]"
-          style={{ aspectRatio: "365 / 513" }}
+          className="relative h-[288px] w-[195px] shrink-0 overflow-hidden sm:h-[364px] sm:w-[246px] lg:h-[471px] lg:w-[318px]"
         >
           <motion.div className="absolute inset-0" style={{ y }}>
             <Image
               src={image}
               alt={alt}
               fill
-              sizes="(min-width: 1024px) 335px, (min-width: 640px) 259px, 205px"
+              sizes="(min-width: 1024px) 318px, (min-width: 640px) 246px, 195px"
               className="object-cover"
               style={{ transform: `scale(${photoScale}) translateX(${photoPanX}%)` }}
             />
           </motion.div>
         </div>
 
-        <div className="flex flex-col items-center gap-3 text-center lg:w-[300px] lg:shrink-0 lg:items-start lg:gap-[112px] lg:text-left lg:mt-[130px]">
-          <p className="font-sans text-black" style={{ fontSize: "clamp(1.1rem, 1.7vw, 1.75rem)" }}>
+        <div className="flex flex-col items-center gap-3 text-center lg:w-[300px] lg:shrink-0 lg:items-start lg:gap-[112px] lg:text-left">
+          <p
+            className="font-sans text-black"
+            style={{ fontSize: "clamp(0.95rem, 1.5vw, 1.5rem)", transform: "translateX(-35px)" }}
+          >
             <Lines lines={taglineLines} />
           </p>
-          <p className="font-sans text-sm text-black">
+          <p
+            className="font-sans text-black"
+            style={{ fontSize: "clamp(0.85rem, 1vw, 0.95rem)", transform: "translate(-50px, 25px)" }}
+          >
             <Lines lines={captionLines} />
           </p>
         </div>
