@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { BASE_PATH } from "@/lib/base-path";
 import { BADGE_FADE_TRANSITION, BADGE_LAYOUT_TRANSITION } from "./badge-transition";
 import { Project } from "./projects-data";
 
@@ -41,8 +42,11 @@ export function ProjectCard({ project }: { project: Project }) {
       }`}
     >
       <video
-        src={project.videoSrc}
-        poster={project.posterSrc}
+        // videoSrc/posterSrc are plain public/ paths, not next/image or
+        // next/link — Next doesn't auto-prefix those with basePath, so it
+        // has to happen here (see src/lib/base-path.ts).
+        src={`${BASE_PATH}${project.videoSrc}`}
+        poster={`${BASE_PATH}${project.posterSrc}`}
         autoPlay
         loop
         muted
