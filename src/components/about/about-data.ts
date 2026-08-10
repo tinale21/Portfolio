@@ -56,7 +56,7 @@ export const ABOUT_ENTRIES: AboutEntry[] = [
   {
     traitLines: ["Explorer"],
     taglineLines: ["led by", "curiosity"],
-    captionLines: ["Checking the Washington", "Monument off my list."],
+    captionLines: ["City views hit different", "in Chicago."],
     image: about1,
     alt: "Tina Le on a bridge over the Chicago River, with the city skyline in the background",
   },
