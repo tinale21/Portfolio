@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { BADGE_FADE_TRANSITION, BADGE_LAYOUT_TRANSITION } from "./badge-transition";
 import { Project } from "./projects-data";
 
 // Per the Work page's Figma prototype (motion reference video): hovering a
@@ -11,6 +12,20 @@ import { Project } from "./projects-data";
 // mouse-leave. `layout` on the pill handles the width animation; `AnimatePresence
 // mode="popLayout"` takes the exiting text out of flow immediately so that
 // resize isn't fighting the outgoing element's own space.
+//
+// The two text spans inside AnimatePresence also need their own `layout`
+// prop, or the parent's width-resize (which Framer Motion implements via a
+// scale transform, not literal width interpolation) visibly stretches/
+// squishes them for a frame instead of un-scaling them back to normal —
+// caught on video: hovering out showed the outgoing and incoming text
+// overlapping and horizontally warped for a split second.
+//
+// The pill also needs overflow-hidden: measured via Puppeteer that the
+// text's opacity fade (a flat 280ms) reaches ~77% before the pill's spring
+// -driven width is even half-grown for a big text-length jump like
+// Wayve's, so the incoming text visibly stuck out past the pill's white
+// background for the transition's first ~100ms. Clipping to the pill's
+// own (animating) width turns that into a clean wipe-reveal instead.
 export function ProjectCard({ project }: { project: Project }) {
   const [hovered, setHovered] = useState(false);
   const showDescription = hovered && project.description;
@@ -36,8 +51,8 @@ export function ProjectCard({ project }: { project: Project }) {
       />
       <motion.span
         layout
-        transition={{ type: "spring", stiffness: 500, damping: 40 }}
-        className={`absolute bottom-2.5 left-2.5 flex h-[27px] items-center rounded-full bg-white px-3 ${
+        transition={{ layout: BADGE_LAYOUT_TRANSITION }}
+        className={`absolute bottom-2.5 left-2.5 flex h-[27px] items-center overflow-hidden rounded-full bg-white px-3 ${
           project.bordered ? "border border-[#F4F4F5]" : ""
         }`}
       >
@@ -45,10 +60,11 @@ export function ProjectCard({ project }: { project: Project }) {
           {showDescription ? (
             <motion.span
               key="description"
+              layout
               initial={{ opacity: 0, y: 4 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -4 }}
-              transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ layout: BADGE_LAYOUT_TRANSITION, opacity: BADGE_FADE_TRANSITION, y: BADGE_FADE_TRANSITION }}
               className="whitespace-nowrap text-xs font-semibold text-black"
             >
               {project.description}
@@ -56,10 +72,11 @@ export function ProjectCard({ project }: { project: Project }) {
           ) : (
             <motion.span
               key="name-year"
+              layout
               initial={{ opacity: 0, y: 4 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -4 }}
-              transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ layout: BADGE_LAYOUT_TRANSITION, opacity: BADGE_FADE_TRANSITION, y: BADGE_FADE_TRANSITION }}
               className="flex items-center gap-1 whitespace-nowrap"
             >
               <span className="text-xs font-semibold text-black">{project.name}</span>

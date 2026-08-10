@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { BADGE_FADE_TRANSITION, BADGE_LAYOUT_TRANSITION } from "@/components/projects/badge-transition";
 import { NdaProject } from "./nda-projects-data";
 
 // Not a Link, unlike ProjectCard — per the prototype, NDA projects have no
@@ -46,20 +47,22 @@ export function NdaProjectCard({ project }: { project: NdaProject }) {
       </span>
 
       {/* Same hover-swap mechanic as ProjectCard's badge — spring width +
-          sliding fade, kept in sync between the two components. */}
+          sliding fade, kept in sync between the two components via the
+          shared badge-transition constants. */}
       <motion.span
         layout
-        transition={{ type: "spring", stiffness: 500, damping: 40 }}
-        className="absolute bottom-2.5 left-2.5 flex h-[27px] items-center rounded-full bg-white px-3"
+        transition={{ layout: BADGE_LAYOUT_TRANSITION }}
+        className="absolute bottom-2.5 left-2.5 flex h-[27px] items-center overflow-hidden rounded-full bg-white px-3"
       >
         <AnimatePresence mode="popLayout" initial={false}>
           {hovered ? (
             <motion.span
               key="description"
+              layout
               initial={{ opacity: 0, y: 4 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -4 }}
-              transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ layout: BADGE_LAYOUT_TRANSITION, opacity: BADGE_FADE_TRANSITION, y: BADGE_FADE_TRANSITION }}
               className="whitespace-nowrap text-xs font-semibold text-black"
             >
               {project.description}
@@ -67,10 +70,11 @@ export function NdaProjectCard({ project }: { project: NdaProject }) {
           ) : (
             <motion.span
               key="name-year"
+              layout
               initial={{ opacity: 0, y: 4 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -4 }}
-              transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ layout: BADGE_LAYOUT_TRANSITION, opacity: BADGE_FADE_TRANSITION, y: BADGE_FADE_TRANSITION }}
               className="flex items-center gap-1 whitespace-nowrap"
             >
               <span className="text-xs font-semibold text-black">{project.name}</span>
