@@ -9,6 +9,10 @@ export type Project = {
   // be indistinguishable from both the section's white background and its
   // own white badge.
   bordered?: boolean;
+  // Shown in the bottom-left badge on hover, swapping out "{name} · {year}"
+  // — per the Work page motion reference video. Optional so a card without
+  // copy yet just skips the hover swap instead of showing an empty bubble.
+  description?: string;
 };
 
 export const PROJECTS: Project[] = [
@@ -18,6 +22,7 @@ export const PROJECTS: Project[] = [
     year: "2025",
     videoSrc: "/projects/aig.mp4",
     posterSrc: "/projects/aig-poster.jpg",
+    description: "Designing an interactive kiosk experience for AIG.",
   },
   {
     slug: "wayve",
@@ -25,6 +30,7 @@ export const PROJECTS: Project[] = [
     year: "2026",
     videoSrc: "/projects/wayve.mp4",
     posterSrc: "/projects/wayve-poster.jpg",
+    description: "Reimagining music discovery through play and creativity.",
   },
   {
     slug: "emora",
@@ -33,6 +39,7 @@ export const PROJECTS: Project[] = [
     videoSrc: "/projects/emora.mp4",
     posterSrc: "/projects/emora-poster.jpg",
     bordered: true,
+    description: "Supporting emotional expression through wearable technology.",
   },
   {
     slug: "framer-redesign",
@@ -40,5 +47,6 @@ export const PROJECTS: Project[] = [
     year: "2026",
     videoSrc: "/projects/framer-redesign.mp4",
     posterSrc: "/projects/framer-redesign-poster.jpg",
+    description: "Simplifying Framer's onboarding for new creators.",
   },
 ];

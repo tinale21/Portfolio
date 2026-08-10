@@ -1,4 +1,8 @@
+"use client";
+
 import Image from "next/image";
+import { useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { NdaProject } from "./nda-projects-data";
 
 // Not a Link, unlike ProjectCard — per the prototype, NDA projects have no
@@ -9,9 +13,13 @@ import { NdaProject } from "./nda-projects-data";
 // reproduced here as a solid black div on top of the image at that same
 // opacity.
 export function NdaProjectCard({ project }: { project: NdaProject }) {
+  const [hovered, setHovered] = useState(false);
+
   return (
     <div
       aria-label={`${project.name} — under NDA, case study unavailable`}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
       className="relative flex aspect-[670/337] items-center justify-center overflow-hidden rounded-[10px]"
     >
       <Image src={project.bg} alt={project.alt} fill className="object-cover" />
@@ -37,10 +45,40 @@ export function NdaProjectCard({ project }: { project: NdaProject }) {
         <span className="text-sm font-semibold">NDA</span>
       </span>
 
-      <span className="absolute bottom-2.5 left-2.5 flex h-[27px] items-center gap-1 rounded-full bg-white px-3">
-        <span className="text-xs font-semibold text-black">{project.name}</span>
-        <span className="text-xs font-semibold text-[#A1A1AA]">· {project.year}</span>
-      </span>
+      {/* Same hover-swap mechanic as ProjectCard's badge — spring width +
+          sliding fade, kept in sync between the two components. */}
+      <motion.span
+        layout
+        transition={{ type: "spring", stiffness: 500, damping: 40 }}
+        className="absolute bottom-2.5 left-2.5 flex h-[27px] items-center rounded-full bg-white px-3"
+      >
+        <AnimatePresence mode="popLayout" initial={false}>
+          {hovered ? (
+            <motion.span
+              key="description"
+              initial={{ opacity: 0, y: 4 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -4 }}
+              transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+              className="whitespace-nowrap text-xs font-semibold text-black"
+            >
+              {project.description}
+            </motion.span>
+          ) : (
+            <motion.span
+              key="name-year"
+              initial={{ opacity: 0, y: 4 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -4 }}
+              transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+              className="flex items-center gap-1 whitespace-nowrap"
+            >
+              <span className="text-xs font-semibold text-black">{project.name}</span>
+              <span className="text-xs font-semibold text-[#A1A1AA]">· {project.year}</span>
+            </motion.span>
+          )}
+        </AnimatePresence>
+      </motion.span>
     </div>
   );
 }
