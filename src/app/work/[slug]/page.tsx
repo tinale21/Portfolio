@@ -1,8 +1,14 @@
 import { notFound } from "next/navigation";
 import { PROJECTS } from "@/components/projects/projects-data";
 
+// AIG has "graduated" to its own dedicated route (src/app/work/aig/) now
+// that its case study has real bespoke content — excluded here so the two
+// routes don't collide on /work/aig. The rest fall back to this generic
+// placeholder until they get the same treatment.
 export function generateStaticParams() {
-  return PROJECTS.map((project) => ({ slug: project.slug }));
+  return PROJECTS.filter((project) => project.slug !== "aig").map((project) => ({
+    slug: project.slug,
+  }));
 }
 
 export default async function ProjectPage({
