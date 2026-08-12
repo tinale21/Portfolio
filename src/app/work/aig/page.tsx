@@ -1,3 +1,4 @@
+import { AigExplorationIterations } from "@/components/case-studies/aig/AigExplorationIterations";
 import { AigHero } from "@/components/case-studies/aig/AigHero";
 import { AigKeyContribution } from "@/components/case-studies/aig/AigKeyContribution";
 import { AigKeyFindings } from "@/components/case-studies/aig/AigKeyFindings";
@@ -14,6 +15,7 @@ export default function AigCaseStudy() {
       <AigResearchMethod />
       <AigKeyFindings />
       <AigVisualDirections />
+      <AigExplorationIterations />
     </main>
   );
 }
