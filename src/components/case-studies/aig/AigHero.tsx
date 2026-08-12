@@ -1,5 +1,6 @@
 import Image from "next/image";
 import aigLogo from "@/assets/logos/aig.svg";
+import { BASE_PATH } from "@/lib/base-path";
 
 // Figma dev-mode inspect (all values read directly, not approximated):
 // - Page horizontal inset is 67px at the 1512px reference width — matches
@@ -21,6 +22,10 @@ import aigLogo from "@/assets/logos/aig.svg";
 // - No bottom padding here — the gap to the next section (Project
 //   Overview) is owned by that section's own pt-[87px], measured directly
 //   with Figma's ruler tool.
+// - Video src was a raw "/projects/..." path missing the BASE_PATH
+//   prefix GitHub Pages needs (the same bug class fixed on ProjectCard
+//   earlier) — found while wiring up Visual Directions' videos and
+//   fixed here too, since it would have 404'd on the deployed site.
 const META = [
   { label: "Timeline", value: "Sep - Nov 2025" },
   { label: "Role", value: "UX Designer" },
@@ -51,7 +56,7 @@ export function AigHero() {
         style={{ aspectRatio: "1378 / 500" }}
       >
         <video
-          src="/projects/aig-hero.mp4"
+          src={`${BASE_PATH}/projects/aig-hero.mp4`}
           autoPlay
           loop
           muted
