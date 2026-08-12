@@ -1,5 +1,6 @@
 import { AigHero } from "@/components/case-studies/aig/AigHero";
 import { AigKeyContribution } from "@/components/case-studies/aig/AigKeyContribution";
+import { AigKeyFindings } from "@/components/case-studies/aig/AigKeyFindings";
 import { AigProjectOverview } from "@/components/case-studies/aig/AigProjectOverview";
 import { AigResearchMethod } from "@/components/case-studies/aig/AigResearchMethod";
 
@@ -10,6 +11,7 @@ export default function AigCaseStudy() {
       <AigProjectOverview />
       <AigKeyContribution />
       <AigResearchMethod />
+      <AigKeyFindings />
     </main>
   );
 }
