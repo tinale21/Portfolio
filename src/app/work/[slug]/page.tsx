@@ -1,12 +1,15 @@
 import { notFound } from "next/navigation";
 import { PROJECTS } from "@/components/projects/projects-data";
 
-// AIG has "graduated" to its own dedicated route (src/app/work/aig/) now
-// that its case study has real bespoke content — excluded here so the two
-// routes don't collide on /work/aig. The rest fall back to this generic
-// placeholder until they get the same treatment.
+// AIG and Wayve have "graduated" to their own dedicated routes
+// (src/app/work/aig/, src/app/work/wayve/) now that they have real
+// bespoke content — excluded here so those routes don't collide with
+// this one. The rest fall back to this generic placeholder until they
+// get the same treatment.
+const GRADUATED_SLUGS = ["aig", "wayve"];
+
 export function generateStaticParams() {
-  return PROJECTS.filter((project) => project.slug !== "aig").map((project) => ({
+  return PROJECTS.filter((project) => !GRADUATED_SLUGS.includes(project.slug)).map((project) => ({
     slug: project.slug,
   }));
 }
