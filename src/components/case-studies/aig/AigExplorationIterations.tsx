@@ -64,6 +64,20 @@ import highFiImage from "@/assets/case-studies/aig/exploration/high-fi.png";
 // badge above it — centered on the row — lines up with the divider on
 // every step.
 //
+// Scroll trigger: originally spanned each block's *entire* viewport
+// transit (["start end", "end start"] — enter at the bottom, exit at
+// the top), which meant adjacent steps' progress bars overlapped for
+// roughly 800px of scroll (step 2 already 10-15% filled while step 1
+// was still only ~35% done, measured directly). Narrowed to
+// ["start 80%", "start 30%"] per direct feedback ("make it where the
+// previous active state finishes when it goes to the next") — this
+// was built and verified on Wayve's copy of this section first, then
+// ported back here once confirmed. Shrank the overlap to roughly
+// 100px; true zero overlap isn't reachable with each block's trigger
+// computed independently of its neighbors (the math requires the gap
+// between item tops to exceed the viewport height), but this is a
+// large, verified reduction.
+//
 // Not directly confirmed by any redline in this batch: the exact gap
 // between a badge and its content block, and between one step and the
 // next. Used gap-8 (32px) and gap-20 (80px) respectively, matching the
@@ -118,7 +132,7 @@ function ExplorationStep({
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: ref,
-    offset: ["start end", "end start"],
+    offset: ["start 80%", "start 30%"],
   });
 
   const opacity = useTransform(scrollYProgress, [0, 0.3], [0, 1]);
