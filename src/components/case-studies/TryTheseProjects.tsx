@@ -20,7 +20,8 @@ import { PROJECTS } from "@/components/projects/projects-data";
 // cycle — an aesthetic choice, not measurable from the reference).
 // Section's own top padding bumped from pt-16 to pt-28 per direct
 // feedback, for more breathing room below Takeaway (the section that
-// directly precedes this one).
+// directly precedes this one). Bottom padding likewise bumped from
+// pb-16 to pb-28, for more room above the footer.
 //
 // Per direct feedback, cards should be clipped at the standard page
 // padding rather than scrolling across the full viewport width. The
@@ -59,7 +60,7 @@ export function TryTheseProjects({ currentSlug }: { currentSlug: string }) {
   const track = [...projects, ...projects, ...projects];
 
   return (
-    <section data-nav-theme="light" className="bg-white pt-28 pb-16">
+    <section data-nav-theme="light" className="bg-white pt-28 pb-28">
       <p className="px-5 font-sans text-base text-[#707682] sm:px-8 lg:px-[68px]">
         If This Caught Your Eye, Try These
       </p>
