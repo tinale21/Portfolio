@@ -1,6 +1,7 @@
 import { WayveExplorationIterations } from "@/components/case-studies/wayve/WayveExplorationIterations";
 import { WayveFinalDesignImplementation } from "@/components/case-studies/wayve/WayveFinalDesignImplementation";
 import { WayveHero } from "@/components/case-studies/wayve/WayveHero";
+import { WayveHowWayveScales } from "@/components/case-studies/wayve/WayveHowWayveScales";
 import { WayveKeyContribution } from "@/components/case-studies/wayve/WayveKeyContribution";
 import { WayveKeyFindings } from "@/components/case-studies/wayve/WayveKeyFindings";
 import { WayveProjectOverview } from "@/components/case-studies/wayve/WayveProjectOverview";
@@ -16,6 +17,7 @@ export default function WayveCaseStudy() {
       <WayveKeyFindings />
       <WayveExplorationIterations />
       <WayveFinalDesignImplementation />
+      <WayveHowWayveScales />
     </main>
   );
 }
