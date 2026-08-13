@@ -63,6 +63,16 @@ export function NavBar() {
   // sections' rects straddle navBottom at once; the later one in DOM order
   // is the one actually painted on top (plain sibling stacking, no z-index
   // involved), so it's the one whose theme should win.
+  //
+  // NavBar lives in the root layout, so it never unmounts across
+  // client-side navigations — only the page content underneath swaps.
+  // Without `pathname` in the dependency array, this effect ran exactly
+  // once (on the very first mount) and then only ever re-fired on scroll/
+  // resize, so `dark` kept whatever value it had on the *previous* page
+  // until the user scrolled far enough to trigger a recheck — the reported
+  // bug ("doesn't know light/dark until you scroll a little"). Re-running
+  // on every pathname change re-measures against the new page's own
+  // top section immediately, before any scroll happens.
   useEffect(() => {
     function updateTheme() {
       const header = headerRef.current;
@@ -85,7 +95,7 @@ export function NavBar() {
       window.removeEventListener("scroll", updateTheme);
       window.removeEventListener("resize", updateTheme);
     };
-  }, []);
+  }, [pathname]);
 
   return (
     <header
