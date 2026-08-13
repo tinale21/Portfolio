@@ -67,7 +67,12 @@ import highFiImage from "@/assets/case-studies/aig/exploration/high-fi.png";
 // Not directly confirmed by any redline in this batch: the exact gap
 // between a badge and its content block, and between one step and the
 // next. Used gap-8 (32px) and gap-20 (80px) respectively, matching the
-// same rhythm already used for Visual Directions' row gap.
+// same rhythm already used for Visual Directions' row gap. Section's
+// own top padding adjusted several times per direct feedback for more
+// breathing room below Visual Directions: pt-16 -> pt-28 -> pt-36 ->
+// pt-[120px] (30 * 4px — outside Tailwind's default scale, which skips
+// from 28 to 32, so this needed the arbitrary-value syntax) ->
+// pt-[122px] ("add 2pt").
 const COLUMN_WIDTH = 380;
 
 const STEPS: {
@@ -163,7 +168,7 @@ function ExplorationStep({
 
 export function AigExplorationIterations() {
   return (
-    <section data-nav-theme="light" className="bg-white px-5 pt-16 pb-16 sm:px-8 lg:px-[68px]">
+    <section data-nav-theme="light" className="bg-white px-5 pt-[122px] pb-16 sm:px-8 lg:px-[68px]">
       <p className="font-sans text-base text-[#707682]">Exploration &amp; Iterations</p>
 
       <div className="mx-auto mt-8 flex w-fit flex-col gap-20">
