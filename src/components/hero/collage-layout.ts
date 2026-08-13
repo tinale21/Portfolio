@@ -153,7 +153,7 @@ export const desktopCollageLayout: CollagePhotoConfig[] = [
   // Portrait — largest, centered, topmost
   {
     src: portrait,
-    alt: "Portrait of Tina Le with the Atlanta skyline behind her",
+    alt: "Portrait of Tina Le",
     top: "6.769%",
     left: "38.624%",
     width: "24.008%",
@@ -190,7 +190,7 @@ export const mobileCollageLayout: CollagePhotoConfig[] = [
   },
   {
     src: portrait,
-    alt: "Portrait of Tina Le with the Atlanta skyline behind her",
+    alt: "Portrait of Tina Le",
     top: "18%",
     left: "24%",
     width: "52%",
