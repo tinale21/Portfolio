@@ -7,6 +7,7 @@ import { AigProjectOverview } from "@/components/case-studies/aig/AigProjectOver
 import { AigResearchMethod } from "@/components/case-studies/aig/AigResearchMethod";
 import { AigTakeaway } from "@/components/case-studies/aig/AigTakeaway";
 import { AigVisualDirections } from "@/components/case-studies/aig/AigVisualDirections";
+import { TryTheseProjects } from "@/components/case-studies/TryTheseProjects";
 
 export default function AigCaseStudy() {
   return (
@@ -20,6 +21,7 @@ export default function AigCaseStudy() {
       <AigExplorationIterations />
       <AigFinalDesignImplementation />
       <AigTakeaway />
+      <TryTheseProjects currentSlug="aig" />
     </main>
   );
 }
