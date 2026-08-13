@@ -38,11 +38,22 @@ import { BASE_PATH } from "@/lib/base-path";
 // same approach used for other un-redlined sections in this codebase.
 //
 // Layout: photo band spans the standard page padding (lg:px-[68px]),
-// same as every section except Exploration & Iterations. The 5 items'
-// text sits in a 5-column grid above (odd items) or below (even items)
-// the shared photo band — matching the source SVG's own item ordering,
-// where odd items' numbers sit just above the band and even items' just
-// below.
+// same as every section except Exploration & Iterations. Per direct
+// feedback, an initial version stacked each item's number above/below
+// its heading+description — the reference actually pairs them
+// horizontally (number to the left, heading+description stacked to its
+// right), matching the description block's own combined height. Each
+// item's `left` is measured directly from the reference screenshot
+// (color-thresholded to isolate the purple number/heading runs, then
+// read as a fraction of image width) and lines up almost exactly with
+// that item's own photo segment's flat left edge (not its center) in
+// the 1396-wide source SVG — e.g. item 3 measured at 39.1% vs. its
+// photo's 39.0%. Used the SVG's own left-edge fractions here since
+// they're exact, rather than the screenshot's pixel-measured
+// approximation. Positioned via absolute inset (not a 5-column grid,
+// which forced 2-line wraps on headings like "Digital Ownership" —
+// the reference keeps every heading on one line since it has the
+// width of its unoccupied neighboring columns to grow into).
 const PHOTOS = {
   technology: `${BASE_PATH}/case-studies/wayve/scales/technology.jpg`,
   venueActivation: `${BASE_PATH}/case-studies/wayve/scales/venue-activation.jpg`,
@@ -55,75 +66,78 @@ const ITEMS = [
   {
     number: "01",
     heading: "Technology",
-    description: "A digitally curated app that tracks user engagement.",
+    descriptionLines: ["A digitally curated app that", "tracks user engagement."],
     position: "top",
+    leftPercent: 0.29,
   },
   {
     number: "02",
     heading: "Venue Activation",
-    description: "Launch pop-ups to create engagement and revenue.",
+    descriptionLines: ["Launch pop-ups to create", "engagement and revenue."],
     position: "bottom",
+    leftPercent: 19.69,
   },
   {
     number: "03",
     heading: "Digital Ownership",
-    description: "Companion app drives global growth and engagement.",
+    descriptionLines: ["Companion app drives global", "growth and engagement."],
     position: "top",
+    leftPercent: 39.0,
   },
   {
     number: "04",
     heading: "Social Sharing",
-    description: "Expand the community through users sharing.",
+    descriptionLines: ["Expand the community", "through users sharing."],
     position: "bottom",
+    leftPercent: 58.35,
   },
   {
     number: "05",
     heading: "New Users",
-    description: "Personalized discovery drives return visits.",
+    descriptionLines: ["Personalized discovery", "drives return visits."],
     position: "top",
+    leftPercent: 77.71,
   },
 ] as const;
 
-function ItemText({ item }: { item: (typeof ITEMS)[number] }) {
+function ItemText({
+  item,
+  align,
+}: {
+  item: (typeof ITEMS)[number];
+  align: "top" | "bottom";
+}) {
   return (
-    <div className="flex flex-col">
-      {item.position === "top" && (
-        <>
-          <p className="font-sans text-2xl font-bold text-[#4A25A9]">{item.heading}</p>
-          <p className="mt-2 font-sans text-[15px] text-[#895FCF]">{item.description}</p>
-          <p className="mt-4 font-sans text-6xl font-bold leading-none text-[#4A25A9]">
-            {item.number}
-          </p>
-        </>
-      )}
-      {item.position === "bottom" && (
-        <>
-          <p className="font-sans text-6xl font-bold leading-none text-[#4A25A9]">
-            {item.number}
-          </p>
-          <p className="mt-4 font-sans text-2xl font-bold text-[#4A25A9]">{item.heading}</p>
-          <p className="mt-2 font-sans text-[15px] text-[#895FCF]">{item.description}</p>
-        </>
-      )}
+    <div
+      className={`absolute flex items-center gap-4 whitespace-nowrap ${align === "top" ? "top-0" : "bottom-0"}`}
+      style={{ left: `${item.leftPercent}%` }}
+    >
+      <p className="font-sans text-[59px] font-bold leading-none text-black">{item.number}</p>
+      <div className="flex flex-col">
+        <p className="font-sans text-[23px] font-bold text-black">{item.heading}</p>
+        <p className="mt-1 font-sans text-[14px] leading-snug text-black">
+          {item.descriptionLines[0]}
+          <br />
+          {item.descriptionLines[1]}
+        </p>
+      </div>
     </div>
   );
 }
 
 export function WayveHowWayveScales() {
   return (
-    <section data-nav-theme="light" className="bg-white px-5 pt-16 pb-16 sm:px-8 lg:px-[68px]">
+    <section data-nav-theme="light" className="bg-white px-5 pt-24 pb-16 sm:px-8 lg:px-[68px]">
       <p className="font-sans text-base text-[#707682]">How Wayve Scales</p>
-      <p className="mt-4 font-sans text-2xl font-bold text-black">From Event to Ecosystem</p>
+      <p className="mt-4 font-sans text-[15px] font-medium text-black">From Event to Ecosystem</p>
 
-      <div className="mt-16 grid grid-cols-5 items-end gap-4">
-        {ITEMS.map((item) => (
-          <div key={item.number} className="flex">
-            {item.position === "top" ? <ItemText item={item} /> : <div className="h-full" />}
-          </div>
+      <div className="relative mt-24 h-16">
+        {ITEMS.filter((item) => item.position === "top").map((item) => (
+          <ItemText key={item.number} item={item} align="bottom" />
         ))}
       </div>
 
-      <svg viewBox="0 0 1396 288" className="mt-4 w-full">
+      <svg viewBox="0 89.4751 1396 98.68" className="mt-5 w-full">
         <defs>
           <clipPath id="wayve-scales-clip-0">
             <path d="M1084.76 89.4751H1311.01C1338.26 89.4751 1360.35 111.565 1360.35 138.815V138.815C1360.35 166.065 1338.26 188.155 1311.01 188.155H1084.76V89.4751Z" />
@@ -192,16 +206,14 @@ export function WayveHowWayveScales() {
           y="90"
           width="276"
           height="98"
-          preserveAspectRatio="xMidYMid slice"
+          preserveAspectRatio="xMidYMin slice"
           clipPath="url(#wayve-scales-clip-8)"
         />
       </svg>
 
-      <div className="mt-4 grid grid-cols-5 items-start gap-4">
-        {ITEMS.map((item) => (
-          <div key={item.number} className="flex">
-            {item.position === "bottom" ? <ItemText item={item} /> : null}
-          </div>
+      <div className="relative mt-5 h-16">
+        {ITEMS.filter((item) => item.position === "bottom").map((item) => (
+          <ItemText key={item.number} item={item} align="top" />
         ))}
       </div>
     </section>
