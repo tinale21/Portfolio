@@ -92,7 +92,7 @@ export function FramerRedesignProjectOverview() {
             <Lines lines={BOLD_STATEMENT_LINES} />
           </Body>
 
-          <div className="mt-[318px]">
+          <div className="mt-[312px]">
             <Eyebrow>The Problem</Eyebrow>
             <Body>
               <Lines lines={PROBLEM_LINES} />
@@ -117,7 +117,7 @@ export function FramerRedesignProjectOverview() {
           </div>
 
           <div
-            className="relative mt-[116px] w-full overflow-hidden rounded-[10px] lg:ml-auto lg:w-[650px]"
+            className="relative mt-[111px] w-full overflow-hidden rounded-[10px] lg:ml-auto lg:w-[650px]"
             style={{ aspectRatio: "597 / 301" }}
           >
             <video
