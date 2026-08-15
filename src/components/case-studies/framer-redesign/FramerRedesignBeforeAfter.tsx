@@ -131,7 +131,7 @@ export function FramerRedesignBeforeAfter() {
 
       <div
         ref={containerRef}
-        className="relative mx-auto mt-8 w-full touch-none overflow-hidden rounded-[12px] border-solid select-none"
+        className="relative mx-auto mt-[102px] w-full touch-none overflow-hidden rounded-[12px] border-solid select-none"
         style={{
           maxWidth: FRAME_MAX_WIDTH,
           aspectRatio: FRAME_ASPECT,
