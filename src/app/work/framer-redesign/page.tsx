@@ -1,3 +1,4 @@
+import { FramerRedesignBeforeAfter } from "@/components/case-studies/framer-redesign/FramerRedesignBeforeAfter";
 import { FramerRedesignExplorationIterations } from "@/components/case-studies/framer-redesign/FramerRedesignExplorationIterations";
 import { FramerRedesignHero } from "@/components/case-studies/framer-redesign/FramerRedesignHero";
 import { FramerRedesignKeyContribution } from "@/components/case-studies/framer-redesign/FramerRedesignKeyContribution";
@@ -14,6 +15,7 @@ export default function FramerRedesignCaseStudy() {
       <FramerRedesignResearchMethod />
       <FramerRedesignKeyFindings />
       <FramerRedesignExplorationIterations />
+      <FramerRedesignBeforeAfter />
     </main>
   );
 }
