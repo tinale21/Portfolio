@@ -126,12 +126,12 @@ export function FramerRedesignBeforeAfter() {
   };
 
   return (
-    <section data-nav-theme="light" className="bg-white px-5 pt-16 pb-16 sm:px-8 lg:px-[68px]">
+    <section data-nav-theme="light" className="bg-white px-5 pt-[172px] pb-16 sm:px-8 lg:px-[68px]">
       <p className="font-sans text-base text-[#707682]">Before &amp; After Overview</p>
 
       <div
         ref={containerRef}
-        className="relative mx-auto mt-[102px] w-full touch-none overflow-hidden rounded-[12px] border-solid select-none"
+        className="relative mx-auto mt-[130px] w-full touch-none overflow-hidden rounded-[12px] border-solid select-none"
         style={{
           maxWidth: FRAME_MAX_WIDTH,
           aspectRatio: FRAME_ASPECT,
