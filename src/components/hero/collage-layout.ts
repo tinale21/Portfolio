@@ -166,56 +166,75 @@ export const desktopCollageLayout: CollagePhotoConfig[] = [
 
 // Simplified arrangement for narrow viewports: fewer overlapping layers,
 // no hidden depth photos, sized to stay legible on small screens. Not
-// sourced from Figma (no mobile design exists) — adapted per design intent.
+// sourced from Figma (no mobile design exists) — adapted per design intent,
+// mobile reference (Screen Recording 2026-08-15 19-09-45, campione.framer.website)
+// showed a tight, mostly-overlapping stack — a large center photo with
+// smaller photos tucked mostly *behind* it, peeking out only at the
+// corners — rather than spread across the full viewport with photos
+// reaching the screen edges.
+//
+// Previous version's positions (left 2%–98%) were computed as if
+// percentages resolved against the container's own *content* box (inside
+// its px-6 padding), but CSS resolves an absolutely-positioned child's
+// percentages against the containing block's *padding* box — so px-6
+// never actually inset anything, and the cluster rendered edge-to-edge,
+// overflowing past the visual padding entirely on real phones. Fixed at
+// the container level (see HeroCollage.tsx): the mobile composition box
+// itself is now a narrower, centered box (w-[78%] max-w-[300px] mx-auto,
+// no padding) rather than a full-width box with padding — every percentage
+// below is relative to that already-inset box, so there's no separate
+// padding layer left to fight with.
+export const mobileCollageAspect = "4 / 5";
+
 export const mobileCollageLayout: CollagePhotoConfig[] = [
   {
     src: scadproGroup,
     alt: "Group photo in front of a screen reading Georgia International Convention Center and SCADpro",
-    top: "0%",
-    left: "2%",
-    width: "42%",
-    height: "34.9%",
-    rotate: -4,
+    top: "3%",
+    left: "4%",
+    width: "36%",
+    height: "27%",
+    rotate: -6,
     z: 10,
   },
   {
     src: wallCritique,
     alt: "Students reviewing pinned-up research boards on a gallery wall",
-    top: "3%",
-    left: "56%",
-    width: "42%",
-    height: "41.7%",
-    rotate: 3,
+    top: "5%",
+    left: "60%",
+    width: "36%",
+    height: "30%",
+    rotate: 5,
     z: 10,
   },
   {
     src: portrait,
     alt: "Portrait of Tina Le",
-    top: "18%",
-    left: "24%",
-    width: "52%",
-    height: "72.6%",
+    top: "16%",
+    left: "22%",
+    width: "56%",
+    height: "74%",
     z: 20,
     priority: true,
   },
   {
     src: constructionSite,
     alt: "Group in hard hats reviewing plans on a construction site",
-    top: "68%",
-    left: "4%",
-    width: "44%",
-    height: "40.7%",
-    rotate: -2,
+    top: "70%",
+    left: "2%",
+    width: "36%",
+    height: "26%",
+    rotate: -5,
     z: 10,
   },
   {
     src: presentationRoom,
     alt: "Audience seated for a presentation in a lounge space",
     top: "72%",
-    left: "52%",
-    width: "44%",
-    height: "36.1%",
-    rotate: 2,
+    left: "60%",
+    width: "36%",
+    height: "24%",
+    rotate: 4,
     z: 10,
   },
 ];

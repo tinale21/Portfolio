@@ -5,6 +5,7 @@ import { CollagePhoto } from "./CollagePhoto";
 import {
   desktopCollageAspect,
   desktopCollageLayout,
+  mobileCollageAspect,
   mobileCollageLayout,
 } from "./collage-layout";
 
@@ -64,8 +65,16 @@ export function HeroCollage({
 
       {/* Mobile arrangement — no "depth" set on any of these, so their
           animated translateZ always resolves to 0; progress is still
-          passed through since CollagePhoto always calls useTransform. */}
-      <div className="relative mx-auto aspect-[5/6] w-full max-w-[420px] px-6 lg:hidden">
+          passed through since CollagePhoto always calls useTransform.
+          Sized as a narrower, centered box (not a full-width box with
+          padding) — every photo's top/left/width/height is a % of *this*
+          box, so it has to actually be the inset composition, not the
+          full viewport width, or the percentages overflow past it (see
+          collage-layout.ts's mobileCollageLayout comment). */}
+      <div
+        className="relative mx-auto w-[78%] max-w-[300px] lg:hidden"
+        style={{ aspectRatio: mobileCollageAspect }}
+      >
         {mobileCollageLayout.map((photo, i) => (
           <CollagePhoto key={i} {...photo} progress={progress} />
         ))}
