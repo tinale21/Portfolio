@@ -186,55 +186,87 @@ export const desktopCollageLayout: CollagePhotoConfig[] = [
 // padding layer left to fight with.
 export const mobileCollageAspect = "4 / 5";
 
+// Re-measured directly off a gridded reference frame (frame_0_grid.jpg,
+// 1170x2532 native, 50px grid) rather than eyeballed, per direct feedback
+// that the first pass didn't match the reference's size/position — the
+// first pass sized the portrait too small (56% width) and let the top two
+// photos sit mostly *beside* the portrait rather than *behind* it, so they
+// read as their own fully-visible photos instead of a peeking sliver.
+//
+// Reference composition bounding box measured at (35,335)-(855,1390) px
+// (820x1055) — every ratio below is that photo's box as a % of this
+// bounding box:
+//   portrait   left 17.7% top 11.8% width 68.9% height 77.3% (dominant,
+//     front-most in the reference too, but NOT frontmost of everything —
+//     see z-order note below)
+//   top-center photo (bottle): left 33.5% top 0% width 39.0% — entirely
+//     within the portrait's own horizontal span (17.7%-86.6%), so it's
+//     fully hidden behind the portrait except for a sliver at the very
+//     top where the portrait hasn't started yet (top 0%-11.8%).
+//   bottom-left photo (shirt): left 3.3% top 71.1% width 36.3% height
+//     27.0% — DOES horizontally overlap the portrait's left edge, but
+//     renders fully in front of it, not behind: the bottom two photos are
+//     stacked above the portrait, covering its bottom corners, while the
+//     top photo is stacked below it. Reproduced here with explicit z
+//     values (30/31 for the bottom pair, 20 for the portrait, 10/11 for
+//     the top pair) rather than relying on array order.
+//   bottom-right photo (glass square): left 65.9% top 75.4% width 34.1%
+//     height 24.6%.
+//
+// We only have 5 curated mobile photos (vs. the reference's 7-8), so the
+// two "top" slots and two "bottom" slots here each stand in for one side
+// of the reference's roughly-mirrored top/bottom pairs, sized and
+// positioned to match those measured ratios rather than the reference's
+// exact photo-by-photo layout.
 export const mobileCollageLayout: CollagePhotoConfig[] = [
   {
     src: scadproGroup,
     alt: "Group photo in front of a screen reading Georgia International Convention Center and SCADpro",
-    top: "3%",
-    left: "4%",
-    width: "36%",
-    height: "27%",
-    rotate: -6,
+    top: "0%",
+    left: "20%",
+    width: "34%",
+    height: "26%",
+    rotate: -5,
     z: 10,
   },
   {
     src: wallCritique,
     alt: "Students reviewing pinned-up research boards on a gallery wall",
-    top: "5%",
-    left: "60%",
-    width: "36%",
-    height: "30%",
-    rotate: 5,
-    z: 10,
+    top: "0%",
+    left: "50%",
+    width: "34%",
+    height: "28%",
+    rotate: 4,
+    z: 11,
   },
   {
     src: portrait,
     alt: "Portrait of Tina Le",
-    top: "16%",
-    left: "22%",
-    width: "56%",
-    height: "74%",
+    top: "12%",
+    left: "16%",
+    width: "68%",
+    height: "77%",
     z: 20,
     priority: true,
   },
   {
     src: constructionSite,
     alt: "Group in hard hats reviewing plans on a construction site",
-    top: "70%",
-    left: "2%",
-    width: "36%",
-    height: "26%",
+    top: "68%",
+    left: "0%",
+    width: "40%",
+    height: "30%",
     rotate: -5,
-    z: 10,
+    z: 30,
   },
   {
     src: presentationRoom,
     alt: "Audience seated for a presentation in a lounge space",
-    top: "72%",
+    top: "70%",
     left: "60%",
     width: "36%",
-    height: "24%",
+    height: "28%",
     rotate: 4,
-    z: 10,
+    z: 31,
   },
 ];
