@@ -190,16 +190,35 @@ export const desktopCollageLayout: CollagePhotoConfig[] = [
 //   constructionSite      32     510      134        123
 //   presentationRoom     235     543      135        100
 //
-// Percentages below are each value / 393 (width) or / 852 (height) — same
-// two-axis-independent-% approach as desktopCollageLayout, so the
-// composition box just needs the same 393/852 aspect ratio for these to
-// render at the exact measured proportions regardless of actual viewport
-// size. The frame's own margins are already baked into the coordinates
-// (leftmost edge sits at 22px/393 ≈ 5.6%, rightmost at 371px/393 ≈ 94.4%,
-// a symmetric ~22px gutter each side) — so unlike the previous two mobile
-// passes, this container needs no extra width-shrinking or padding of its
-// own to center the composition; it can run the container at its natural
-// full width (see HeroCollage.tsx) and the gutters fall out of the data.
+// Percentages were originally each value / 393 (width) or / 852 (height) —
+// i.e. relative to the *full* Figma frame. Per direct follow-up feedback
+// ("shift the photo collage up and make the typewriter closer to the
+// photo collage but still not visible until users scroll down"), re-based
+// them instead to the photo cluster's own tight bounding box, not the
+// full frame.
+//
+// The full 393x852 frame has large intentional blank margins baked in
+// above/below the actual photo cluster (photos only span y:191-643 of the
+// 852-tall frame — roughly half the frame height is blank). Using the
+// full frame as the composition's own aspect-ratio box meant that blank
+// margin scaled up right along with everything else: at a 390px-wide
+// viewport the box rendered ~845px tall — almost exactly one full mobile
+// screen — which on top of the section's own minHeight requirement (see
+// HeroSection.tsx's NAV_HEIGHT/flex-item math) pushed the actual scroll
+// distance needed to reach the headline *past* one viewport, and put the
+// visible photo cluster nowhere near the top of the screen.
+//
+// Re-derived every box against the cluster's own tight bounds instead:
+// leftmost edge 22px, rightmost 371px (width 349), topmost 191px, bottom-
+// most 643px (height 452) — every percentage below is (value - offset) /
+// 349 or 452, so the composition box's own aspect ratio is now 349/452
+// (~0.772) instead of 393/852 (~0.461), and renders as a much shorter,
+// more compact box with no wasted blank margin baked in. Positioned near
+// the top of its section (see HeroSection.tsx) rather than vertically
+// centered, so it now sits close to the nav, and the (now much smaller,
+// unavoidable — see HeroSection.tsx's comment on why some gap here is
+// required to keep the headline hidden pre-scroll) blank gap before the
+// headline is a single gap below the cluster, not split above and below.
 //
 // z-index: the two bottom photos (constructionSite, presentationRoom)
 // render fully legible in the reference despite overlapping the portrait's
@@ -208,89 +227,89 @@ export const desktopCollageLayout: CollagePhotoConfig[] = [
 // portrait's own box doesn't reach. No rotation on any of the 9 — the
 // reference frame's edges all read axis-aligned, unlike the earlier
 // hand-designed passes which added rotation for a "candid stack" feel.
-export const mobileCollageAspect = "393 / 852";
+export const mobileCollageAspect = "349 / 452";
 
 export const mobileCollageLayout: CollagePhotoConfig[] = [
   {
     src: officeMeeting,
     alt: "",
-    top: "63.732%",
-    left: "40.712%",
-    width: "22.137%",
-    height: "9.272%",
+    top: "77.876%",
+    left: "39.542%",
+    width: "24.928%",
+    height: "17.478%",
     z: 1,
   },
   {
     src: aigKiosk,
     alt: "",
-    top: "33.216%",
-    left: "67.684%",
-    width: "26.718%",
-    height: "16.667%",
+    top: "20.354%",
+    left: "69.914%",
+    width: "30.086%",
+    height: "31.416%",
     z: 2,
   },
   {
     src: workshopTable,
     alt: "",
-    top: "22.418%",
-    left: "34.860%",
-    width: "36.132%",
-    height: "21.596%",
+    top: "0%",
+    left: "32.951%",
+    width: "40.688%",
+    height: "40.708%",
     z: 3,
   },
   {
     src: lobbyWalk,
     alt: "Group walking through a glass-walled room overlooking the skyline",
-    top: "51.056%",
-    left: "9.415%",
-    width: "19.593%",
-    height: "11.502%",
+    top: "53.982%",
+    left: "4.298%",
+    width: "22.063%",
+    height: "21.681%",
     z: 4,
   },
   {
     src: scadproGroup,
     alt: "Group photo in front of a screen reading Georgia International Convention Center and SCADpro",
-    top: "41.432%",
-    left: "5.598%",
-    width: "61.069%",
-    height: "19.131%",
+    top: "35.841%",
+    left: "0%",
+    width: "68.767%",
+    height: "36.062%",
     z: 5,
   },
   {
     src: wallCritique,
     alt: "Students reviewing pinned-up research boards on a gallery wall",
-    top: "46.362%",
-    left: "47.328%",
-    width: "40.712%",
-    height: "18.545%",
+    top: "45.133%",
+    left: "46.991%",
+    width: "45.845%",
+    height: "34.956%",
     z: 6,
   },
   {
     src: portrait,
     alt: "Portrait of Tina Le",
-    top: "28.521%",
-    left: "20.611%",
-    width: "62.087%",
-    height: "40.141%",
+    top: "11.504%",
+    left: "16.905%",
+    width: "69.914%",
+    height: "75.664%",
     z: 20,
     priority: true,
   },
   {
     src: presentationRoom,
     alt: "Audience seated for a presentation in a lounge space",
-    top: "63.732%",
-    left: "59.796%",
-    width: "34.351%",
-    height: "11.737%",
+    top: "77.876%",
+    left: "61.032%",
+    width: "38.682%",
+    height: "22.124%",
     z: 30,
   },
   {
     src: constructionSite,
     alt: "Group in hard hats reviewing plans on a construction site",
-    top: "59.859%",
-    left: "8.142%",
-    width: "34.096%",
-    height: "14.437%",
+    top: "70.575%",
+    left: "2.865%",
+    width: "38.395%",
+    height: "27.212%",
     z: 31,
   },
 ];

@@ -202,7 +202,19 @@ export function HeroSection() {
       data-nav-theme="dark"
       className="bg-[#262626]"
     >
-      {/* First screen: collage only, unchanged from the approved layout.
+      {/* First screen: collage only, unchanged from the approved layout on
+          desktop (lg:items-center, unchanged). On mobile, top-aligned
+          instead per direct feedback ("shift the photo collage up and
+          make the typewriter closer to the photo collage but still not
+          visible until users scroll down") — this section's minHeight is
+          still exactly one viewport (nav-adjusted) so the headline below
+          stays fully offscreen until the user scrolls at all (that floor
+          can't be reduced without revealing it prematurely — see
+          collage-layout.ts's mobileCollageLayout comment for how the
+          *collage's own* size was shrunk instead, which is what actually
+          moved the needle on the gap being smaller now, not this
+          alignment change alone). pt-6 gives it a little breathing room
+          off the nav rather than touching it directly.
           overflow-hidden lives here (not on the section itself anymore) —
           it clips the collage photos as they translate/tilt past their
           own bounds, but having it on an ancestor of the pinned headline
@@ -214,7 +226,7 @@ export function HeroSection() {
           position just decreased 1:1 with scroll the whole time, until
           this was scoped down to only wrap what actually needs clipping. */}
       <div
-        className="flex items-center overflow-hidden"
+        className="flex items-start overflow-hidden pt-6 lg:items-center lg:pt-0"
         style={{ minHeight: `calc(100vh - ${NAV_HEIGHT}px)` }}
       >
         <HeroCollage
