@@ -164,109 +164,133 @@ export const desktopCollageLayout: CollagePhotoConfig[] = [
   },
 ];
 
-// Simplified arrangement for narrow viewports: fewer overlapping layers,
-// no hidden depth photos, sized to stay legible on small screens. Not
-// sourced from Figma (no mobile design exists) — adapted per design intent,
-// mobile reference (Screen Recording 2026-08-15 19-09-45, campione.framer.website)
-// showed a tight, mostly-overlapping stack — a large center photo with
-// smaller photos tucked mostly *behind* it, peeking out only at the
-// corners — rather than spread across the full viewport with photos
-// reaching the screen edges.
+// Sourced from an actual Figma mobile frame this time (iPhone 16, 393x852pt)
+// the user built and inspected directly — not adapted/eyeballed like the
+// two earlier passes. Per direct feedback ("on mobile i can only see 5
+// images instead of all 9"), the Figma frame uses all 9 of the same
+// photos desktopCollageLayout uses, not the smaller 5-photo curated subset
+// the previous two mobile passes used — so this replaces that subset
+// entirely rather than just repositioning it.
 //
-// Previous version's positions (left 2%–98%) were computed as if
-// percentages resolved against the container's own *content* box (inside
-// its px-6 padding), but CSS resolves an absolutely-positioned child's
-// percentages against the containing block's *padding* box — so px-6
-// never actually inset anything, and the cluster rendered edge-to-edge,
-// overflowing past the visual padding entirely on real phones. Fixed at
-// the container level (see HeroCollage.tsx): the mobile composition box
-// itself is now a narrower, centered box (w-[78%] max-w-[300px] mx-auto,
-// no padding) rather than a full-width box with padding — every percentage
-// below is relative to that already-inset box, so there's no separate
-// padding layer left to fight with.
-export const mobileCollageAspect = "4 / 5";
+// Every box below was read directly from Figma's Inspect panel (per-layer
+// "Layout" width/height + the 4-directional distance-to-frame-edge
+// callouts), not estimated from a screenshot: each layer's callouts
+// (top/left/right/bottom distance to the 393x852 frame edges) were cross-
+// checked to confirm left+width+right=393 and top+height+bottom=852 for
+// every one of the 9 rectangles before converting to %.
+//
+//   photo             left(px) top(px) width(px) height(px)
+//   portrait             81     243      244        342
+//   scadproGroup          22     353      240        163
+//   workshopTable        137     191      142        184
+//   wallCritique         186     395      160        158
+//   lobbyWalk             37     435       77         98
+//   aigKiosk             266     283      105        142
+//   officeMeeting        160     543       87         79
+//   constructionSite      32     510      134        123
+//   presentationRoom     235     543      135        100
+//
+// Percentages below are each value / 393 (width) or / 852 (height) — same
+// two-axis-independent-% approach as desktopCollageLayout, so the
+// composition box just needs the same 393/852 aspect ratio for these to
+// render at the exact measured proportions regardless of actual viewport
+// size. The frame's own margins are already baked into the coordinates
+// (leftmost edge sits at 22px/393 ≈ 5.6%, rightmost at 371px/393 ≈ 94.4%,
+// a symmetric ~22px gutter each side) — so unlike the previous two mobile
+// passes, this container needs no extra width-shrinking or padding of its
+// own to center the composition; it can run the container at its natural
+// full width (see HeroCollage.tsx) and the gutters fall out of the data.
+//
+// z-index: the two bottom photos (constructionSite, presentationRoom)
+// render fully legible in the reference despite overlapping the portrait's
+// bottom corners, so they're given higher z than the portrait (in front of
+// it) — everything else sits behind the portrait, peeking only where the
+// portrait's own box doesn't reach. No rotation on any of the 9 — the
+// reference frame's edges all read axis-aligned, unlike the earlier
+// hand-designed passes which added rotation for a "candid stack" feel.
+export const mobileCollageAspect = "393 / 852";
 
-// Re-measured directly off a gridded reference frame (frame_0_grid.jpg,
-// 1170x2532 native, 50px grid) rather than eyeballed, per direct feedback
-// that the first pass didn't match the reference's size/position — the
-// first pass sized the portrait too small (56% width) and let the top two
-// photos sit mostly *beside* the portrait rather than *behind* it, so they
-// read as their own fully-visible photos instead of a peeking sliver.
-//
-// Reference composition bounding box measured at (35,335)-(855,1390) px
-// (820x1055) — every ratio below is that photo's box as a % of this
-// bounding box:
-//   portrait   left 17.7% top 11.8% width 68.9% height 77.3% (dominant,
-//     front-most in the reference too, but NOT frontmost of everything —
-//     see z-order note below)
-//   top-center photo (bottle): left 33.5% top 0% width 39.0% — entirely
-//     within the portrait's own horizontal span (17.7%-86.6%), so it's
-//     fully hidden behind the portrait except for a sliver at the very
-//     top where the portrait hasn't started yet (top 0%-11.8%).
-//   bottom-left photo (shirt): left 3.3% top 71.1% width 36.3% height
-//     27.0% — DOES horizontally overlap the portrait's left edge, but
-//     renders fully in front of it, not behind: the bottom two photos are
-//     stacked above the portrait, covering its bottom corners, while the
-//     top photo is stacked below it. Reproduced here with explicit z
-//     values (30/31 for the bottom pair, 20 for the portrait, 10/11 for
-//     the top pair) rather than relying on array order.
-//   bottom-right photo (glass square): left 65.9% top 75.4% width 34.1%
-//     height 24.6%.
-//
-// We only have 5 curated mobile photos (vs. the reference's 7-8), so the
-// two "top" slots and two "bottom" slots here each stand in for one side
-// of the reference's roughly-mirrored top/bottom pairs, sized and
-// positioned to match those measured ratios rather than the reference's
-// exact photo-by-photo layout.
 export const mobileCollageLayout: CollagePhotoConfig[] = [
+  {
+    src: officeMeeting,
+    alt: "",
+    top: "63.732%",
+    left: "40.712%",
+    width: "22.137%",
+    height: "9.272%",
+    z: 1,
+  },
+  {
+    src: aigKiosk,
+    alt: "",
+    top: "33.216%",
+    left: "67.684%",
+    width: "26.718%",
+    height: "16.667%",
+    z: 2,
+  },
+  {
+    src: workshopTable,
+    alt: "",
+    top: "22.418%",
+    left: "34.860%",
+    width: "36.132%",
+    height: "21.596%",
+    z: 3,
+  },
+  {
+    src: lobbyWalk,
+    alt: "Group walking through a glass-walled room overlooking the skyline",
+    top: "51.056%",
+    left: "9.415%",
+    width: "19.593%",
+    height: "11.502%",
+    z: 4,
+  },
   {
     src: scadproGroup,
     alt: "Group photo in front of a screen reading Georgia International Convention Center and SCADpro",
-    top: "0%",
-    left: "20%",
-    width: "34%",
-    height: "26%",
-    rotate: -5,
-    z: 10,
+    top: "41.432%",
+    left: "5.598%",
+    width: "61.069%",
+    height: "19.131%",
+    z: 5,
   },
   {
     src: wallCritique,
     alt: "Students reviewing pinned-up research boards on a gallery wall",
-    top: "0%",
-    left: "50%",
-    width: "34%",
-    height: "28%",
-    rotate: 4,
-    z: 11,
+    top: "46.362%",
+    left: "47.328%",
+    width: "40.712%",
+    height: "18.545%",
+    z: 6,
   },
   {
     src: portrait,
     alt: "Portrait of Tina Le",
-    top: "12%",
-    left: "16%",
-    width: "68%",
-    height: "77%",
+    top: "28.521%",
+    left: "20.611%",
+    width: "62.087%",
+    height: "40.141%",
     z: 20,
     priority: true,
   },
   {
-    src: constructionSite,
-    alt: "Group in hard hats reviewing plans on a construction site",
-    top: "68%",
-    left: "0%",
-    width: "40%",
-    height: "30%",
-    rotate: -5,
+    src: presentationRoom,
+    alt: "Audience seated for a presentation in a lounge space",
+    top: "63.732%",
+    left: "59.796%",
+    width: "34.351%",
+    height: "11.737%",
     z: 30,
   },
   {
-    src: presentationRoom,
-    alt: "Audience seated for a presentation in a lounge space",
-    top: "70%",
-    left: "60%",
-    width: "36%",
-    height: "28%",
-    rotate: 4,
+    src: constructionSite,
+    alt: "Group in hard hats reviewing plans on a construction site",
+    top: "59.859%",
+    left: "8.142%",
+    width: "34.096%",
+    height: "14.437%",
     z: 31,
   },
 ];
