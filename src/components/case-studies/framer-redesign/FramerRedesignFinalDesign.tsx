@@ -47,6 +47,64 @@ const PROTOTYPE_BEZEL_COLOR = "#1D1D1D";
 const PROTOTYPE_ASPECT = "1800 / 994";
 const PROTOTYPE_MAX_WIDTH = 1100;
 
+// Screen-by-screen breakdown rows, per direct instruction ("this part
+// is formatted the same as the other case study like aig; use the
+// same rules for this"). Structure, spacing, and typography are a
+// direct reuse of AigFinalDesignImplementation.tsx's own SCREENS
+// pattern: 512px left column (title #707682 15px/400, description
+// black 15px/500), video capped at max-w-[597px] pushed to the right
+// padding via ml-auto, 10px corner radius, object-cover, aspect-ratio
+// 597/334 (AIG's own box ratio, close enough to this project's source
+// ratio — same object-cover crop tolerance already accepted there).
+// Copy transcribed directly from the reference screenshot (source:
+// Screenshot 2026-08-15 at 1.40.27 AM.png).
+//
+// Motion reference (Screen Recording 2026-08-15 at 1.39.43 AM.mov)
+// showed the same plain sequential scroll as AIG's — no zigzag, no
+// scroll-tied progress, no tilt — so no special motion added here,
+// matching AIG.
+//
+// Video processing: all 5 source recordings (Workspace.mp4,
+// GuidedTutorials.mp4, ErrorChecking.mp4, Recommendations.mp4,
+// CommunityAssets.mp4, all 3456x1908) scaled to 1600px wide with no
+// crop, CRF 18, audio stripped (all 5 sources had an audio track,
+// unlike this project's other videos — stripped per this project's
+// standing convention of muted background/showcase video). Checked
+// frames across each source's full runtime first to confirm no
+// sensitive content.
+const SCREENS = [
+  {
+    title: "Workspace",
+    description:
+      "The redesigned workspace creates a familiar starting point with a Figma-inspired layout, clearer navigation, and organized tools that help first-time users build with confidence.",
+    video: "/projects/framer-redesign-fdi-workspace.mp4",
+  },
+  {
+    title: "Guided Tutorial",
+    description:
+      "Interactive tutorials teach core Framer concepts through hands-on exercises, helping first-time users build confidence.",
+    video: "/projects/framer-redesign-fdi-guided-tutorial.mp4",
+  },
+  {
+    title: "Error Checking",
+    description:
+      "The redesigned error checker provides real-time feedback on accessibility, spelling, and grammar, helping users identify issues early and apply suggested fixes",
+    video: "/projects/framer-redesign-fdi-error-checking.mp4",
+  },
+  {
+    title: "Recommendations",
+    description:
+      "Smart recommendations appear based on the errors users encounter, surfacing relevant community assets, templates, and resources.",
+    video: "/projects/framer-redesign-fdi-recommendations.mp4",
+  },
+  {
+    title: "Community Assets",
+    description:
+      "The integrated community library makes it easy to discover and add reusable assets, templates, and components without leaving the editor",
+    video: "/projects/framer-redesign-fdi-community-assets.mp4",
+  },
+];
+
 export function FramerRedesignFinalDesign() {
   return (
     <section data-nav-theme="light" className="bg-white px-5 pt-[122px] pb-16 sm:px-8 lg:px-[68px]">
@@ -84,6 +142,33 @@ export function FramerRedesignFinalDesign() {
           playsInline
           className="h-full w-full object-cover"
         />
+      </div>
+
+      <div className="mt-32 flex flex-col gap-20">
+        {SCREENS.map((screen) => (
+          <div key={screen.title} className="flex flex-col gap-8 lg:flex-row lg:items-start">
+            <div className="lg:w-[512px] lg:shrink-0">
+              <p className="font-sans text-[15px] text-[#707682]">{screen.title}</p>
+              <p className="mt-[16px] font-sans text-[15px] font-medium text-black">
+                {screen.description}
+              </p>
+            </div>
+
+            <div
+              className="relative w-full overflow-hidden rounded-[10px] border-solid lg:ml-auto lg:flex-1 lg:max-w-[597px]"
+              style={{ aspectRatio: "597 / 334", borderWidth: "0.5px", borderColor: "#000000" }}
+            >
+              <video
+                src={`${BASE_PATH}${screen.video}`}
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="h-full w-full object-cover"
+              />
+            </div>
+          </div>
+        ))}
       </div>
     </section>
   );
