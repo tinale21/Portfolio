@@ -43,6 +43,17 @@ import { PhilosophyMobileImage } from "./PhilosophyMobileImage";
 // philosophy-data.ts) using *uniform* boxes per photo role instead of
 // each photo's true native size, which is what let desktop's own frame
 // sprawl wide in the first place.
+//
+// Third pass, per further direct feedback ("make the image start off
+// bigger and then when users scroll the image can just move out of the
+// frame entirely like the reference"): unlike desktop, where every image
+// settles into a *visible* final position, this composition's images now
+// exit off-frame entirely (see MOBILE_PHILOSOPHY_IMAGES's own comment) —
+// closer to the reference recording's actual behavior of cards flying
+// past the screen's edges as the surrounding text takes over, rather
+// than resolving into a small on-screen grid. Cluster starting size was
+// also bumped up (MOBILE_CLUSTER_CARD_WIDTH/HEIGHT) per the same
+// feedback.
 const MOBILE_PIN_SCROLL_DISTANCE = 500;
 
 export function PhilosophyMobileSection() {
@@ -85,7 +96,13 @@ export function PhilosophyMobileSection() {
       <div className="sticky top-0 flex min-h-screen flex-col justify-center overflow-hidden px-5">
         <div
           ref={containerRef}
-          className="relative mx-auto w-full max-w-[380px]"
+          // overflow-hidden here (not just on the outer sticky/viewport-
+          // sized wrapper above) so the images can actually exit the
+          // *frame* rather than just the screen — see
+          // MOBILE_PHILOSOPHY_IMAGES's comment in philosophy-data.ts for
+          // why their positions are now off-frame exit points instead of
+          // resting positions.
+          className="relative mx-auto w-full max-w-[380px] overflow-hidden"
           style={{ aspectRatio: `${MOBILE_FIGMA_WIDTH} / ${MOBILE_FIGMA_HEIGHT}` }}
         >
           <div

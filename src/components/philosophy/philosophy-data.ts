@@ -149,34 +149,44 @@ export const QUOTE_WIDTH = 570;
 export const MOBILE_FIGMA_WIDTH = 360;
 export const MOBILE_FIGMA_HEIGHT = 620;
 
-// Uniform box per role (not each photo's own native w/h — see comment
-// above) so every "large" photo shares one box and every "small" photo
-// shares another; object-cover crops each source photo to fit. z mirrors
-// the same "smaller rect sits in front of the larger one" rule desktop's
-// own PHILOSOPHY_IMAGES comment describes.
+// Per direct follow-up feedback ("make the image start off bigger and
+// then when users scroll the image can just move out of the frame
+// entirely like the reference"), these are no longer *resting* positions
+// within the frame — they're exit points, each entirely above (top pair)
+// or entirely below (bottom pair) the MOBILE_FIGMA_HEIGHT bounds (0-620).
+// Combined with overflow-hidden on the composition's own container (see
+// PhilosophyMobileSection.tsx) — not just the outer sticky viewport-sized
+// wrapper desktop's version relies on — each image visually exits the
+// frame as progress finishes, leaving only the quote. Only the y values
+// need to clear the frame bounds for overflow-hidden to clip them (an
+// element entirely above/below its clipping container is hidden
+// regardless of x), but x also drifts outward per pair for a fuller
+// "flying apart" feel rather than a straight-up/down exit.
+// z mirrors the same "smaller rect sits in front of the larger one" rule
+// desktop's own PHILOSOPHY_IMAGES comment describes.
 export const MOBILE_PHILOSOPHY_IMAGES: PhilosophyImage[] = [
-  { src: rect23, alt: "", x: 12, y: 45, w: 150, h: 105, z: 10 },
-  { src: rect24, alt: "AIG Innovation Hub dashboard screen", x: 2, y: 20, w: 88, h: 62, z: 15 },
-  { src: rect21, alt: "", x: 198, y: 45, w: 150, h: 105, z: 20 },
-  { src: rect22, alt: "Smoky Chipotle Chicken Bowl recipe page", x: 270, y: 20, w: 88, h: 62, z: 25 },
-  { src: rect25, alt: "", x: 12, y: 470, w: 150, h: 105, z: 30 },
-  { src: rect26, alt: "Delivery app phone mockups", x: 2, y: 445, w: 88, h: 62, z: 35 },
-  { src: rect19, alt: "", x: 198, y: 470, w: 150, h: 105, z: 40 },
-  { src: rect20, alt: "AIG Explore ATL screen", x: 270, y: 445, w: 88, h: 62, z: 45 },
+  { src: rect23, alt: "", x: -60, y: -220, w: 150, h: 105, z: 10 },
+  { src: rect24, alt: "AIG Innovation Hub dashboard screen", x: -100, y: -260, w: 88, h: 62, z: 15 },
+  { src: rect21, alt: "", x: 270, y: -220, w: 150, h: 105, z: 20 },
+  { src: rect22, alt: "Smoky Chipotle Chicken Bowl recipe page", x: 380, y: -260, w: 88, h: 62, z: 25 },
+  { src: rect25, alt: "", x: -60, y: 750, w: 150, h: 105, z: 30 },
+  { src: rect26, alt: "Delivery app phone mockups", x: -100, y: 790, w: 88, h: 62, z: 35 },
+  { src: rect19, alt: "", x: 270, y: 750, w: 150, h: 105, z: 40 },
+  { src: rect20, alt: "AIG Explore ATL screen", x: 380, y: 790, w: 88, h: 62, z: 45 },
 ];
 
-// Vertical midpoint of the gap between the top row's bottom edge (150,
-// the max of the top two large photos' bottom edges) and the bottom
-// row's top edge (445, the min of the bottom two small photos' top
-// edges) — same "midpoint of the gap between the halves" rule as
-// desktop's own CLUSTER_CENTER_Y, just computed against this frame's own
-// numbers.
+// Frame's own vertical center — with the images now exiting off the top/
+// bottom edges rather than settling into a visible grid, there's no
+// longer a "gap between two rows" to find the midpoint of, so this is
+// just MOBILE_FIGMA_HEIGHT / 2 directly (this frame's own aspect ratio
+// was already designed so that's where the quote reads best).
 export const MOBILE_CLUSTER_CENTER_X = MOBILE_FIGMA_WIDTH / 2;
-export const MOBILE_CLUSTER_CENTER_Y = (150 + 445) / 2;
+export const MOBILE_CLUSTER_CENTER_Y = MOBILE_FIGMA_HEIGHT / 2;
 
 // One shared starting size for every photo regardless of its final
 // large/small role — same reasoning as desktop's own CLUSTER_CARD_WIDTH/
-// HEIGHT (a true deck-of-cards stack, nothing peeking out at rest),
-// just sized down to fit this frame's own scale.
-export const MOBILE_CLUSTER_CARD_WIDTH = 130;
-export const MOBILE_CLUSTER_CARD_HEIGHT = 90;
+// HEIGHT (a true deck-of-cards stack, nothing peeking out at rest).
+// Bumped up from an initial 130x90 per direct feedback that the starting
+// cluster read too small.
+export const MOBILE_CLUSTER_CARD_WIDTH = 210;
+export const MOBILE_CLUSTER_CARD_HEIGHT = 146;

@@ -47,6 +47,14 @@ Continuing the mobile-issues pass: the home page's "Design is not just what we m
 - **New `src/components/philosophy/PhilosophyMobileImage.tsx`**, replacing the previous pass's per-pair component of the same conceptual role.
 - **Modified `src/components/philosophy/philosophy-data.ts`**: added `MOBILE_FIGMA_WIDTH/HEIGHT`, `MOBILE_PHILOSOPHY_IMAGES`, `MOBILE_CLUSTER_CENTER_X/Y`, `MOBILE_CLUSTER_CARD_WIDTH/HEIGHT` — all additive, no changes to any existing desktop-facing exports.
 
+## Follow-up: bigger starting cluster, images exit the frame entirely
+
+- "the logic is correct now with mobile but it a bit small, can you make the image start off bigger and than when the users scroll the image can just move out of the frame entirely like the reference i sent you on the mobile" — two changes: (1) the starting cluster read too small, (2) unlike desktop (where images settle into a *visible* final position), the reference showed cards flying past the screen's edges as the surrounding text takes over — the 2x2-grid "resting position" version didn't match that.
+- Bumped `MOBILE_CLUSTER_CARD_WIDTH/HEIGHT` from 130x90 to 210x146 (~1.6x larger) for a bigger starting stack.
+- Changed every `MOBILE_PHILOSOPHY_IMAGES` entry from a resting position within the 2x2 grid to an *exit point* entirely above (top pair) or entirely below (bottom pair) the `MOBILE_FIGMA_HEIGHT` bounds — an element whose `y` range is entirely outside its clipping container's bounds is hidden regardless of `x`, so only the vertical exit needed to clear the frame; horizontal drift was added on top purely for a fuller "flying apart" feel, not because it's required for the clipping to work.
+- Added `overflow-hidden` to the composition's own container (`PhilosophyMobileSection.tsx`), not just the outer sticky/viewport-sized wrapper desktop's version relies on — without this, images exiting the *frame's* bounds would still be visible within the (viewport-sized) outer sticky area, since that's a much bigger box than the composition itself.
+- Verified: `npx tsc --noEmit` clean; screenshots at the three progress stages confirm the bigger starting cluster and that by progress=1 all 8 images have fully exited (frame renders as just the quote, nothing else visible) — a direct match to the reference's own behavior; zero horizontal overflow; desktop screenshot still pixel-identical; `NEXT_PUBLIC_BASE_PATH=/Portfolio npm run build` succeeds.
+
 ## Remaining mobile work
 
 None identified yet beyond what's already been addressed in this mobile-issues pass (hero collage, Selected Projects autoplay, this section). Other mobile-only issues elsewhere on the site have not yet been identified.
