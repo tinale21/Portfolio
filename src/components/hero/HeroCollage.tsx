@@ -66,15 +66,22 @@ export function HeroCollage({
       {/* Mobile arrangement — no "depth" set on any of these, so their
           animated translateZ always resolves to 0; progress is still
           passed through since CollagePhoto always calls useTransform.
-          Unlike the desktop composition (scaled down from its 1512px
-          Figma frame via DESKTOP_SCALE), this one's source Figma frame
-          (393x852, iPhone 16) is already phone-width, and its own margins
-          are already baked into mobileCollageLayout's percentages — so no
-          extra width-shrinking or padding here, just a full-width box
-          capped at a sensible max so it doesn't scale past native size on
-          wider phones. */}
+          mobileCollageLayout's percentages are now based on the photo
+          cluster's own 349px-wide tight bounding box (cropped from the
+          full 393px Figma frame — see collage-layout.ts), not the full
+          frame width. A w-full container would render each photo at
+          (container width) × (its % of 349px) — since 349 < 393, that's
+          the same photo drawn *larger* than before at any given container
+          width (confirmed: portrait rendered 273px wide vs. 242px pre-
+          crop, at an identical 390px container). Per direct feedback
+          ("dial the size down to match the original"), MOBILE_SCALE
+          compensates by shrinking the container by that same 349/393
+          ratio, so a percentage of the *now-smaller* container reproduces
+          the original absolute pixel size again — same technique as
+          DESKTOP_SCALE above, just derived from a ratio instead of tuned
+          by eye. */}
       <div
-        className="relative mx-auto w-full max-w-[430px] lg:hidden"
+        className="relative mx-auto w-[88.804%] max-w-[382px] lg:hidden"
         style={{ aspectRatio: mobileCollageAspect }}
       >
         {mobileCollageLayout.map((photo, i) => (
