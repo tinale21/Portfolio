@@ -10,6 +10,7 @@ import {
   HEADING_FONT_SIZE_VW,
   getConnectExitTiming,
 } from "./connect-data";
+import { ConnectMobileSection } from "./ConnectMobileSection";
 import { ConnectPhoto } from "./ConnectPhoto";
 
 // Same pinned-scroll mechanism as PhilosophySection. Confirmed against the
@@ -78,47 +79,58 @@ export function ConnectSection() {
   }, [progress]);
 
   return (
-    <div
-      ref={wrapperRef}
-      data-nav-theme="dark"
-      style={{
-        // Pre-measurement fallback only (replaced on mount) — hold isn't
-        // known yet without a viewport read, so this just needs to be a
-        // reasonable placeholder to avoid a zero-height flash.
-        height: wrapperHeightPx !== null ? `${wrapperHeightPx}px` : `calc(100vh + ${PIN_SCROLL_DISTANCE + 700}px)`,
-      }}
-      // Plain, unanimated bg-color on the outer wrapper — per the brief
-      // ("the background remains the same dark color throughout the
-      // entire section"), this never changes regardless of scroll
-      // progress or how the pinned inner content animates.
-      className="relative bg-[#262626]"
-    >
-      <div className="sticky top-0 overflow-hidden">
-        <div
-          className="relative mx-auto w-full"
-          ref={containerRef}
-          style={{ aspectRatio: `${FIGMA_WIDTH} / ${FIGMA_HEIGHT}` }}
-        >
-          {/* Dead center, z-index above every photo, and never animated —
-              per direct feedback plus the live reference's own DOM (see
-              connect-data.ts), this sits in a logically separate layer
-              from the Figma-positioned photo scatter, not at a Figma
-              coordinate within it. */}
-          <p
-            className="absolute left-1/2 z-[100] -translate-x-1/2 -translate-y-1/2 whitespace-nowrap font-serif font-bold text-white"
-            style={{
-              top: headingCenterYPx !== null ? `${headingCenterYPx}px` : "50%",
-              fontSize: `clamp(2rem, ${HEADING_FONT_SIZE_VW}vw, 3.5rem)`,
-            }}
+    <>
+      {/* Per direct feedback ("it is currently built horizontal but for
+          mobile it should be rebuilt vertically"), mobile gets its own
+          composition (narrower portrait reference frame, 2 columns of 3
+          photos instead of 6 spread across a landscape frame) — see
+          ConnectMobileSection.tsx / connect-data.ts's MOBILE_CONNECT_PHOTOS
+          comment for the fuller reasoning, the same shape as
+          PhilosophySection's own mobile rebuild. Desktop below is
+          unchanged, just gated behind hidden lg:block. */}
+      <ConnectMobileSection />
+      <div
+        ref={wrapperRef}
+        data-nav-theme="dark"
+        style={{
+          // Pre-measurement fallback only (replaced on mount) — hold isn't
+          // known yet without a viewport read, so this just needs to be a
+          // reasonable placeholder to avoid a zero-height flash.
+          height: wrapperHeightPx !== null ? `${wrapperHeightPx}px` : `calc(100vh + ${PIN_SCROLL_DISTANCE + 700}px)`,
+        }}
+        // Plain, unanimated bg-color on the outer wrapper — per the brief
+        // ("the background remains the same dark color throughout the
+        // entire section"), this never changes regardless of scroll
+        // progress or how the pinned inner content animates.
+        className="relative hidden bg-[#262626] lg:block"
+      >
+        <div className="sticky top-0 overflow-hidden">
+          <div
+            className="relative mx-auto w-full"
+            ref={containerRef}
+            style={{ aspectRatio: `${FIGMA_WIDTH} / ${FIGMA_HEIGHT}` }}
           >
-            {HEADING}
-          </p>
+            {/* Dead center, z-index above every photo, and never animated —
+                per direct feedback plus the live reference's own DOM (see
+                connect-data.ts), this sits in a logically separate layer
+                from the Figma-positioned photo scatter, not at a Figma
+                coordinate within it. */}
+            <p
+              className="absolute left-1/2 z-[100] -translate-x-1/2 -translate-y-1/2 whitespace-nowrap font-serif font-bold text-white"
+              style={{
+                top: headingCenterYPx !== null ? `${headingCenterYPx}px` : "50%",
+                fontSize: `clamp(2rem, ${HEADING_FONT_SIZE_VW}vw, 3.5rem)`,
+              }}
+            >
+              {HEADING}
+            </p>
 
-          {CONNECT_PHOTOS.map((photo, i) => (
-            <ConnectPhoto key={i} {...photo} progress={progress} pxScale={pxScale} />
-          ))}
+            {CONNECT_PHOTOS.map((photo, i) => (
+              <ConnectPhoto key={i} {...photo} progress={progress} pxScale={pxScale} />
+            ))}
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

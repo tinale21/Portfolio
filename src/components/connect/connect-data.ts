@@ -76,6 +76,52 @@ export const ENTRY_AFTER = Math.max(...CONNECT_PHOTOS.map((p) => p.y + p.h)) + 1
 export const HEADING = "Let's Connect!";
 export const HEADING_FONT_SIZE_VW = (56 / FIGMA_WIDTH) * 100;
 
+// Mobile version of the same "photos rise from below, arrive staggered,
+// keep rising and exit above" section, per direct feedback ("it is
+// currently built horizontal but for mobile it should be rebuilt
+// vertically"). The underlying *motion* here was already vertical-only
+// (translateY, no horizontal drift — see ENTRY_BEFORE/AFTER's comment)
+// — what reads as "horizontal" on mobile is the *spatial layout*: 6
+// photos scattered across the full width of a 1512-wide landscape frame,
+// which squashes into a short, cramped strip at phone width the same way
+// PhilosophySection's own landscape frame did (see that component's
+// mobile-pass comments for the fuller version of this reasoning).
+//
+// Fix follows the same shape as Philosophy's: a narrower, genuinely
+// portrait reference frame (360x600, vs. desktop's 1512x982 landscape)
+// that stays short enough at mobile widths to fit under one pinned
+// viewport (position:sticky here has the exact same "sticky box must be
+// shorter than its viewport" constraint Philosophy's did). The 6 photos
+// are split into 2 columns of 3 by their original desktop x position
+// (x < 756, half of 1512, -> left column; the other 3 already landed on
+// the right) rather than reassigned by hand — a coincidental, clean 3/3
+// split that preserves which original photo reads as "left-side" vs.
+// "right-side" instead of arbitrarily reshuffling them. Each photo's own
+// aspect ratio (h/w) is preserved from its desktop dimensions; only the
+// absolute scale and exact resting y is new, staggered across the
+// portrait frame's own height instead of desktop's.
+export const MOBILE_FIGMA_WIDTH = 360;
+export const MOBILE_FIGMA_HEIGHT = 600;
+
+export const MOBILE_CONNECT_PHOTOS: ConnectPhotoData[] = [
+  // Left column (desktop photo2, photo3, photo5 — all had x < 756)
+  { src: photo2, alt: "", x: 15, y: 60, w: 145, h: 225, z: 20, arrival: 0.15 },
+  { src: photo5, alt: "", x: 10, y: 180, w: 140, h: 196, z: 50, arrival: 0.43 },
+  { src: photo3, alt: "", x: 20, y: 340, w: 135, h: 167, z: 30, arrival: 0.71 },
+  // Right column (desktop photo1, photo4, photo6 — all had x >= 756)
+  { src: photo1, alt: "", x: 205, y: 90, w: 145, h: 204, z: 10, arrival: 0.29 },
+  { src: photo6, alt: "", x: 215, y: 210, w: 110, h: 138, z: 60, arrival: 0.57 },
+  { src: photo4, alt: "", x: 210, y: 310, w: 130, h: 257, z: 40, arrival: 0.85 },
+];
+
+export const MOBILE_ENTRY_BEFORE =
+  Math.max(...MOBILE_CONNECT_PHOTOS.map((p) => MOBILE_FIGMA_HEIGHT - p.y)) + 150;
+export const MOBILE_ENTRY_AFTER = Math.max(...MOBILE_CONNECT_PHOTOS.map((p) => p.y + p.h)) + 150;
+
+export const MOBILE_HEADING_FONT_SIZE_VW = (36 / MOBILE_FIGMA_WIDTH) * 100;
+
+export const MOBILE_PIN_SCROLL_DISTANCE = 700;
+
 // Shared by ConnectSection (which uses `hold`) and ExperiencesSection
 // (which uses `pull`) to produce the "heading scrolls behind the next
 // section" exit effect. Both used to be fixed px constants tuned against
@@ -111,8 +157,19 @@ export const HEADING_FONT_SIZE_VW = (56 / FIGMA_WIDTH) * 100;
 const PULL_MARGIN = 20;
 const REVEAL_MARGIN = 20;
 
+// Matches Tailwind's `lg` breakpoint, which is what actually switches
+// ConnectSection between its desktop and mobile branches (see
+// ConnectSection.tsx / ConnectMobileSection.tsx) — this function has to
+// agree with that switch, or ExperiencesSection's pull-up (which calls
+// this with the live viewport size, no breakpoint awareness of its own)
+// would use the wrong section's geometry right at the boundary.
+const MOBILE_BREAKPOINT = 1024;
+
 export function getConnectExitTiming(viewportWidth: number, viewportHeight: number) {
-  const stickyHeight = viewportWidth * (FIGMA_HEIGHT / FIGMA_WIDTH);
+  const isMobile = viewportWidth < MOBILE_BREAKPOINT;
+  const width = isMobile ? MOBILE_FIGMA_WIDTH : FIGMA_WIDTH;
+  const height = isMobile ? MOBILE_FIGMA_HEIGHT : FIGMA_HEIGHT;
+  const stickyHeight = viewportWidth * (height / width);
   const pull = Math.min(750, Math.max(300, stickyHeight - viewportHeight / 2 + PULL_MARGIN));
   const hold = Math.max(100, REVEAL_MARGIN + pull + viewportHeight - stickyHeight);
   return { pull, hold };
