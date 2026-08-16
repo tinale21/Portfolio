@@ -171,8 +171,18 @@ export const MOBILE_PHILOSOPHY_IMAGES: PhilosophyImage[] = [
   { src: rect22, alt: "Smoky Chipotle Chicken Bowl recipe page", x: 400, y: -300, w: 120, h: 84, z: 25 },
   { src: rect25, alt: "", x: -75, y: 760, w: 195, h: 137, z: 30 },
   { src: rect26, alt: "Delivery app phone mockups", x: -125, y: 810, w: 120, h: 84, z: 35 },
-  { src: rect19, alt: "", x: 285, y: 760, w: 195, h: 137, z: 40 },
-  { src: rect20, alt: "AIG Explore ATL screen", x: 400, y: 810, w: 120, h: 84, z: 45 },
+  // rect19/rect20 swapped from their z-order-implied large/small roles
+  // (unlike every other pair here) — both are screenshots of a modal/
+  // card floating over a background, and rect20's card sat close enough
+  // to its own edges that the "small" role's more aggressive scale-up
+  // (needed to reach the shared cluster size from a smaller base box)
+  // over-zoomed it, making the card's own square corners visible right at
+  // our container's rounded edge and reading as "the rounding is
+  // missing." Giving it the larger box (a gentler scale factor) instead
+  // fixes that without touching the shared per-role box sizes every other
+  // pair still uses.
+  { src: rect20, alt: "AIG Explore ATL screen", x: 285, y: 760, w: 195, h: 137, z: 40 },
+  { src: rect19, alt: "", x: 400, y: 810, w: 120, h: 84, z: 45 },
 ];
 
 // Frame's own vertical center — with the images now exiting off the top/
