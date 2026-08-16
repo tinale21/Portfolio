@@ -115,3 +115,68 @@ export const QUOTE_LINES = [
 // tied to the cluster's own size — it's set purely to fit the QUOTE_LINES
 // split as exactly 2 lines at the current font size.
 export const QUOTE_WIDTH = 570;
+
+// Mobile version of the same cluster-then-spread mechanism, per direct
+// feedback ("the logic of the motion should work like how it is on
+// desktop where all the images start off at the same scale and one
+// behind another, then when users scroll the images move out and adjust
+// in scale, the quotes also fades in") — a request to replicate the
+// *mechanism* (shared cluster, one scroll-linked progress driving every
+// image plus the quote), not just the general vibe. A first mobile pass
+// used a single tall vertical column with a per-pair scroll progress
+// instead — closer to the *feel* than the actual logic, and rejected for
+// exactly that reason.
+//
+// Desktop's mechanism only works at all because its position:sticky pin
+// is *shorter* than the viewport it pins against (see this file's other
+// mobile-related comments in PhilosophySection.tsx/PhilosophyMobile-
+// Section.tsx for the fuller "why not just port it directly" reasoning).
+// A single-column stack of 8 images tall enough to read comfortably is
+// necessarily taller than a phone viewport, which is exactly why the
+// first pass abandoned pinning. The fix here isn't abandoning pinning —
+// it's making the composition itself compact enough that pinning works:
+// a 2x2 grid of pairs (mirroring desktop's own spatial structure — 2
+// pairs above the quote, 2 below) using *uniform* box sizes for every
+// large/small photo (rather than each photo's true native w/h, which is
+// what let desktop's frame sprawl wide) keeps the whole thing under one
+// typical mobile viewport height even at a comfortable image size.
+//
+// MOBILE_FIGMA_WIDTH/HEIGHT is this composition's own reference frame
+// (360x620, an aspect ratio close to 0.58 — genuinely portrait, unlike
+// desktop's 1512x982 landscape frame) — small enough in practice that at
+// a ~380-390px rendered width, the whole thing lands around 650-670px
+// tall, comfortably inside one mobile viewport's available height.
+export const MOBILE_FIGMA_WIDTH = 360;
+export const MOBILE_FIGMA_HEIGHT = 620;
+
+// Uniform box per role (not each photo's own native w/h — see comment
+// above) so every "large" photo shares one box and every "small" photo
+// shares another; object-cover crops each source photo to fit. z mirrors
+// the same "smaller rect sits in front of the larger one" rule desktop's
+// own PHILOSOPHY_IMAGES comment describes.
+export const MOBILE_PHILOSOPHY_IMAGES: PhilosophyImage[] = [
+  { src: rect23, alt: "", x: 12, y: 45, w: 150, h: 105, z: 10 },
+  { src: rect24, alt: "AIG Innovation Hub dashboard screen", x: 2, y: 20, w: 88, h: 62, z: 15 },
+  { src: rect21, alt: "", x: 198, y: 45, w: 150, h: 105, z: 20 },
+  { src: rect22, alt: "Smoky Chipotle Chicken Bowl recipe page", x: 270, y: 20, w: 88, h: 62, z: 25 },
+  { src: rect25, alt: "", x: 12, y: 470, w: 150, h: 105, z: 30 },
+  { src: rect26, alt: "Delivery app phone mockups", x: 2, y: 445, w: 88, h: 62, z: 35 },
+  { src: rect19, alt: "", x: 198, y: 470, w: 150, h: 105, z: 40 },
+  { src: rect20, alt: "AIG Explore ATL screen", x: 270, y: 445, w: 88, h: 62, z: 45 },
+];
+
+// Vertical midpoint of the gap between the top row's bottom edge (150,
+// the max of the top two large photos' bottom edges) and the bottom
+// row's top edge (445, the min of the bottom two small photos' top
+// edges) — same "midpoint of the gap between the halves" rule as
+// desktop's own CLUSTER_CENTER_Y, just computed against this frame's own
+// numbers.
+export const MOBILE_CLUSTER_CENTER_X = MOBILE_FIGMA_WIDTH / 2;
+export const MOBILE_CLUSTER_CENTER_Y = (150 + 445) / 2;
+
+// One shared starting size for every photo regardless of its final
+// large/small role — same reasoning as desktop's own CLUSTER_CARD_WIDTH/
+// HEIGHT (a true deck-of-cards stack, nothing peeking out at rest),
+// just sized down to fit this frame's own scale.
+export const MOBILE_CLUSTER_CARD_WIDTH = 130;
+export const MOBILE_CLUSTER_CARD_HEIGHT = 90;
