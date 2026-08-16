@@ -1,7 +1,8 @@
 "use client";
 
+import { useRef } from "react";
 import Image from "next/image";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import {
   PHILOSOPHY_IMAGES,
   PhilosophyImage as PhilosophyImageData,
@@ -28,23 +29,21 @@ import {
 // show its top portion while stuck — the rest never becomes visible in a
 // controlled way once un-pinned it would just scroll past all at once.
 //
-// Used instead: the reference recording's own actual pattern (images
-// peeking in from the screen edges, plain vertical text flow in between,
-// no pinning) — each of the 4 spatial pairs from PHILOSOPHY_IMAGES
-// (indices 0-1, 2-3, 4-5, 6-7 — see that file's own z-ordering comment)
-// rendered as a self-contained "large photo + smaller overlapping photo"
-// block, stacked vertically with the quote in the middle, each fading/
-// sliding in via whileInView as it scrolls into view — a standard,
-// reliable mobile pattern instead of trying to force the desktop
-// mechanism into a shape it doesn't fit.
-const FADE_UP = {
-  hidden: { opacity: 0, y: 28 },
-  visible: { opacity: 1, y: 0 },
-};
-
-const REVEAL_TRANSITION = { duration: 0.6, ease: "easeOut" as const };
-const REVEAL_VIEWPORT = { once: true, margin: "-80px" };
-
+// First pass used a one-shot whileInView fade/slide-up per pair. Per
+// direct feedback ("the intended card stack motion isn't there... it
+// should start stacked one behind another and then move out when users
+// scroll down"), replaced that with genuine scroll-linked motion instead:
+// re-watched the reference recording at denser frame intervals and
+// confirmed it's not a fixed-duration reveal-on-enter — a card visibly
+// duplicates/fans out progressively as you scroll, tracking scroll
+// position continuously (reversible scrolling back up), the same
+// "physically tied to scroll, not a timed animation" spirit as desktop's
+// mechanism, just applied per-pair instead of to one giant pinned cluster
+// (which — per the comment above — can't work at mobile's proportions).
+// Each pair's own useScroll({target}) gives a local 0-1 progress as that
+// specific pair moves through the viewport; the small photo animates from
+// stacked almost directly behind the large one at progress 0 to its
+// resting "peeking corner" offset at progress 1.
 function PhilosophyPair({
   large,
   small,
@@ -54,37 +53,73 @@ function PhilosophyPair({
   small: PhilosophyImageData;
   overlapSide: "left" | "right";
 }) {
+  const ref = useRef<HTMLDivElement>(null);
+  // "start end" -> "start center": progress 0 exactly when the pair's top
+  // edge first touches the viewport's bottom edge (i.e. the instant
+  // before any of it is visible at all), progress 1 once that same top
+  // edge has scrolled up to the viewport's vertical center. First attempt
+  // used ["start 0.9", "start 0.4"] instead — measured via Puppeteer that
+  // it front-loaded most of the transition into the ~84px sliver right as
+  // the pair started entering (barely visible), so by the time enough of
+  // it was actually on screen to perceive, it read as already mostly (or
+  // fully) spread — the "stacked" starting state was essentially never
+  // seen. This range keeps the transition's visible-on-screen fraction
+  // much higher throughout.
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "start center"],
+  });
+
+  // Small photo's resting position (its final, "spread" state) is set via
+  // plain CSS below (-top-8, right-4/left-4) — these motion values are an
+  // *additional* transform on top of that, animating from "pulled back in
+  // toward the large photo's center, stacked behind it" (progress 0) to
+  // "no extra offset, resting exactly at its designed peeking position"
+  // (progress 1). Percent-based x/y so the magnitude scales with the
+  // small photo's own rendered size rather than a fixed px guess.
+  const smallX = useTransform(scrollYProgress, [0, 1], [overlapSide === "right" ? "-45%" : "45%", "0%"]);
+  const smallY = useTransform(scrollYProgress, [0, 1], ["55%", "0%"]);
+  const smallScale = useTransform(scrollYProgress, [0, 1], [0.8, 1]);
+  // Large photo gets a much subtler settle (scale/opacity only, no
+  // position shift) — reads as "the whole pair is unpacking," not just
+  // the small photo moving independently in front of a static backdrop.
+  const largeScale = useTransform(scrollYProgress, [0, 1], [0.96, 1]);
+  const largeOpacity = useTransform(scrollYProgress, [0, 1], [0.85, 1]);
+
   return (
-    <motion.div
-      variants={FADE_UP}
-      initial="hidden"
-      whileInView="visible"
-      viewport={REVEAL_VIEWPORT}
-      transition={REVEAL_TRANSITION}
-      className="relative mx-auto w-full max-w-[320px]"
-    >
-      <div
+    <div ref={ref} className="relative mx-auto w-full max-w-[320px]">
+      <motion.div
+        style={{ scale: largeScale, opacity: largeOpacity, aspectRatio: `${large.w} / ${large.h}` }}
         className="relative w-full overflow-hidden rounded-[10px]"
-        style={{ aspectRatio: `${large.w} / ${large.h}` }}
       >
         <Image src={large.src} alt={large.alt} fill sizes="80vw" className="object-cover" />
-      </div>
+      </motion.div>
       {/* Overlapping smaller photo, peeking above one top corner of the
           large one — same "smaller rect sits in front of the larger one"
           relationship desktop's data comment describes, just simplified
           to a consistent corner (alternating left/right per pair below)
           instead of each pair's own bespoke desktop offset. */}
-      <div
+      <motion.div
+        style={{
+          x: smallX,
+          y: smallY,
+          scale: smallScale,
+          aspectRatio: `${small.w} / ${small.h}`,
+        }}
         className={`absolute -top-8 w-[48%] overflow-hidden rounded-[10px] ${
           overlapSide === "right" ? "right-4" : "left-4"
         }`}
-        style={{ aspectRatio: `${small.w} / ${small.h}` }}
       >
         <Image src={small.src} alt={small.alt} fill sizes="40vw" className="object-cover" />
-      </div>
-    </motion.div>
+      </motion.div>
+    </div>
   );
 }
+
+const QUOTE_FADE_UP = {
+  hidden: { opacity: 0, y: 28 },
+  visible: { opacity: 1, y: 0 },
+};
 
 export function PhilosophyMobileSection() {
   const pairs: { large: PhilosophyImageData; small: PhilosophyImageData; overlapSide: "left" | "right" }[] = [
@@ -105,13 +140,15 @@ export function PhilosophyMobileSection() {
             570px-wide box — joined with a space here instead so it wraps
             naturally at mobile's much narrower width, rather than forcing
             the same 2-line break at a size where it wasn't designed to
-            fit. */}
+            fit. Kept as a simple one-shot whileInView fade (unlike the
+            pairs above) — the "card stack" feedback was specifically
+            about the photos, not the quote. */}
         <motion.p
-          variants={FADE_UP}
+          variants={QUOTE_FADE_UP}
           initial="hidden"
           whileInView="visible"
-          viewport={REVEAL_VIEWPORT}
-          transition={REVEAL_TRANSITION}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
           className="text-center font-serif text-black"
           style={{ fontSize: "clamp(1.5rem, 6vw, 2rem)", fontWeight: 700 }}
         >
