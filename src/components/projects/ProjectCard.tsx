@@ -40,24 +40,54 @@ import { Project } from "./projects-data";
 // browser still refuses), so the rejection is swallowed — there's no
 // fallback UI to show either way, and the poster frame is a reasonable
 // static result if it does fail.
+//
+// Still reported broken on a real device after that first pass, on a
+// cold/first load specifically. Two follow-up changes, both defensive
+// against the most likely *timing* cause (the IntersectionObserver firing
+// before the video has buffered enough to actually start): preload="auto"
+// asks the browser to prioritize fetching this video's data immediately
+// rather than deferring it, and a second play() attempt is wired to the
+// loadeddata event (gated by the same isIntersecting flag), covering the
+// case where intersection fires first but the browser wasn't ready to
+// play yet. attemptPlay is idempotent (play() on an already-playing video
+// is a harmless no-op), so calling it from two triggers can't double-play
+// or otherwise misbehave.
+//
+// Important caveat if this still doesn't resolve it: some mobile browsers
+// expose a hard, user-level autoplay preference (iOS Safari: Settings >
+// Safari > Auto-Play > "Never Auto-Play") that blocks *all* autoplay,
+// muted or not, regardless of any JS play() call — no web-side code can
+// override that. If the symptom persists after this change, that's worth
+// checking on the actual device before assuming it's still a code bug.
 export function ProjectCard({ project }: { project: Project }) {
   const [hovered, setHovered] = useState(false);
   const showDescription = hovered && project.description;
   const videoRef = useRef<HTMLVideoElement>(null);
+  const isIntersectingRef = useRef(false);
 
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
+
+    const attemptPlay = () => {
+      if (isIntersectingRef.current) {
+        video.play().catch(() => {});
+      }
+    };
+
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
-          video.play().catch(() => {});
-        }
+        isIntersectingRef.current = entry.isIntersecting;
+        if (entry.isIntersecting) attemptPlay();
       },
       { threshold: 0.1 },
     );
     observer.observe(video);
-    return () => observer.disconnect();
+    video.addEventListener("loadeddata", attemptPlay);
+    return () => {
+      observer.disconnect();
+      video.removeEventListener("loadeddata", attemptPlay);
+    };
   }, []);
 
   return (
@@ -81,6 +111,7 @@ export function ProjectCard({ project }: { project: Project }) {
         loop
         muted
         playsInline
+        preload="auto"
         className="h-full w-full object-cover"
       />
       <motion.span

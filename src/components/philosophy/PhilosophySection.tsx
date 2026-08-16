@@ -14,6 +14,7 @@ import {
   QUOTE_WIDTH,
 } from "./philosophy-data";
 import { PhilosophyImage } from "./PhilosophyImage";
+import { PhilosophyMobileSection } from "./PhilosophyMobileSection";
 
 // How much scroll distance (px) the section stays pinned for while the
 // images spread apart — confirmed via inspecting the motion reference
@@ -78,68 +79,71 @@ export function PhilosophySection() {
   }, [progress]);
 
   return (
-    <div
-      ref={wrapperRef}
-      data-nav-theme="light"
-      style={{ height: `calc(100vh + ${PIN_SCROLL_DISTANCE}px)` }}
-      className="relative bg-white"
-    >
-      <div className="sticky top-0 overflow-hidden">
-        <div
-          ref={containerRef}
-          className="relative mx-auto w-full"
-          style={{ aspectRatio: `${FIGMA_WIDTH} / ${FIGMA_HEIGHT}` }}
-        >
-          {/* Static positioning/centering lives on this plain wrapper —
-              motion.p below needs its own transform (opacity/scale) free
-              of the -50%/-50% centering translate, since a motion
-              component's animated transform props replace its element's
-              whole CSS transform rather than composing with a className
-              like -translate-x-1/2. */}
+    <>
+      <PhilosophyMobileSection />
+      <div
+        ref={wrapperRef}
+        data-nav-theme="light"
+        style={{ height: `calc(100vh + ${PIN_SCROLL_DISTANCE}px)` }}
+        className="relative hidden bg-white lg:block"
+      >
+        <div className="sticky top-0 overflow-hidden">
           <div
-            className="absolute -translate-x-1/2 -translate-y-1/2"
-            style={{
-              left: `${(CLUSTER_CENTER_X / FIGMA_WIDTH) * 100}%`,
-              top: `${(clusterCenterY / FIGMA_HEIGHT) * 100}%`,
-              width: `${(QUOTE_WIDTH / FIGMA_WIDTH) * 100}%`,
-            }}
+            ref={containerRef}
+            className="relative mx-auto w-full"
+            style={{ aspectRatio: `${FIGMA_WIDTH} / ${FIGMA_HEIGHT}` }}
           >
-            <motion.p
-              className="text-center font-serif text-black"
+            {/* Static positioning/centering lives on this plain wrapper —
+                motion.p below needs its own transform (opacity/scale) free
+                of the -50%/-50% centering translate, since a motion
+                component's animated transform props replace its element's
+                whole CSS transform rather than composing with a className
+                like -translate-x-1/2. */}
+            <div
+              className="absolute -translate-x-1/2 -translate-y-1/2"
               style={{
-                fontSize: "clamp(1.35rem, 1.9vw, 1.9rem)",
-                fontWeight: 700,
-                opacity: quoteOpacity,
-                scale: quoteScale,
+                left: `${(CLUSTER_CENTER_X / FIGMA_WIDTH) * 100}%`,
+                top: `${(clusterCenterY / FIGMA_HEIGHT) * 100}%`,
+                width: `${(QUOTE_WIDTH / FIGMA_WIDTH) * 100}%`,
               }}
             >
-              {/* Opening/closing marks hang outside the centered text
-                  block via a negative margin, instead of sitting flush
-                  with the first/last line — the classic "hanging
-                  punctuation" look, implemented by hand since CSS's own
-                  hanging-punctuation property only has Safari support. */}
-              <span style={{ marginLeft: "-0.45em" }}>{QUOTE_OPEN}</span>
-              {QUOTE_LINES.map((line, i) => (
-                <span key={line}>
-                  {line}
-                  {i < QUOTE_LINES.length - 1 && <br />}
-                </span>
-              ))}
-              <span style={{ marginRight: "-0.45em" }}>{QUOTE_CLOSE}</span>
-            </motion.p>
-          </div>
+              <motion.p
+                className="text-center font-serif text-black"
+                style={{
+                  fontSize: "clamp(1.35rem, 1.9vw, 1.9rem)",
+                  fontWeight: 700,
+                  opacity: quoteOpacity,
+                  scale: quoteScale,
+                }}
+              >
+                {/* Opening/closing marks hang outside the centered text
+                    block via a negative margin, instead of sitting flush
+                    with the first/last line — the classic "hanging
+                    punctuation" look, implemented by hand since CSS's own
+                    hanging-punctuation property only has Safari support. */}
+                <span style={{ marginLeft: "-0.45em" }}>{QUOTE_OPEN}</span>
+                {QUOTE_LINES.map((line, i) => (
+                  <span key={line}>
+                    {line}
+                    {i < QUOTE_LINES.length - 1 && <br />}
+                  </span>
+                ))}
+                <span style={{ marginRight: "-0.45em" }}>{QUOTE_CLOSE}</span>
+              </motion.p>
+            </div>
 
-          {PHILOSOPHY_IMAGES.map((image, i) => (
-            <PhilosophyImage
-              key={i}
-              {...image}
-              progress={progress}
-              pxScale={pxScale}
-              clusterCenterY={clusterCenterY}
-            />
-          ))}
+            {PHILOSOPHY_IMAGES.map((image, i) => (
+              <PhilosophyImage
+                key={i}
+                {...image}
+                progress={progress}
+                pxScale={pxScale}
+                clusterCenterY={clusterCenterY}
+              />
+            ))}
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
