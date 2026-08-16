@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useMotionValue, useTransform } from "framer-motion";
+import { motion, useMotionValue, useTransform } from "framer-motion";
 import { HeroCollage } from "./HeroCollage";
 import { CURSOR_WIDTH, PREFIX, TypewriterHeadline } from "./TypewriterHeadline";
 
@@ -79,6 +79,28 @@ const HEADLINE_FONT_SIZE_VW = (90 / 1512) * 100;
 // it could use a little more room to breathe.
 const HEADLINE_HOLD = 350;
 
+// Fades the headline in over the first 5% of scroll progress (roughly
+// the first ~40px of scroll on a typical phone) — this is what actually
+// guarantees "still hidden until scroll" now that the layout-distance
+// floor above has been relaxed: at scrollY=0, progress is exactly 0, so
+// opacity is exactly 0, regardless of where the headline's box actually
+// sits in the page's layout.
+//
+// Mobile-only: on desktop, block1 still stays a full viewport tall, so
+// I first assumed the headline would never be geometrically reachable
+// until progress was already well past this range, making the fade a
+// no-op there. Checked that assumption directly instead of trusting it —
+// it was wrong: the headline's *box* enters the viewport (by simple
+// position, ignoring opacity) at a much smaller scroll distance than
+// where this range finishes ramping to 1, so applying this unconditionally
+// would add a real, visible fade-in to desktop's headline reveal that
+// didn't exist before (previously: instant full-opacity the moment it
+// scrolled into view). Gated below via isMobileViewport so desktop always
+// renders at a flat, static opacity: 1 — matching its original behavior
+// exactly, not just "close enough."
+const HEADLINE_OPACITY_RANGE: [number, number] = [0, 0.05];
+const MOBILE_BREAKPOINT_QUERY = "(min-width: 1024px)"; // Tailwind's `lg`
+
 export function HeroSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const stickyRef = useRef<HTMLDivElement>(null);
@@ -87,6 +109,15 @@ export function HeroSection() {
   const progress = useMotionValue(0);
   const collageY = useTransform(progress, EASE_STOPS, EASE_OUTPUT);
   const collageRotateX = useTransform(progress, EASE_STOPS, ROTATE_X_OUTPUT);
+  const headlineOpacity = useTransform(progress, HEADLINE_OPACITY_RANGE, [0, 1]);
+  // Defaults true (hidden/fading, the mobile behavior) rather than false —
+  // on an actual mobile device, defaulting to "desktop" here would render
+  // one static opacity:1 frame before this effect corrects it, flashing
+  // the headline visible pre-scroll for a frame. Defaulting to "mobile"
+  // instead means the worst case on desktop is a harmless opacity:0-then-1
+  // correction before the headline is even in its (already offscreen at
+  // load) viewport position.
+  const [isMobileViewport, setIsMobileViewport] = useState(true);
   const [headlineArrived, setHeadlineArrived] = useState(false);
   // Sizes the pin wrapper as exactly (headline's natural height) + HOLD,
   // same reasoning as ConnectSection's wrapperHeightPx: without measuring
@@ -143,6 +174,14 @@ export function HeroSection() {
   }, []);
 
   useEffect(() => {
+    const mql = window.matchMedia(MOBILE_BREAKPOINT_QUERY);
+    setIsMobileViewport(!mql.matches);
+    const handleChange = (e: MediaQueryListEvent) => setIsMobileViewport(!e.matches);
+    mql.addEventListener("change", handleChange);
+    return () => mql.removeEventListener("change", handleChange);
+  }, []);
+
+  useEffect(() => {
     function updatePinHeight() {
       // Measuring stickyRef (headline + the trailing background-extending
       // spacer together), not headlineRef alone — the sticky child's real
@@ -178,8 +217,18 @@ export function HeroSection() {
       // headline's own rect keeps the trigger correct regardless of how
       // its position or the collage's travel distance are tuned later.
       // Latches on first visibility and never resets, even scrolling back up.
+      //
+      // raw > 0 guards against firing at scrollY=0 on mobile: now that
+      // the mobile block's layout height is intentionally less than one
+      // full viewport (MOBILE_MIN_HEIGHT_VH), the headline's geometric
+      // rect can already satisfy the intersection check before any
+      // scrolling has happened at all — it's only actually *hidden* pre-
+      // scroll via headlineOpacity (opacity 0 until progress > 0). Without
+      // this guard the typewriter would start (and likely finish) typing
+      // while still invisible, so it'd just appear fully-typed the moment
+      // opacity faded in, instead of visibly typing out.
       const headline = headlineRef.current;
-      if (headline) {
+      if (headline && raw > 0) {
         const rect = headline.getBoundingClientRect();
         if (rect.top < window.innerHeight && rect.bottom > NAV_HEIGHT) {
           setHeadlineArrived(true);
@@ -203,20 +252,31 @@ export function HeroSection() {
       className="bg-[#262626]"
     >
       {/* First screen: collage only, unchanged from the approved layout on
-          desktop (lg:items-center, unchanged). On mobile, top-aligned
-          instead per direct feedback ("shift the photo collage up and
-          make the typewriter closer to the photo collage but still not
-          visible until users scroll down") — this section's minHeight is
-          still exactly one viewport (nav-adjusted) so the headline below
-          stays fully offscreen until the user scrolls at all (that floor
-          can't be reduced without revealing it prematurely — see
-          collage-layout.ts's mobileCollageLayout comment for how the
-          *collage's own* size was shrunk instead, which is what actually
-          moved the needle on the gap being smaller now, not this
-          alignment change alone). pt-[89px] gives it breathing room off
-          the nav rather than touching it directly (bumped from an
-          initial pt-6, then pt-16, then pt-[84px], per direct feedback to
-          shift it down further each time).
+          desktop (lg:items-center, lg:min-h-[calc(100vh-64px)], both
+          unchanged). On mobile, top-aligned instead per direct feedback
+          ("shift the photo collage up and make the typewriter closer to
+          the photo collage but still not visible until users scroll
+          down"), with a *reduced* min-height (78vh instead of the full
+          100vh-nav) per further direct feedback ("is there a way so that
+          the typewriter moves up but is still hidden until the scroll")
+          — the headline is no longer hidden by sheer layout distance on
+          mobile, it's hidden by headlineOpacity instead (see that
+          constant's comment), which is what actually guarantees "not
+          visible until scroll" now, not this min-height. 78vh is a first
+          pass, not derived from anything — free to tune up/down, since
+          correctness no longer depends on it. The "64" in both min-h
+          values is a literal copy of NAV_HEIGHT, not a template-
+          interpolated reference to it — Tailwind's arbitrary-value classes
+          have to be static text for its scanner to pick them up, so a
+          `${NAV_HEIGHT}` interpolation here would silently fail to
+          generate the class at build time. Keep both literals in sync
+          with NAV_HEIGHT by hand if that constant ever changes (same
+          manual-sync caveat NAV_HEIGHT's own comment already flags for
+          collage-layout.ts).
+          pt-[89px] gives the collage breathing room off the nav rather
+          than touching it directly (bumped from an initial pt-6, then
+          pt-16, then pt-[84px], per direct feedback to shift it down
+          further each time).
           overflow-hidden lives here (not on the section itself anymore) —
           it clips the collage photos as they translate/tilt past their
           own bounds, but having it on an ancestor of the pinned headline
@@ -228,8 +288,7 @@ export function HeroSection() {
           position just decreased 1:1 with scroll the whole time, until
           this was scoped down to only wrap what actually needs clipping. */}
       <div
-        className="flex items-start overflow-hidden pt-[89px] lg:items-center lg:pt-0"
-        style={{ minHeight: `calc(100vh - ${NAV_HEIGHT}px)` }}
+        className="flex items-start overflow-hidden pt-[89px] min-h-[calc(78vh-64px)] lg:items-center lg:pt-0 lg:min-h-[calc(100vh-64px)]"
       >
         <HeroCollage
           y={collageY}
@@ -271,9 +330,20 @@ export function HeroSection() {
               to stay below the fold, which is already guaranteed by
               sitting after a full-viewport-tall sibling above, not by its
               own padding. Bottom padding is kept larger for breathing
-              room before whatever section follows. */}
-          <div
+              room before whatever section follows.
+              motion.div + headlineOpacity: on mobile this is now the
+              *actual* mechanism keeping the headline hidden pre-scroll
+              (see headlineOpacity's comment) — the block above no longer
+              guarantees that by itself. Gated to mobile only via
+              isMobileViewport: desktop renders a flat opacity: 1 always,
+              matching its original (never-faded, instant-reveal) behavior
+              exactly — see HEADLINE_OPACITY_RANGE's comment for why this
+              gate exists (an earlier version applied the fade
+              unconditionally on the assumption it'd be a no-op on
+              desktop; checking that directly showed it wasn't). */}
+          <motion.div
             ref={headlineRef}
+            style={{ opacity: isMobileViewport ? headlineOpacity : 1 }}
             className="px-5 pt-0 pb-24 sm:px-8 sm:pt-1 sm:pb-32 lg:px-8 lg:pt-[2px] lg:pb-40"
           >
             <h1
@@ -306,7 +376,7 @@ export function HeroSection() {
               ))}
               <TypewriterHeadline phrases={PHRASES} start={headlineArrived} />
             </h1>
-          </div>
+          </motion.div>
 
           {/* Extends the section's black background past the headline's
               own bottom padding so the space below the headline matches
