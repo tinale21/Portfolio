@@ -48,20 +48,23 @@ export function PhilosophyMobileImage({
   const scaleY = useTransform(progress, [0, 1], [clusterScaleY, 1]);
 
   return (
-    // Rounding lives on a *separate, untransformed* inner div rather than
-    // on this same element — found via direct inspection (computed style
-    // showed overflow:hidden + border-radius:10px correctly, but the
-    // browser's actual paint still rendered a hard square corner) that
-    // combining overflow-hidden + border-radius + an independent-axis
-    // scaleX/scaleY transform on the *same* element can fail to clip
-    // correctly, even though isolated test pages with the same transform
-    // values rendered fine — a compositing-layer edge case specific to
-    // this page's actual complexity, not reproducible in a minimal
-    // repro. Splitting "the element that transforms" from "the element
-    // that clips/rounds" sidesteps it: the outer div carries position and
-    // the scroll-driven transform with no rounding of its own, and the
-    // inner div (100% of the outer, never transformed itself) carries
-    // overflow-hidden + rounded-[10px] and the actual image.
+    // Two layered fixes for corner rounding not rendering, both kept:
+    // (1) splitting "the element that transforms" from "the element that
+    // clips/rounds" — the outer div carries position and the scroll-
+    // driven transform with no rounding of its own; the inner div (100%
+    // of the outer, never transformed itself) does the clipping. First
+    // attempt at just this alone fixed it in a Chrome test but a real
+    // device screenshot on Safari showed *no* image in the composition
+    // rounded at all afterward — worse than the original bug, and not
+    // reproduced in any Chrome test throughout this, so it reads as a
+    // Safari-specific compositing/clipping bug for `overflow: hidden` +
+    // `border-radius` combined with a transformed ancestor, not the same
+    // failure mode diagnosed on Chrome. (2) clip-path instead of
+    // overflow-hidden + border-radius for the actual clipping — a
+    // different, more explicit CSS clipping primitive that doesn't rely
+    // on the overflow/box-model interaction with transforms the way
+    // overflow-hidden does, and is generally more consistent across
+    // browsers for exactly this transformed-ancestor scenario.
     <motion.div
       className="absolute"
       style={{
@@ -76,7 +79,7 @@ export function PhilosophyMobileImage({
         scaleY,
       }}
     >
-      <div className="h-full w-full overflow-hidden rounded-[10px]">
+      <div className="h-full w-full" style={{ clipPath: "inset(0px round 10px)" }}>
         <Image src={src} alt={alt} fill sizes="40vw" className="object-cover" />
       </div>
     </motion.div>
