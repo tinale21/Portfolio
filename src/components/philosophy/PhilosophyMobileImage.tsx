@@ -48,8 +48,22 @@ export function PhilosophyMobileImage({
   const scaleY = useTransform(progress, [0, 1], [clusterScaleY, 1]);
 
   return (
+    // Rounding lives on a *separate, untransformed* inner div rather than
+    // on this same element — found via direct inspection (computed style
+    // showed overflow:hidden + border-radius:10px correctly, but the
+    // browser's actual paint still rendered a hard square corner) that
+    // combining overflow-hidden + border-radius + an independent-axis
+    // scaleX/scaleY transform on the *same* element can fail to clip
+    // correctly, even though isolated test pages with the same transform
+    // values rendered fine — a compositing-layer edge case specific to
+    // this page's actual complexity, not reproducible in a minimal
+    // repro. Splitting "the element that transforms" from "the element
+    // that clips/rounds" sidesteps it: the outer div carries position and
+    // the scroll-driven transform with no rounding of its own, and the
+    // inner div (100% of the outer, never transformed itself) carries
+    // overflow-hidden + rounded-[10px] and the actual image.
     <motion.div
-      className="absolute overflow-hidden rounded-[10px]"
+      className="absolute"
       style={{
         left: `${(x / MOBILE_FIGMA_WIDTH) * 100}%`,
         top: `${(y / MOBILE_FIGMA_HEIGHT) * 100}%`,
@@ -62,7 +76,9 @@ export function PhilosophyMobileImage({
         scaleY,
       }}
     >
-      <Image src={src} alt={alt} fill sizes="40vw" className="object-cover" />
+      <div className="h-full w-full overflow-hidden rounded-[10px]">
+        <Image src={src} alt={alt} fill sizes="40vw" className="object-cover" />
+      </div>
     </motion.div>
   );
 }
