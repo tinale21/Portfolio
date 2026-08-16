@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { BASE_PATH } from "@/lib/base-path";
 import { BADGE_FADE_TRANSITION, BADGE_LAYOUT_TRANSITION } from "./badge-transition";
@@ -27,9 +27,38 @@ import { Project } from "./projects-data";
 // Wayve's, so the incoming text visibly stuck out past the pill's white
 // background for the transition's first ~100ms. Clipping to the pill's
 // own (animating) width turns that into a clean wipe-reveal instead.
+// Reported on mobile: cards were showing a play button and not
+// autoplaying — this is a well-known mobile-browser gap, not something
+// specific to this component. The bare `autoPlay` HTML attribute is
+// unreliable on mobile Safari/Chrome, especially with several videos
+// autoplaying on the same page at once (this grid has one per project);
+// browsers commonly ignore it there even though it's muted+playsInline
+// and would otherwise be allowed to autoplay. The robust fix is to also
+// explicitly call video.play() from JS once the element has mounted and
+// is in view, via IntersectionObserver, rather than relying solely on
+// the attribute. play() returns a promise that can reject (e.g. if the
+// browser still refuses), so the rejection is swallowed — there's no
+// fallback UI to show either way, and the poster frame is a reasonable
+// static result if it does fail.
 export function ProjectCard({ project }: { project: Project }) {
   const [hovered, setHovered] = useState(false);
   const showDescription = hovered && project.description;
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          video.play().catch(() => {});
+        }
+      },
+      { threshold: 0.1 },
+    );
+    observer.observe(video);
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <Link
@@ -42,6 +71,7 @@ export function ProjectCard({ project }: { project: Project }) {
       }`}
     >
       <video
+        ref={videoRef}
         // videoSrc/posterSrc are plain public/ paths, not next/image or
         // next/link — Next doesn't auto-prefix those with basePath, so it
         // has to happen here (see src/lib/base-path.ts).
