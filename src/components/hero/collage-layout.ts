@@ -220,25 +220,19 @@ export const desktopCollageLayout: CollagePhotoConfig[] = [
 // required to keep the headline hidden pre-scroll) blank gap before the
 // headline is a single gap below the cluster, not split above and below.
 //
-// z-index: the two bottom photos (constructionSite, presentationRoom)
-// render fully legible in the reference despite overlapping the portrait's
-// bottom corners, so they're given higher z than the portrait (in front of
-// it) — everything else sits behind the portrait, peeking only where the
-// portrait's own box doesn't reach. No rotation on any of the 9 — the
-// reference frame's edges all read axis-aligned, unlike the earlier
-// hand-designed passes which added rotation for a "candid stack" feel.
+// z-index: constructionSite renders fully legible in the reference despite
+// overlapping the portrait's bottom-left corner, so it's given higher z
+// than the portrait (in front of it). Everything else sits behind the
+// portrait, peeking only where the portrait's own box doesn't reach — with
+// two explicit orderings among that back tier per direct feedback:
+// lobbyWalk in front of scadproGroup (but still behind the portrait), and
+// presentationRoom behind both the portrait and officeMeeting, but in
+// front of wallCritique. No rotation on any of the 9 — the reference
+// frame's edges all read axis-aligned, unlike the earlier hand-designed
+// passes which added rotation for a "candid stack" feel.
 export const mobileCollageAspect = "349 / 452";
 
 export const mobileCollageLayout: CollagePhotoConfig[] = [
-  {
-    src: officeMeeting,
-    alt: "",
-    top: "77.876%",
-    left: "39.542%",
-    width: "24.928%",
-    height: "17.478%",
-    z: 1,
-  },
   {
     src: aigKiosk,
     alt: "",
@@ -246,7 +240,7 @@ export const mobileCollageLayout: CollagePhotoConfig[] = [
     left: "69.914%",
     width: "30.086%",
     height: "31.416%",
-    z: 2,
+    z: 1,
   },
   {
     src: workshopTable,
@@ -255,6 +249,15 @@ export const mobileCollageLayout: CollagePhotoConfig[] = [
     left: "32.951%",
     width: "40.688%",
     height: "40.708%",
+    z: 2,
+  },
+  {
+    src: scadproGroup,
+    alt: "Group photo in front of a screen reading Georgia International Convention Center and SCADpro",
+    top: "35.841%",
+    left: "0%",
+    width: "68.767%",
+    height: "36.062%",
     z: 3,
   },
   {
@@ -267,22 +270,31 @@ export const mobileCollageLayout: CollagePhotoConfig[] = [
     z: 4,
   },
   {
-    src: scadproGroup,
-    alt: "Group photo in front of a screen reading Georgia International Convention Center and SCADpro",
-    top: "35.841%",
-    left: "0%",
-    width: "68.767%",
-    height: "36.062%",
-    z: 5,
-  },
-  {
     src: wallCritique,
     alt: "Students reviewing pinned-up research boards on a gallery wall",
     top: "45.133%",
     left: "46.991%",
     width: "45.845%",
     height: "34.956%",
+    z: 5,
+  },
+  {
+    src: presentationRoom,
+    alt: "Audience seated for a presentation in a lounge space",
+    top: "77.876%",
+    left: "61.032%",
+    width: "38.682%",
+    height: "22.124%",
     z: 6,
+  },
+  {
+    src: officeMeeting,
+    alt: "",
+    top: "77.876%",
+    left: "39.542%",
+    width: "24.928%",
+    height: "17.478%",
+    z: 7,
   },
   {
     src: portrait,
@@ -293,15 +305,6 @@ export const mobileCollageLayout: CollagePhotoConfig[] = [
     height: "75.664%",
     z: 20,
     priority: true,
-  },
-  {
-    src: presentationRoom,
-    alt: "Audience seated for a presentation in a lounge space",
-    top: "77.876%",
-    left: "61.032%",
-    width: "38.682%",
-    height: "22.124%",
-    z: 30,
   },
   {
     src: constructionSite,
