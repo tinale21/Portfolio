@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { motion, useMotionValue, useTransform } from "framer-motion";
 import {
   MOBILE_CLUSTER_CENTER_Y,
@@ -58,23 +58,18 @@ const MOBILE_PIN_SCROLL_DISTANCE = 500;
 
 export function PhilosophyMobileSection() {
   const wrapperRef = useRef<HTMLDivElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
   const progress = useMotionValue(0);
-  const [pxScale, setPxScale] = useState(1);
   const quoteOpacity = useTransform(progress, [0.3, 1], [0, 1]);
   const quoteScale = useTransform(progress, [0.3, 1], [0.9, 1]);
 
   useEffect(() => {
     function update() {
       const wrapper = wrapperRef.current;
-      const container = containerRef.current;
-      if (!wrapper || !container) return;
+      if (!wrapper) return;
 
       const wrapperTop = wrapper.getBoundingClientRect().top + window.scrollY;
       const raw = (window.scrollY - wrapperTop) / MOBILE_PIN_SCROLL_DISTANCE;
       progress.set(Math.min(1, Math.max(0, raw)));
-
-      setPxScale(container.getBoundingClientRect().width / MOBILE_FIGMA_WIDTH);
     }
 
     update();
@@ -95,7 +90,6 @@ export function PhilosophyMobileSection() {
     >
       <div className="sticky top-0 flex min-h-screen flex-col justify-center overflow-hidden px-5">
         <div
-          ref={containerRef}
           // overflow-hidden here (not just on the outer sticky/viewport-
           // sized wrapper above) so the images can actually exit the
           // *frame* rather than just the screen — see
@@ -134,7 +128,7 @@ export function PhilosophyMobileSection() {
           </div>
 
           {MOBILE_PHILOSOPHY_IMAGES.map((image, i) => (
-            <PhilosophyMobileImage key={i} {...image} progress={progress} pxScale={pxScale} />
+            <PhilosophyMobileImage key={i} {...image} progress={progress} />
           ))}
         </div>
       </div>
