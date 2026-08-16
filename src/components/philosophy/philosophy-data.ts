@@ -165,14 +165,14 @@ export const MOBILE_FIGMA_HEIGHT = 620;
 // z mirrors the same "smaller rect sits in front of the larger one" rule
 // desktop's own PHILOSOPHY_IMAGES comment describes.
 export const MOBILE_PHILOSOPHY_IMAGES: PhilosophyImage[] = [
-  { src: rect23, alt: "", x: -60, y: -220, w: 150, h: 105, z: 10 },
-  { src: rect24, alt: "AIG Innovation Hub dashboard screen", x: -100, y: -260, w: 88, h: 62, z: 15 },
-  { src: rect21, alt: "", x: 270, y: -220, w: 150, h: 105, z: 20 },
-  { src: rect22, alt: "Smoky Chipotle Chicken Bowl recipe page", x: 380, y: -260, w: 88, h: 62, z: 25 },
-  { src: rect25, alt: "", x: -60, y: 750, w: 150, h: 105, z: 30 },
-  { src: rect26, alt: "Delivery app phone mockups", x: -100, y: 790, w: 88, h: 62, z: 35 },
-  { src: rect19, alt: "", x: 270, y: 750, w: 150, h: 105, z: 40 },
-  { src: rect20, alt: "AIG Explore ATL screen", x: 380, y: 790, w: 88, h: 62, z: 45 },
+  { src: rect23, alt: "", x: -75, y: -250, w: 195, h: 137, z: 10 },
+  { src: rect24, alt: "AIG Innovation Hub dashboard screen", x: -125, y: -300, w: 120, h: 84, z: 15 },
+  { src: rect21, alt: "", x: 285, y: -250, w: 195, h: 137, z: 20 },
+  { src: rect22, alt: "Smoky Chipotle Chicken Bowl recipe page", x: 400, y: -300, w: 120, h: 84, z: 25 },
+  { src: rect25, alt: "", x: -75, y: 760, w: 195, h: 137, z: 30 },
+  { src: rect26, alt: "Delivery app phone mockups", x: -125, y: 810, w: 120, h: 84, z: 35 },
+  { src: rect19, alt: "", x: 285, y: 760, w: 195, h: 137, z: 40 },
+  { src: rect20, alt: "AIG Explore ATL screen", x: 400, y: 810, w: 120, h: 84, z: 45 },
 ];
 
 // Frame's own vertical center — with the images now exiting off the top/
@@ -186,7 +186,10 @@ export const MOBILE_CLUSTER_CENTER_Y = MOBILE_FIGMA_HEIGHT / 2;
 // One shared starting size for every photo regardless of its final
 // large/small role — same reasoning as desktop's own CLUSTER_CARD_WIDTH/
 // HEIGHT (a true deck-of-cards stack, nothing peeking out at rest).
-// Bumped up from an initial 130x90 per direct feedback that the starting
-// cluster read too small.
-export const MOBILE_CLUSTER_CARD_WIDTH = 210;
-export const MOBILE_CLUSTER_CARD_HEIGHT = 146;
+// Bumped up twice per direct feedback that the starting cluster read too
+// small: first 130x90 -> 210x146, then 210x146 -> 270x190 (this second
+// bump alongside the ~30% size increase on every MOBILE_PHILOSOPHY_IMAGES
+// entry above, keeping the same "starts bigger than its own final size"
+// relationship as before rather than shrinking that gap).
+export const MOBILE_CLUSTER_CARD_WIDTH = 270;
+export const MOBILE_CLUSTER_CARD_HEIGHT = 190;

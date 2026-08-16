@@ -55,6 +55,13 @@ Continuing the mobile-issues pass: the home page's "Design is not just what we m
 - Added `overflow-hidden` to the composition's own container (`PhilosophyMobileSection.tsx`), not just the outer sticky/viewport-sized wrapper desktop's version relies on — without this, images exiting the *frame's* bounds would still be visible within the (viewport-sized) outer sticky area, since that's a much bigger box than the composition itself.
 - Verified: `npx tsc --noEmit` clean; screenshots at the three progress stages confirm the bigger starting cluster and that by progress=1 all 8 images have fully exited (frame renders as just the quote, nothing else visible) — a direct match to the reference's own behavior; zero horizontal overflow; desktop screenshot still pixel-identical; `NEXT_PUBLIC_BASE_PATH=/Portfolio npm run build` succeeds.
 
+## Follow-up: bigger again, plus corner-rounding check
+
+- "can you make it bigger on mobile; also check that the corner rounding are the same"
+- Corner rounding: checked directly via computed style rather than assuming — both `PhilosophyImage.tsx` (desktop) and `PhilosophyMobileImage.tsx` use `rounded-[10px]`; confirmed via Puppeteer that both render an actual computed `border-radius: 10px` (40 matching elements found at each breakpoint, covering every image across both hero cluster instances on the page). Already consistent, no change needed there.
+- Size: bumped every `MOBILE_PHILOSOPHY_IMAGES` entry's `w`/`h` by ~30% (large photos 150x105 -> 195x137, small photos 88x62 -> 120x84), and `MOBILE_CLUSTER_CARD_WIDTH/HEIGHT` from 210x146 -> 270x190 to match, preserving the same "starts bigger than its own final size" relationship rather than shrinking that gap. Exit `y` offsets given a bit more headroom (e.g. -220 -> -250) so the now-larger boxes still clear the frame bounds with margin, keeping the overflow-hidden clipping solid.
+- Verified: `npx tsc --noEmit` clean; screenshot confirms a visibly larger starting cluster; zero horizontal overflow; desktop screenshot still pixel-identical; `NEXT_PUBLIC_BASE_PATH=/Portfolio npm run build` succeeds.
+
 ## Remaining mobile work
 
 None identified yet beyond what's already been addressed in this mobile-issues pass (hero collage, Selected Projects autoplay, this section). Other mobile-only issues elsewhere on the site have not yet been identified.
