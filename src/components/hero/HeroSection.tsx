@@ -213,10 +213,10 @@ export function HeroSection() {
           collage-layout.ts's mobileCollageLayout comment for how the
           *collage's own* size was shrunk instead, which is what actually
           moved the needle on the gap being smaller now, not this
-          alignment change alone). pt-[84px] gives it breathing room off
+          alignment change alone). pt-[89px] gives it breathing room off
           the nav rather than touching it directly (bumped from an
-          initial pt-6, then pt-16, per direct feedback to shift it down
-          further each time).
+          initial pt-6, then pt-16, then pt-[84px], per direct feedback to
+          shift it down further each time).
           overflow-hidden lives here (not on the section itself anymore) —
           it clips the collage photos as they translate/tilt past their
           own bounds, but having it on an ancestor of the pinned headline
@@ -228,7 +228,7 @@ export function HeroSection() {
           position just decreased 1:1 with scroll the whole time, until
           this was scoped down to only wrap what actually needs clipping. */}
       <div
-        className="flex items-start overflow-hidden pt-[84px] lg:items-center lg:pt-0"
+        className="flex items-start overflow-hidden pt-[89px] lg:items-center lg:pt-0"
         style={{ minHeight: `calc(100vh - ${NAV_HEIGHT}px)` }}
       >
         <HeroCollage

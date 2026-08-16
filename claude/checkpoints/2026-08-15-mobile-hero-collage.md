@@ -70,6 +70,10 @@ Started a new phase of work: fixing mobile-only layout issues across the site, b
 - z-order: translated the two instructions into explicit constraints — lobbyWalk (R40) between scadproGroup (R39) and portrait (R46); presentationRoom (R44) between wallCritique (R43) and both officeMeeting (R45) and portrait (R46). This required moving presentationRoom out of the "in front of portrait" tier it was in before (z:30, alongside constructionSite) into the "behind portrait" tier — reassigned the whole back tier as `aigKiosk:1, workshopTable:2, scadproGroup:3, lobbyWalk:4, wallCritique:5, presentationRoom:6, officeMeeting:7`, all still below `portrait:20`. `constructionSite` (not mentioned) stays untouched at z:31, still in front of the portrait.
 - Verified precisely, not just by eye: read each mobile photo's actual computed `z-index` back out of the DOM and confirmed `scadproGroup(3) < lobbyWalk(4) < portrait(20)` and `wallCritique(5) < presentationRoom(6) < officeMeeting(7) < portrait(20)` — both requested orderings hold exactly. Also confirmed the collage box's top position moved by exactly 20px. `npx tsc --noEmit` clean; zero horizontal overflow; desktop screenshot still pixel-identical; `NEXT_PUBLIC_BASE_PATH=/Portfolio npm run build` succeeds.
 
+## Follow-up: shift down 5px more
+
+- "shift it 5px down" — bumped `HeroSection.tsx`'s mobile-only top padding from `pt-[84px]` to `pt-[89px]`. Confirmed via measurement the collage box moved down by exactly 5px (top 149px → 154px); headline still confirmed hidden at scrollY=0. `npx tsc --noEmit` clean; `NEXT_PUBLIC_BASE_PATH=/Portfolio npm run build` succeeds.
+
 ## Remaining mobile work
 
 User said "there are some things that look off" about mobile generally — this checkpoint only covers the home page hero collage. Other mobile-only issues elsewhere on the site have not yet been identified or addressed.
