@@ -140,7 +140,14 @@ export function FramerRedesignFinalDesign() {
           loop
           muted
           playsInline
-          className="h-full w-full object-cover"
+          // Per direct feedback, the video must never crop on mobile —
+          // object-contain guarantees the full frame is always visible
+          // (letterboxing into the bezel's own #1D1D1D background if
+          // the frame and video aspect ratios ever drift apart, rather
+          // than cutting off content) — kept desktop unchanged at
+          // object-cover as before, matching "keep the black outline
+          // the same thickness."
+          className="h-full w-full object-contain lg:object-cover"
         />
       </div>
 

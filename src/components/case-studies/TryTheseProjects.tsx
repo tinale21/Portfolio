@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { BASE_PATH } from "@/lib/base-path";
@@ -52,12 +53,44 @@ import { PROJECTS } from "@/components/projects/projects-data";
 const CARD_WIDTH = 530;
 const CARD_HEIGHT = 286;
 const CARD_GAP = 32;
+// Per direct feedback, the 530x286 card (fine on desktop) was wider
+// than the entire mobile viewport, so only a sliver of one card's
+// video was ever visible at a time as the marquee scrolled by. Scaled
+// down to roughly half size, keeping the same ~1.85:1 aspect ratio
+// (object-cover on the video absorbs the small rounding difference,
+// same as it already does for any source video whose native ratio
+// doesn't match the card exactly).
+const MOBILE_CARD_WIDTH = 280;
+const MOBILE_CARD_HEIGHT = 150;
+const MOBILE_CARD_GAP = 16;
 const LOOP_DURATION_SECONDS = 30;
+// Matches Tailwind's `lg`, same query HeroSection.tsx already uses for
+// its own viewport-dependent motion.
+const DESKTOP_QUERY = "(min-width: 1024px)";
 
 export function TryTheseProjects({ currentSlug }: { currentSlug: string }) {
   const projects = PROJECTS.filter((project) => project.slug !== currentSlug);
-  const setWidth = projects.length * (CARD_WIDTH + CARD_GAP);
   const track = [...projects, ...projects, ...projects];
+
+  // The marquee's translateX distance has to match whichever card size
+  // is actually rendered, or the loop's snap-back point drifts from
+  // where the 2nd copy of the strip visually begins — same matchMedia-
+  // driven pattern already used for the Framer bezel/tilt fixes.
+  // isDesktop starts false (mobile sizing) until this effect resolves
+  // it on mount, same one-frame correction those fixes already accept.
+  const [isDesktop, setIsDesktop] = useState(false);
+  useEffect(() => {
+    const mql = window.matchMedia(DESKTOP_QUERY);
+    const update = () => setIsDesktop(mql.matches);
+    update();
+    mql.addEventListener("change", update);
+    return () => mql.removeEventListener("change", update);
+  }, []);
+
+  const cardWidth = isDesktop ? CARD_WIDTH : MOBILE_CARD_WIDTH;
+  const cardHeight = isDesktop ? CARD_HEIGHT : MOBILE_CARD_HEIGHT;
+  const cardGap = isDesktop ? CARD_GAP : MOBILE_CARD_GAP;
+  const setWidth = projects.length * (cardWidth + cardGap);
 
   return (
     <section data-nav-theme="light" className="bg-white pt-28 pb-28">
@@ -69,7 +102,7 @@ export function TryTheseProjects({ currentSlug }: { currentSlug: string }) {
         <div className="overflow-hidden">
           <motion.div
             className="flex"
-            style={{ gap: CARD_GAP }}
+            style={{ gap: cardGap }}
             animate={{ x: [0, -setWidth] }}
             transition={{ duration: LOOP_DURATION_SECONDS, repeat: Infinity, ease: "linear" }}
           >
@@ -81,7 +114,7 @@ export function TryTheseProjects({ currentSlug }: { currentSlug: string }) {
                 className={`relative block shrink-0 overflow-hidden rounded-[10px] ${
                   project.bordered ? "border border-[#F4F4F5]" : ""
                 }`}
-                style={{ width: CARD_WIDTH, height: CARD_HEIGHT }}
+                style={{ width: cardWidth, height: cardHeight }}
               >
                 <video
                   src={`${BASE_PATH}${project.videoSrc}`}
