@@ -1,4 +1,5 @@
 import { BASE_PATH } from "@/lib/base-path";
+import { Lightbox } from "@/components/case-studies/Lightbox";
 
 // Figma dev-mode inspect. Solid, directly-read values:
 // - "Visual Directions" eyebrow: Inter 16px/400, #707682.
@@ -92,19 +93,21 @@ export function AigVisualDirections() {
               </p>
             </div>
 
-            <div
-              className="relative w-full overflow-hidden rounded-[10px] lg:ml-auto lg:flex-1 lg:max-w-[597px]"
-              style={{ aspectRatio: "597 / 334" }}
-            >
-              <video
-                src={`${BASE_PATH}${item.video}`}
-                autoPlay
-                loop
-                muted
-                playsInline
-                className="h-full w-full object-cover"
-              />
-            </div>
+            <Lightbox media={{ type: "video", src: `${BASE_PATH}${item.video}` }}>
+              <div
+                className="relative w-full overflow-hidden rounded-[10px] lg:ml-auto lg:flex-1 lg:max-w-[597px]"
+                style={{ aspectRatio: "597 / 334" }}
+              >
+                <video
+                  src={`${BASE_PATH}${item.video}`}
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  className="h-full w-full object-cover"
+                />
+              </div>
+            </Lightbox>
           </div>
         ))}
       </div>

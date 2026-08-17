@@ -1,4 +1,5 @@
 import { BASE_PATH } from "@/lib/base-path";
+import { Lightbox } from "@/components/case-studies/Lightbox";
 
 // Per direct instruction, reuses the exact text and video sizing,
 // color, and spacing rules already established for the AIG Final
@@ -79,19 +80,21 @@ export function WayveFinalDesignImplementation() {
               </p>
             </div>
 
-            <div
-              className="relative w-full overflow-hidden rounded-[10px] lg:ml-auto lg:flex-1 lg:max-w-[597px]"
-              style={{ aspectRatio: "597 / 334" }}
-            >
-              <video
-                src={`${BASE_PATH}${screen.video}`}
-                autoPlay
-                loop
-                muted
-                playsInline
-                className="h-full w-full object-cover"
-              />
-            </div>
+            <Lightbox media={{ type: "video", src: `${BASE_PATH}${screen.video}` }}>
+              <div
+                className="relative w-full overflow-hidden rounded-[10px] lg:ml-auto lg:flex-1 lg:max-w-[597px]"
+                style={{ aspectRatio: "597 / 334" }}
+              >
+                <video
+                  src={`${BASE_PATH}${screen.video}`}
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  className="h-full w-full object-cover"
+                />
+              </div>
+            </Lightbox>
           </div>
         ))}
       </div>

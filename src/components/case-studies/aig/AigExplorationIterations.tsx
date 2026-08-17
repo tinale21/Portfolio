@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import Image, { StaticImageData } from "next/image";
 import { motion, useMotionValue, useScroll, useTransform } from "framer-motion";
+import { Lightbox } from "@/components/case-studies/Lightbox";
 import lowFiImage from "@/assets/case-studies/aig/exploration/low-fi.png";
 import midFiImage from "@/assets/case-studies/aig/exploration/mid-fi.png";
 import highFiImage from "@/assets/case-studies/aig/exploration/high-fi.png";
@@ -168,12 +169,14 @@ function ExplorationStep({
   // render once each; `order-*` utilities reposition them per
   // breakpoint instead of swapping which block renders first.
   const imageBlock = (
-    <motion.div
-      className={`relative order-1 w-full max-w-[380px] shrink-0 overflow-hidden rounded-[10px] lg:w-[380px] ${imageFirst ? "lg:order-1" : "lg:order-3"}`}
-      style={{ rotate }}
-    >
-      <Image src={image} alt={`${heading} exploration screens`} className="h-auto w-full" />
-    </motion.div>
+    <Lightbox media={{ type: "image", src: image, alt: `${heading} exploration screens` }}>
+      <motion.div
+        className={`relative order-1 w-full max-w-[380px] shrink-0 overflow-hidden rounded-[10px] lg:w-[380px] ${imageFirst ? "lg:order-1" : "lg:order-3"}`}
+        style={{ rotate }}
+      >
+        <Image src={image} alt={`${heading} exploration screens`} className="h-auto w-full" />
+      </motion.div>
+    </Lightbox>
   );
 
   const textBlock = (

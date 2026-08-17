@@ -1,4 +1,5 @@
 import { BASE_PATH } from "@/lib/base-path";
+import { Lightbox } from "@/components/case-studies/Lightbox";
 
 // Per direct instruction, reuses the exact text sizing/color, image
 // sizing, and spacing rules already established for the AIG Project
@@ -123,19 +124,21 @@ export function FramerRedesignProjectOverview() {
             ))}
           </div>
 
-          <div
-            className="relative mt-[111px] w-full overflow-hidden rounded-[10px] lg:ml-auto lg:w-[650px]"
-            style={{ aspectRatio: "597 / 301" }}
-          >
-            <video
-              src={`${BASE_PATH}/projects/framer-redesign-overview.mp4`}
-              autoPlay
-              loop
-              muted
-              playsInline
-              className="h-full w-full object-cover"
-            />
-          </div>
+          <Lightbox media={{ type: "video", src: `${BASE_PATH}/projects/framer-redesign-overview.mp4` }}>
+            <div
+              className="relative mt-[111px] w-full overflow-hidden rounded-[10px] lg:ml-auto lg:w-[650px]"
+              style={{ aspectRatio: "597 / 301" }}
+            >
+              <video
+                src={`${BASE_PATH}/projects/framer-redesign-overview.mp4`}
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="h-full w-full object-cover"
+              />
+            </div>
+          </Lightbox>
         </div>
       </div>
     </section>

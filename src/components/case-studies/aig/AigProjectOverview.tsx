@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { Lightbox } from "@/components/case-studies/Lightbox";
 import teamPhoto from "@/assets/case-studies/aig/team-photo.png";
 
 // Figma dev-mode inspect (all values read directly):
@@ -139,17 +140,25 @@ export function AigProjectOverview() {
             ))}
           </div>
 
-          <div
-            className="relative mt-[90px] w-full overflow-hidden rounded-[10px] lg:ml-auto lg:w-[650px]"
-            style={{ aspectRatio: "597 / 301" }}
+          <Lightbox
+            media={{
+              type: "image",
+              src: teamPhoto,
+              alt: "The AIG x SCADpro team posing with the kiosk prototype in front of an AIG x SCADpro welcome screen",
+            }}
           >
-            <Image
-              src={teamPhoto}
-              alt="The AIG x SCADpro team posing with the kiosk prototype in front of an AIG x SCADpro welcome screen"
-              fill
-              className="object-cover"
-            />
-          </div>
+            <div
+              className="relative mt-[90px] w-full overflow-hidden rounded-[10px] lg:ml-auto lg:w-[650px]"
+              style={{ aspectRatio: "597 / 301" }}
+            >
+              <Image
+                src={teamPhoto}
+                alt="The AIG x SCADpro team posing with the kiosk prototype in front of an AIG x SCADpro welcome screen"
+                fill
+                className="object-cover"
+              />
+            </div>
+          </Lightbox>
         </div>
       </div>
     </section>

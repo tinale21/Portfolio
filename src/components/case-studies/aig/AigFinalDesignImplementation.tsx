@@ -1,4 +1,5 @@
 import { BASE_PATH } from "@/lib/base-path";
+import { Lightbox } from "@/components/case-studies/Lightbox";
 
 // Structure and copy transcribed directly from the composite reference
 // screenshot (source: Screenshot 2026-08-12 at 9.23.46 PM.png) — no
@@ -104,19 +105,21 @@ export function AigFinalDesignImplementation() {
               </p>
             </div>
 
-            <div
-              className="relative w-full overflow-hidden rounded-[10px] lg:ml-auto lg:flex-1 lg:max-w-[597px]"
-              style={{ aspectRatio: "597 / 334" }}
-            >
-              <video
-                src={`${BASE_PATH}${screen.video}`}
-                autoPlay
-                loop
-                muted
-                playsInline
-                className="h-full w-full object-cover"
-              />
-            </div>
+            <Lightbox media={{ type: "video", src: `${BASE_PATH}${screen.video}` }}>
+              <div
+                className="relative w-full overflow-hidden rounded-[10px] lg:ml-auto lg:flex-1 lg:max-w-[597px]"
+                style={{ aspectRatio: "597 / 334" }}
+              >
+                <video
+                  src={`${BASE_PATH}${screen.video}`}
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  className="h-full w-full object-cover"
+                />
+              </div>
+            </Lightbox>
           </div>
         ))}
       </div>

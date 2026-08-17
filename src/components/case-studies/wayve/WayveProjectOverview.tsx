@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { Lightbox } from "@/components/case-studies/Lightbox";
 import teamPhoto from "@/assets/case-studies/wayve/team-photo.png";
 
 // Per direct instruction, reuses the exact text sizing/color, image
@@ -131,17 +132,25 @@ export function WayveProjectOverview() {
             ))}
           </div>
 
-          <div
-            className="relative mt-[90px] w-full overflow-hidden rounded-[10px] lg:ml-auto lg:w-[650px]"
-            style={{ aspectRatio: "597 / 301" }}
+          <Lightbox
+            media={{
+              type: "image",
+              src: teamPhoto,
+              alt: "The Wayve team in a meeting room watching a video call, with the Wayve logo displayed on a second screen",
+            }}
           >
-            <Image
-              src={teamPhoto}
-              alt="The Wayve team in a meeting room watching a video call, with the Wayve logo displayed on a second screen"
-              fill
-              className="object-cover"
-            />
-          </div>
+            <div
+              className="relative mt-[90px] w-full overflow-hidden rounded-[10px] lg:ml-auto lg:w-[650px]"
+              style={{ aspectRatio: "597 / 301" }}
+            >
+              <Image
+                src={teamPhoto}
+                alt="The Wayve team in a meeting room watching a video call, with the Wayve logo displayed on a second screen"
+                fill
+                className="object-cover"
+              />
+            </div>
+          </Lightbox>
         </div>
       </div>
     </section>

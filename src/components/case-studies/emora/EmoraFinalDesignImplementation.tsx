@@ -1,4 +1,5 @@
 import { BASE_PATH } from "@/lib/base-path";
+import { Lightbox } from "@/components/case-studies/Lightbox";
 
 // Structure and copy transcribed directly from the composite reference
 // screenshot (source: Screenshot 2026-08-13 at 10.42.24 PM.png). Per
@@ -51,11 +52,16 @@ import { BASE_PATH } from "@/lib/base-path";
 //   so object-cover still trims a small amount off the top/bottom of
 //   the bezel to fill the wider box — an acceptable tradeoff given the
 //   explicit ask was "same size as the other two videos," not "show
-//   the whole tablet unclipped." Source recording was 74s long (a full
-//   app walkthrough) — trimmed to the first 15s (splash screen through
-//   the "Lesson 1: Learning Emotions" screen) to match this project's
-//   established ~10-17s loop-length convention for these background
-//   videos, rather than shipping the full unedited walkthrough.
+//   the whole tablet unclipped." Source recording is 74.95s long (a
+//   full app walkthrough). Initially trimmed to the first 15s to match
+//   this project's ~10-17s loop-length convention for background
+//   videos, but per direct feedback ("the whole video is not playing
+//   but is instead trimmed" / "full length"), reverted to the complete
+//   recording — this one video is a deliberate exception to that
+//   convention. Re-cropped from the original source file (still had it
+//   on disk) using the same bezel-detection method as the first pass,
+//   verified frame-for-frame identical framing to the original trim
+//   before re-encoding the full length, so only the duration changed.
 const INTRO = {
   description:
     "Our final solution combines AI-powered wearables and companion apps into one connected ecosystem that supports children's emotional learning before, during, and after everyday social interactions.",
@@ -114,19 +120,21 @@ export function EmoraFinalDesignImplementation() {
               </p>
             </div>
 
-            <div
-              className="relative w-full overflow-hidden rounded-[10px] lg:ml-auto lg:flex-1 lg:max-w-[597px]"
-              style={{ aspectRatio: "597 / 455" }}
-            >
-              <video
-                src={`${BASE_PATH}${screen.video}`}
-                autoPlay
-                loop
-                muted
-                playsInline
-                className="h-full w-full object-cover"
-              />
-            </div>
+            <Lightbox media={{ type: "video", src: `${BASE_PATH}${screen.video}` }}>
+              <div
+                className="relative w-full overflow-hidden rounded-[10px] lg:ml-auto lg:flex-1 lg:max-w-[597px]"
+                style={{ aspectRatio: "597 / 455" }}
+              >
+                <video
+                  src={`${BASE_PATH}${screen.video}`}
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  className="h-full w-full object-cover"
+                />
+              </div>
+            </Lightbox>
           </div>
         ))}
       </div>

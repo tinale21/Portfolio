@@ -1,4 +1,5 @@
 import { BASE_PATH } from "@/lib/base-path";
+import { Lightbox } from "@/components/case-studies/Lightbox";
 
 // Copy transcribed directly from the reference screenshot (source:
 // Screenshot 2026-08-15 at 12.04.15 AM.png). Per direct instruction
@@ -124,36 +125,38 @@ export function FramerRedesignFinalDesign() {
         </div>
       </div>
 
-      <div
-        // Per direct feedback, matches the thinner mobile bezel now used
-        // on the Before & After Overview slider (10px vs desktop's
-        // original 24px). Border-box sizing (the default) means
-        // `w-full` alone already gives the correct total on-screen size
-        // at any border width — see FramerRedesignBeforeAfter.tsx for
-        // the full reasoning behind moving off aspect-ratio/content-box.
-        className="relative mx-auto mt-24 w-full max-w-[1148px] touch-none overflow-hidden rounded-[12px] border-[10px] border-solid select-none lg:border-[24px]"
-        style={{
-          borderColor: PROTOTYPE_BEZEL_COLOR,
-          backgroundColor: PROTOTYPE_BEZEL_COLOR,
-        }}
-      >
-        <div style={{ paddingTop: `${PROTOTYPE_HEIGHT_PERCENT}%` }} />
-        <video
-          src={`${BASE_PATH}/projects/framer-redesign-prototype.mp4`}
-          autoPlay
-          loop
-          muted
-          playsInline
-          // Per direct feedback, the video must never crop on mobile —
-          // object-contain guarantees the full frame is always visible
-          // (letterboxing into the bezel's own #1D1D1D background if
-          // the frame and video aspect ratios ever drift apart, rather
-          // than cutting off content) — kept desktop unchanged at
-          // object-cover as before, matching "keep the black outline
-          // the same thickness."
-          className="absolute inset-0 h-full w-full object-contain lg:object-cover"
-        />
-      </div>
+      <Lightbox media={{ type: "video", src: `${BASE_PATH}/projects/framer-redesign-prototype.mp4` }}>
+        <div
+          // Per direct feedback, matches the thinner mobile bezel now used
+          // on the Before & After Overview slider (10px vs desktop's
+          // original 24px). Border-box sizing (the default) means
+          // `w-full` alone already gives the correct total on-screen size
+          // at any border width — see FramerRedesignBeforeAfter.tsx for
+          // the full reasoning behind moving off aspect-ratio/content-box.
+          className="relative mx-auto mt-24 w-full max-w-[1148px] touch-none overflow-hidden rounded-[12px] border-[10px] border-solid select-none lg:border-[24px]"
+          style={{
+            borderColor: PROTOTYPE_BEZEL_COLOR,
+            backgroundColor: PROTOTYPE_BEZEL_COLOR,
+          }}
+        >
+          <div style={{ paddingTop: `${PROTOTYPE_HEIGHT_PERCENT}%` }} />
+          <video
+            src={`${BASE_PATH}/projects/framer-redesign-prototype.mp4`}
+            autoPlay
+            loop
+            muted
+            playsInline
+            // Per direct feedback, the video must never crop on mobile —
+            // object-contain guarantees the full frame is always visible
+            // (letterboxing into the bezel's own #1D1D1D background if
+            // the frame and video aspect ratios ever drift apart, rather
+            // than cutting off content) — kept desktop unchanged at
+            // object-cover as before, matching "keep the black outline
+            // the same thickness."
+            className="absolute inset-0 h-full w-full object-contain lg:object-cover"
+          />
+        </div>
+      </Lightbox>
 
       <div className="mt-32 flex flex-col gap-20">
         {SCREENS.map((screen) => (
@@ -165,19 +168,21 @@ export function FramerRedesignFinalDesign() {
               </p>
             </div>
 
-            <div
-              className="relative w-full overflow-hidden rounded-[10px] border-solid lg:ml-auto lg:flex-1 lg:max-w-[597px]"
-              style={{ aspectRatio: "597 / 334", borderWidth: "0.5px", borderColor: "#000000" }}
-            >
-              <video
-                src={`${BASE_PATH}${screen.video}`}
-                autoPlay
-                loop
-                muted
-                playsInline
-                className="h-full w-full object-cover"
-              />
-            </div>
+            <Lightbox media={{ type: "video", src: `${BASE_PATH}${screen.video}` }}>
+              <div
+                className="relative w-full overflow-hidden rounded-[10px] border-solid lg:ml-auto lg:flex-1 lg:max-w-[597px]"
+                style={{ aspectRatio: "597 / 334", borderWidth: "0.5px", borderColor: "#000000" }}
+              >
+                <video
+                  src={`${BASE_PATH}${screen.video}`}
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  className="h-full w-full object-cover"
+                />
+              </div>
+            </Lightbox>
           </div>
         ))}
       </div>

@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { Lightbox } from "@/components/case-studies/Lightbox";
 import overviewIllustration from "@/assets/case-studies/emora/overview-illustration.png";
 
 // Per direct instruction, reuses the exact text sizing/color, image
@@ -121,17 +122,25 @@ export function EmoraProjectOverview() {
             ))}
           </div>
 
-          <div
-            className="relative mt-[100px] w-full overflow-hidden rounded-[10px] lg:ml-auto lg:w-[650px]"
-            style={{ aspectRatio: "597 / 301" }}
+          <Lightbox
+            media={{
+              type: "image",
+              src: overviewIllustration,
+              alt: "Illustration of the Emora ecosystem: a collage of emotion-face app icons around the Emora wordmark, captioned 'Emora combines wearables and apps to build emotional clarity and confidence.'",
+            }}
           >
-            <Image
-              src={overviewIllustration}
-              alt="Illustration of the Emora ecosystem: a collage of emotion-face app icons around the Emora wordmark, captioned 'Emora combines wearables and apps to build emotional clarity and confidence.'"
-              fill
-              className="object-cover"
-            />
-          </div>
+            <div
+              className="relative mt-[100px] w-full overflow-hidden rounded-[10px] lg:ml-auto lg:w-[650px]"
+              style={{ aspectRatio: "597 / 301" }}
+            >
+              <Image
+                src={overviewIllustration}
+                alt="Illustration of the Emora ecosystem: a collage of emotion-face app icons around the Emora wordmark, captioned 'Emora combines wearables and apps to build emotional clarity and confidence.'"
+                fill
+                className="object-cover"
+              />
+            </div>
+          </Lightbox>
         </div>
       </div>
     </section>
