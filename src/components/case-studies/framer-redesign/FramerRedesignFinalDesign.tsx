@@ -42,10 +42,8 @@ const INTRO = {
 // ("don't trim the video down, keep it the full length"), kept the
 // complete 2:03 recording instead — only scaled to 1800px wide,
 // preserving the source's native aspect ratio (no crop needed).
-const PROTOTYPE_BORDER_WIDTH = 24;
 const PROTOTYPE_BEZEL_COLOR = "#1D1D1D";
 const PROTOTYPE_ASPECT = "1800 / 994";
-const PROTOTYPE_MAX_WIDTH = 1100;
 
 // Screen-by-screen breakdown rows, per direct instruction ("this part
 // is formatted the same as the other case study like aig; use the
@@ -124,14 +122,15 @@ export function FramerRedesignFinalDesign() {
       </div>
 
       <div
-        className="relative mx-auto mt-24 touch-none overflow-hidden rounded-[12px] border-solid select-none"
+        // Per direct feedback, matches the thinner mobile bezel now used
+        // on the Before & After Overview slider (10px vs desktop's
+        // original 24px) — see FramerRedesignBeforeAfter.tsx for why
+        // width and border-width have to move together per breakpoint.
+        className="relative mx-auto mt-24 w-[calc(100%-20px)] max-w-[1100px] touch-none overflow-hidden rounded-[12px] border-[10px] border-solid select-none lg:w-[calc(100%-48px)] lg:border-[24px]"
         style={{
-          width: `calc(100% - ${PROTOTYPE_BORDER_WIDTH * 2}px)`,
-          maxWidth: PROTOTYPE_MAX_WIDTH,
           aspectRatio: PROTOTYPE_ASPECT,
           borderColor: PROTOTYPE_BEZEL_COLOR,
           backgroundColor: PROTOTYPE_BEZEL_COLOR,
-          borderWidth: PROTOTYPE_BORDER_WIDTH,
           boxSizing: "content-box",
         }}
       >

@@ -79,11 +79,9 @@ import afterImage from "@/assets/case-studies/framer-redesign/before-after/after
 // draggable range maps exactly to the content area, matching where
 // the divider is actually rendered — the handle can no longer be
 // dragged into the border/bezel itself.
-const FRAME_MAX_WIDTH = 1100;
 const FRAME_ASPECT = "1800 / 923";
 const BEZEL_COLOR = "#1D1D1D";
 const LABEL_COLOR = "#363636";
-const BORDER_WIDTH = 24;
 
 function ArrowsIcon() {
   return (
@@ -119,8 +117,13 @@ export function FramerRedesignBeforeAfter() {
     const el = containerRef.current;
     if (!el) return;
     const rect = el.getBoundingClientRect();
-    const contentLeft = rect.left + BORDER_WIDTH;
-    const contentWidth = rect.width - BORDER_WIDTH * 2;
+    // Per direct feedback, the border is thinner on mobile than desktop
+    // (see className below) — read the live computed border width
+    // instead of a single JS constant so the drag math stays correct
+    // at every breakpoint without needing to keep two values in sync.
+    const borderWidth = parseFloat(getComputedStyle(el).borderLeftWidth) || 0;
+    const contentLeft = rect.left + borderWidth;
+    const contentWidth = rect.width - borderWidth * 2;
     const pct = ((clientX - contentLeft) / contentWidth) * 100;
     position.set(Math.min(100, Math.max(0, pct)));
   };
@@ -131,14 +134,23 @@ export function FramerRedesignBeforeAfter() {
 
       <div
         ref={containerRef}
-        className="relative mx-auto mt-[130px] touch-none overflow-hidden rounded-[12px] border-solid select-none"
+        // Per direct feedback, the bezel is thinner on mobile (10px vs
+        // desktop's original 24px) — the frame's total footprint
+        // already fills the section's available width at every
+        // breakpoint (see the width calc below), so a thinner border
+        // directly grows the visible slider within the same footprint.
+        // Both border-width and width must move together per breakpoint
+        // (content-box sizing means width + 2*border = the frame's
+        // total on-screen size, which needs to stay pinned to 100% of
+        // the available width to avoid reintroducing the horizontal-
+        // overflow bug fixed earlier), so this can't be JS/inline-style
+        // driven the way the old single BORDER_WIDTH constant was —
+        // moved to plain responsive Tailwind classes instead.
+        className="relative mx-auto mt-[130px] w-[calc(100%-20px)] max-w-[1100px] touch-none overflow-hidden rounded-[12px] border-[10px] border-solid select-none lg:w-[calc(100%-48px)] lg:border-[24px]"
         style={{
-          width: `calc(100% - ${BORDER_WIDTH * 2}px)`,
-          maxWidth: FRAME_MAX_WIDTH,
           aspectRatio: FRAME_ASPECT,
           borderColor: BEZEL_COLOR,
           backgroundColor: BEZEL_COLOR,
-          borderWidth: BORDER_WIDTH,
           boxSizing: "content-box",
         }}
         onPointerDown={(e) => {
