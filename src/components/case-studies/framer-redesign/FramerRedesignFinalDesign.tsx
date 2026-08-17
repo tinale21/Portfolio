@@ -105,7 +105,7 @@ const SCREENS = [
 
 export function FramerRedesignFinalDesign() {
   return (
-    <section data-nav-theme="light" className="bg-white px-5 pt-[122px] pb-16 sm:px-8 lg:px-[68px]">
+    <section data-nav-theme="light" className="bg-white px-5 pt-16 pb-16 sm:px-8 lg:px-[68px] lg:pt-[122px]">
       <p className="font-sans text-base text-[#707682]">Final Design</p>
 
       <div className="mt-8 flex flex-col gap-8 lg:flex-row lg:items-start">

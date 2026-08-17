@@ -146,7 +146,7 @@ export function FramerRedesignBeforeAfter() {
         // overflow bug fixed earlier), so this can't be JS/inline-style
         // driven the way the old single BORDER_WIDTH constant was —
         // moved to plain responsive Tailwind classes instead.
-        className="relative mx-auto mt-[130px] w-[calc(100%-20px)] max-w-[1100px] touch-none overflow-hidden rounded-[12px] border-[10px] border-solid select-none lg:w-[calc(100%-48px)] lg:border-[24px]"
+        className="relative mx-auto mt-8 w-[calc(100%-20px)] max-w-[1100px] touch-none overflow-hidden rounded-[12px] border-[10px] border-solid select-none lg:mt-[130px] lg:w-[calc(100%-48px)] lg:border-[24px]"
         style={{
           aspectRatio: FRAME_ASPECT,
           borderColor: BEZEL_COLOR,
