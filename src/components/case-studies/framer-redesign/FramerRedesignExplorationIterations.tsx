@@ -1,8 +1,8 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import Image, { StaticImageData } from "next/image";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useMotionValue, useScroll, useTransform } from "framer-motion";
 import lowFiImage from "@/assets/case-studies/framer-redesign/exploration/low-fi.png";
 import midFiImage from "@/assets/case-studies/framer-redesign/exploration/mid-fi.png";
 import prototypeImage from "@/assets/case-studies/framer-redesign/exploration/prototype.png";
@@ -40,6 +40,10 @@ import prototypeImage from "@/assets/case-studies/framer-redesign/exploration/pr
 // wasn't obviously intentional. Confirmed to use as provided.
 const ACTIVE_COLOR = "#000000";
 const INACTIVE_COLOR = "#BFBFBF";
+
+// Matches Tailwind's `lg`, same query HeroSection.tsx already uses for
+// its own viewport-dependent motion.
+const DESKTOP_QUERY = "(min-width: 1024px)";
 
 const STEPS: {
   number: string;
@@ -91,12 +95,35 @@ function ExplorationStep({
   const y = useTransform(scrollYProgress, [0, 0.3], [24, 0]);
   const blurPx = useTransform(scrollYProgress, [0, 0.3], [8, 0]);
   const filter = useTransform(blurPx, (v) => `blur(${v}px)`);
-  const rotate = useTransform(scrollYProgress, [0, 0.3], [0, imageFirst ? -5 : 5]);
   const barHeight = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
 
+  // Per direct feedback, the image tilt is desktop-only now (was
+  // applying on mobile too). The scroll-linked tilt angle itself is
+  // unchanged; it's just scaled to 0 below `lg` via a second motion
+  // value driven by matchMedia rather than a plain React state flip —
+  // useTransform's array-form input/output ranges are captured once
+  // and don't reliably pick up a changed target on a later re-render,
+  // so the two are combined as a multi-value transform instead (each
+  // one independently reactive, combined via the multi-input overload).
+  const desktopTiltScale = useMotionValue(0);
+  useEffect(() => {
+    const mql = window.matchMedia(DESKTOP_QUERY);
+    const update = () => desktopTiltScale.set(mql.matches ? 1 : 0);
+    update();
+    mql.addEventListener("change", update);
+    return () => mql.removeEventListener("change", update);
+  }, [desktopTiltScale]);
+  const tiltDeg = useTransform(scrollYProgress, [0, 0.3], [0, imageFirst ? -5 : 5]);
+  const rotate = useTransform([tiltDeg, desktopTiltScale], ([deg, scale]: number[]) => deg * scale);
+
+  // Per direct feedback, mobile always shows image -> divider -> text,
+  // regardless of `imageFirst` (which only controls left/right column
+  // order once the columns sit side by side on desktop). Both blocks
+  // render once each; `order-*` utilities reposition them per
+  // breakpoint instead of swapping which block renders first.
   const imageBlock = (
     <motion.div
-      className="relative w-full max-w-[380px] shrink-0 overflow-hidden rounded-[10px] lg:w-[380px]"
+      className={`relative order-1 w-full max-w-[380px] shrink-0 overflow-hidden rounded-[10px] lg:w-[380px] ${imageFirst ? "lg:order-1" : "lg:order-3"}`}
       style={{ rotate }}
     >
       <Image src={image} alt={`${heading} screens`} className="h-auto w-full" />
@@ -104,7 +131,9 @@ function ExplorationStep({
   );
 
   const textBlock = (
-    <div className="w-full max-w-[380px] shrink-0 lg:w-[380px]">
+    <div
+      className={`order-3 w-full max-w-[380px] shrink-0 lg:w-[380px] ${imageFirst ? "lg:order-3" : "lg:order-1"}`}
+    >
       <p className="font-serif text-[31px] text-black">{heading}</p>
       <p className="mt-4 font-sans text-[15px] text-black">{description}</p>
     </div>
@@ -120,7 +149,7 @@ function ExplorationStep({
       </div>
 
       <div className="flex w-full flex-col items-center gap-8 lg:w-fit lg:flex-row lg:items-stretch lg:gap-8">
-        {imageFirst ? imageBlock : textBlock}
+        {imageBlock}
 
         {/* Per direct feedback, this stays a vertical bar at every
             breakpoint (not a horizontal one on mobile, tried first) —
@@ -128,7 +157,7 @@ function ExplorationStep({
             fixed height when the columns stack instead of self-stretch
             filling the full row height like desktop. */}
         <div
-          className="relative h-16 w-[2px] shrink-0 self-center lg:h-auto lg:self-stretch"
+          className="relative order-2 h-16 w-[2px] shrink-0 self-center lg:h-auto lg:self-stretch"
           style={{ backgroundColor: INACTIVE_COLOR }}
         >
           <motion.div
@@ -137,7 +166,7 @@ function ExplorationStep({
           />
         </div>
 
-        {imageFirst ? textBlock : imageBlock}
+        {textBlock}
       </div>
     </motion.div>
   );
