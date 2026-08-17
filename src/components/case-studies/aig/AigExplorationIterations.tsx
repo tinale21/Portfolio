@@ -87,8 +87,6 @@ import highFiImage from "@/assets/case-studies/aig/exploration/high-fi.png";
 // pt-[120px] (30 * 4px — outside Tailwind's default scale, which skips
 // from 28 to 32, so this needed the arbitrary-value syntax) ->
 // pt-[122px] ("add 2pt").
-const COLUMN_WIDTH = 380;
-
 const STEPS: {
   number: string;
   heading: string;
@@ -141,7 +139,6 @@ function ExplorationStep({
   const filter = useTransform(blurPx, (v) => `blur(${v}px)`);
   const rotate = useTransform(scrollYProgress, [0, 0.3], [0, imageFirst ? -5 : 5]);
   const barHeight = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
-  const barWidth = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
 
   const imageBlock = (
     <motion.div
@@ -165,22 +162,15 @@ function ExplorationStep({
         <span className="font-serif text-xl text-white">{number}</span>
       </div>
 
-      {/* Mobile-only horizontal progress bar, right below the badge —
-          desktop's vertical divider (below) sits *between* the image and
-          text columns, which only makes sense when they're side by side.
-          Once flex-col stacks them, a height-filling vertical bar has no
-          natural place to live, and hiding it entirely (the original
-          bug) drops the progress indicator altogether on mobile. This is
-          the same scroll progress, just filling left-to-right instead of
-          top-to-bottom. */}
-      <div className="relative h-[2px] w-full max-w-[380px] shrink-0 bg-[#D4D8F7] lg:hidden">
-        <motion.div className="absolute inset-y-0 left-0 bg-[#5465DF]" style={{ width: barWidth }} />
-      </div>
-
       <div className="flex w-full flex-col items-center gap-8 lg:w-fit lg:flex-row lg:items-stretch lg:gap-8">
         {imageFirst ? imageBlock : textBlock}
 
-        <div className="relative hidden w-[2px] shrink-0 self-stretch bg-[#D4D8F7] lg:block">
+        {/* Per direct feedback, this stays a vertical bar at every
+            breakpoint (not a horizontal one on mobile, tried first) —
+            same scroll progress, same fill direction, just a shorter
+            fixed height when the columns stack instead of self-stretch
+            filling the full row height like desktop. */}
+        <div className="relative h-16 w-[2px] shrink-0 self-center bg-[#D4D8F7] lg:h-auto lg:self-stretch">
           <motion.div
             className="absolute inset-x-0 top-0 bg-[#5465DF]"
             style={{ height: barHeight }}

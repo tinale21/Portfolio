@@ -49,7 +49,6 @@ import finalSolutionImage from "@/assets/case-studies/wayve/exploration/final-so
 // (the math requires the gap between item tops to exceed the viewport
 // height, which isn't the case here), but this is a large, verified
 // reduction from the original ~800px down to ~100px.
-const COLUMN_WIDTH = 380;
 const ACTIVE_COLOR = "#4A25A9";
 const INACTIVE_COLOR = "#D2C8E9";
 
@@ -113,7 +112,6 @@ function ExplorationStep({
   const filter = useTransform(blurPx, (v) => `blur(${v}px)`);
   const rotate = useTransform(scrollYProgress, [0, 0.3], [0, imageFirst ? -5 : 5]);
   const barHeight = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
-  const barWidth = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
 
   const imageBlock = (
     <motion.div
@@ -140,18 +138,16 @@ function ExplorationStep({
         <span className="font-serif text-xl text-white">{number}</span>
       </div>
 
-      {/* Mobile-only horizontal progress bar — see AigExplorationIterations.tsx
-          for why the vertical divider below can't just be un-hidden as-is
-          once the columns stack instead of sitting side by side. */}
-      <div className="relative h-[2px] w-full max-w-[380px] shrink-0 lg:hidden" style={{ backgroundColor: INACTIVE_COLOR }}>
-        <motion.div className="absolute inset-y-0 left-0" style={{ width: barWidth, backgroundColor: ACTIVE_COLOR }} />
-      </div>
-
       <div className="flex w-full flex-col items-center gap-8 lg:w-fit lg:flex-row lg:items-stretch lg:gap-8">
         {imageFirst ? imageBlock : textBlock}
 
+        {/* Per direct feedback, this stays a vertical bar at every
+            breakpoint (not a horizontal one on mobile, tried first) —
+            same scroll progress, same fill direction, just a shorter
+            fixed height when the columns stack instead of self-stretch
+            filling the full row height like desktop. */}
         <div
-          className="relative hidden w-[2px] shrink-0 self-stretch lg:block"
+          className="relative h-16 w-[2px] shrink-0 self-center lg:h-auto lg:self-stretch"
           style={{ backgroundColor: INACTIVE_COLOR }}
         >
           <motion.div
