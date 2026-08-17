@@ -94,25 +94,26 @@ function ExplorationStep({
   const filter = useTransform(blurPx, (v) => `blur(${v}px)`);
   const rotate = useTransform(scrollYProgress, [0, 0.3], [0, imageFirst ? -5 : 5]);
   const barHeight = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
+  const barWidth = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
 
   const imageBlock = (
     <motion.div
-      className="relative shrink-0 overflow-hidden rounded-[10px]"
-      style={{ width: COLUMN_WIDTH, rotate }}
+      className="relative w-full max-w-[380px] shrink-0 overflow-hidden rounded-[10px] lg:w-[380px]"
+      style={{ rotate }}
     >
       <Image src={image} alt={`${heading} screens`} className="h-auto w-full" />
     </motion.div>
   );
 
   const textBlock = (
-    <div className="shrink-0" style={{ width: COLUMN_WIDTH }}>
+    <div className="w-full max-w-[380px] shrink-0 lg:w-[380px]">
       <p className="font-serif text-[31px] text-black">{heading}</p>
       <p className="mt-4 font-sans text-[15px] text-black">{description}</p>
     </div>
   );
 
   return (
-    <motion.div ref={ref} style={{ opacity, y, filter }} className="flex flex-col items-center gap-8">
+    <motion.div ref={ref} style={{ opacity, y, filter }} className="flex w-full flex-col items-center gap-8">
       <div
         className="flex h-10 w-[41px] shrink-0 items-center justify-center rounded-[5px]"
         style={{ backgroundColor: ACTIVE_COLOR }}
@@ -120,7 +121,14 @@ function ExplorationStep({
         <span className="font-serif text-xl text-white">{number}</span>
       </div>
 
-      <div className="flex w-full flex-col items-center gap-8 lg:flex-row lg:items-stretch lg:gap-8">
+      {/* Mobile-only horizontal progress bar — see AigExplorationIterations.tsx
+          for why the vertical divider below can't just be un-hidden as-is
+          once the columns stack instead of sitting side by side. */}
+      <div className="relative h-[2px] w-full max-w-[380px] shrink-0 lg:hidden" style={{ backgroundColor: INACTIVE_COLOR }}>
+        <motion.div className="absolute inset-y-0 left-0" style={{ width: barWidth, backgroundColor: ACTIVE_COLOR }} />
+      </div>
+
+      <div className="flex w-full flex-col items-center gap-8 lg:w-fit lg:flex-row lg:items-stretch lg:gap-8">
         {imageFirst ? imageBlock : textBlock}
 
         <div
@@ -144,7 +152,7 @@ export function FramerRedesignExplorationIterations() {
     <section data-nav-theme="light" className="bg-white px-5 pt-[122px] pb-16 sm:px-8 lg:px-[68px]">
       <p className="font-sans text-base text-[#707682]">Exploration &amp; Iterations</p>
 
-      <div className="mx-auto mt-8 flex w-fit flex-col gap-20">
+      <div className="mx-auto mt-8 flex w-full max-w-[380px] flex-col gap-20 lg:w-fit lg:max-w-none">
         {STEPS.map((step) => (
           <ExplorationStep key={step.number} {...step} />
         ))}

@@ -124,8 +124,9 @@ export function FramerRedesignFinalDesign() {
       </div>
 
       <div
-        className="relative mx-auto mt-24 w-full touch-none overflow-hidden rounded-[12px] border-solid select-none"
+        className="relative mx-auto mt-24 touch-none overflow-hidden rounded-[12px] border-solid select-none"
         style={{
+          width: `calc(100% - ${PROTOTYPE_BORDER_WIDTH * 2}px)`,
           maxWidth: PROTOTYPE_MAX_WIDTH,
           aspectRatio: PROTOTYPE_ASPECT,
           borderColor: PROTOTYPE_BEZEL_COLOR,

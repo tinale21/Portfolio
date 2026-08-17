@@ -69,6 +69,7 @@ const ITEMS = [
     descriptionLines: ["A digitally curated app that", "tracks user engagement."],
     position: "top",
     leftPercent: 0.29,
+    photo: PHOTOS.technology,
   },
   {
     number: "02",
@@ -76,6 +77,7 @@ const ITEMS = [
     descriptionLines: ["Launch pop-ups to create", "engagement and revenue."],
     position: "bottom",
     leftPercent: 19.69,
+    photo: PHOTOS.venueActivation,
   },
   {
     number: "03",
@@ -83,6 +85,7 @@ const ITEMS = [
     descriptionLines: ["Companion app drives global", "growth and engagement."],
     position: "top",
     leftPercent: 39.0,
+    photo: PHOTOS.digitalOwnership,
   },
   {
     number: "04",
@@ -90,6 +93,7 @@ const ITEMS = [
     descriptionLines: ["Expand the community", "through users sharing."],
     position: "bottom",
     leftPercent: 58.35,
+    photo: PHOTOS.socialSharing,
   },
   {
     number: "05",
@@ -97,6 +101,7 @@ const ITEMS = [
     descriptionLines: ["Personalized discovery", "drives return visits."],
     position: "top",
     leftPercent: 77.71,
+    photo: PHOTOS.newUsers,
   },
 ] as const;
 
@@ -125,12 +130,51 @@ function ItemText({
   );
 }
 
+// Mobile fallback: the desktop treatment above positions each item's
+// caption via an absolute `left: {percent}%` combined with
+// `whitespace-nowrap` on multi-line text up to 59px numerals — values
+// tuned against the 1396px-wide source SVG's own proportions, which
+// don't scale down to mobile widths (nowrap text ignores its
+// container, so items past ~%40 left ran straight off the right edge
+// of the viewport, and the interlocking scalloped photo band has no
+// meaningful narrower rendering). Rather than attempt to compress that
+// desktop-only layout, this renders the same 5 items/photos as a
+// simple stacked list (photo, then number+heading+description) below
+// lg, matching how this codebase's other photo+text sections (e.g.
+// Exploration & Iterations) fall back to a stacked column on mobile.
+function MobileItem({ item }: { item: (typeof ITEMS)[number] }) {
+  return (
+    <div className="flex flex-col gap-4">
+      <div className="relative h-44 w-full overflow-hidden rounded-[10px]">
+        {/* eslint-disable-next-line @next/next/no-img-element -- plain URL string, not a statically-imported asset (shared with the SVG <image> above) */}
+        <img src={item.photo} alt="" className="h-full w-full object-cover" />
+      </div>
+      <div className="flex items-start gap-4">
+        <p className="font-sans text-[32px] font-bold leading-none text-black">{item.number}</p>
+        <div className="flex flex-col">
+          <p className="font-sans text-[18px] font-bold text-black">{item.heading}</p>
+          <p className="mt-1 font-sans text-[14px] leading-snug text-black">
+            {item.descriptionLines[0]} {item.descriptionLines[1]}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function WayveHowWayveScales() {
   return (
     <section data-nav-theme="light" className="bg-white px-5 pt-24 pb-16 sm:px-8 lg:px-[68px]">
       <p className="font-sans text-base text-[#707682]">How Wayve Scales</p>
       <p className="mt-4 font-sans text-[15px] font-medium text-black">From Event to Ecosystem</p>
 
+      <div className="mt-8 flex flex-col gap-12 lg:hidden">
+        {ITEMS.map((item) => (
+          <MobileItem key={item.number} item={item} />
+        ))}
+      </div>
+
+      <div className="hidden lg:block">
       <div className="relative mt-24 h-16">
         {ITEMS.filter((item) => item.position === "top").map((item) => (
           <ItemText key={item.number} item={item} align="bottom" />
@@ -215,6 +259,7 @@ export function WayveHowWayveScales() {
         {ITEMS.filter((item) => item.position === "bottom").map((item) => (
           <ItemText key={item.number} item={item} align="top" />
         ))}
+      </div>
       </div>
     </section>
   );
