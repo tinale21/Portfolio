@@ -65,21 +65,34 @@ import afterImage from "@/assets/case-studies/framer-redesign/before-after/after
 // ended up at a slightly different ratio than the image itself,
 // object-contain letterboxed to compensate, and that letterbox gap
 // sat *inside* the visible border stripe, reading as an uneven
-// border on two sides. Fixed by setting box-sizing: content-box on
-// this element so aspect-ratio targets the content box instead — the
-// border is now added uniformly *outside* an already-correctly-
-// proportioned content area, with zero letterbox needed.
+// border on two sides. Originally fixed by setting box-sizing:
+// content-box so aspect-ratio targets the content box instead.
 // Separately, the drag math used `getBoundingClientRect()` on this
 // same element, which always reports the *border box* regardless of
 // box-sizing — so position 0%/100% mapped to the outer (border)
 // edges while the images/divider are positioned relative to the
-// content box (CSS's own rule for what an absolutely-positioned
-// child's containing block is, when the parent has a border).
-// Subtracted BORDER_WIDTH from the measured rect on both sides so the
-// draggable range maps exactly to the content area, matching where
-// the divider is actually rendered — the handle can no longer be
-// dragged into the border/bezel itself.
-const FRAME_ASPECT = "1800 / 923";
+// content box. Subtracted the live border width from the measured
+// rect on both sides so the draggable range maps exactly to the
+// content area.
+//
+// Second follow-up ("the top outline is much thicker than the bottom,
+// which is cutting it"): the content-box + aspect-ratio combination
+// above turned out to still be uneven — verified via pixel-level
+// measurement that the border renders perfectly symmetric in
+// Chromium, but a real-device screenshot showed a clearly asymmetric
+// border (thick top, thin/cut bottom), pointing at a Safari/WebKit-
+// specific bug in how `aspect-ratio` interacts with content-box
+// sizing rather than anything reproducible in this session's own
+// tooling. Replaced `aspect-ratio` entirely with the older "responsive
+// embed" padding-percentage technique (a zero-height spacer with
+// `padding-top` set to the aspect ratio's height-as-percent-of-width)
+// — percentage padding has been correctly computed from the
+// containing block's width in every browser for decades, so this
+// doesn't depend on `aspect-ratio`'s cross-browser correctness at
+// all. The border now lives on a plain `border-box`-sized element with
+// no explicit height of its own; the spacer establishes the height,
+// and an absolutely-positioned wrapper holds the actual visual layers.
+const FRAME_HEIGHT_PERCENT = (923 / 1800) * 100;
 const BEZEL_COLOR = "#1D1D1D";
 const LABEL_COLOR = "#363636";
 
@@ -137,21 +150,16 @@ export function FramerRedesignBeforeAfter() {
         // Per direct feedback, the bezel is thinner on mobile (10px vs
         // desktop's original 24px) — the frame's total footprint
         // already fills the section's available width at every
-        // breakpoint (see the width calc below), so a thinner border
-        // directly grows the visible slider within the same footprint.
-        // Both border-width and width must move together per breakpoint
-        // (content-box sizing means width + 2*border = the frame's
-        // total on-screen size, which needs to stay pinned to 100% of
-        // the available width to avoid reintroducing the horizontal-
-        // overflow bug fixed earlier), so this can't be JS/inline-style
-        // driven the way the old single BORDER_WIDTH constant was —
-        // moved to plain responsive Tailwind classes instead.
-        className="relative mx-auto mt-8 w-[calc(100%-20px)] max-w-[1100px] touch-none overflow-hidden rounded-[12px] border-[10px] border-solid select-none lg:mt-[130px] lg:w-[calc(100%-48px)] lg:border-[24px]"
+        // breakpoint, so a thinner border directly grows the visible
+        // slider within the same footprint. Border-box sizing (the
+        // default) means `w-full` alone already gives the correct
+        // total on-screen size at any border width, with no calc()
+        // needed — see the top-of-file comment for why this moved off
+        // aspect-ratio/content-box entirely.
+        className="relative mx-auto mt-8 w-full max-w-[1148px] touch-none overflow-hidden rounded-[12px] border-[10px] border-solid select-none lg:mt-[130px] lg:border-[24px]"
         style={{
-          aspectRatio: FRAME_ASPECT,
           borderColor: BEZEL_COLOR,
           backgroundColor: BEZEL_COLOR,
-          boxSizing: "content-box",
         }}
         onPointerDown={(e) => {
           (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
@@ -162,46 +170,50 @@ export function FramerRedesignBeforeAfter() {
           updateFromClientX(e.clientX);
         }}
       >
-        <Image
-          src={afterImage}
-          alt="Framer's editor after the redesign"
-          fill
-          className="pointer-events-none object-contain"
-          draggable={false}
-        />
-        <motion.div className="absolute inset-0" style={{ clipPath }}>
+        <div style={{ paddingTop: `${FRAME_HEIGHT_PERCENT}%` }} />
+
+        <div className="absolute inset-0">
           <Image
-            src={beforeImage}
-            alt="Framer's editor before the redesign"
+            src={afterImage}
+            alt="Framer's editor after the redesign"
             fill
             className="pointer-events-none object-contain"
             draggable={false}
           />
-        </motion.div>
+          <motion.div className="absolute inset-0" style={{ clipPath }}>
+            <Image
+              src={beforeImage}
+              alt="Framer's editor before the redesign"
+              fill
+              className="pointer-events-none object-contain"
+              draggable={false}
+            />
+          </motion.div>
 
-        <motion.div
-          className="pointer-events-none absolute inset-y-0 w-[2px] bg-white"
-          style={{ left: leftPct }}
-        />
+          <motion.div
+            className="pointer-events-none absolute inset-y-0 w-[2px] bg-white"
+            style={{ left: leftPct }}
+          />
 
-        <motion.div
-          className="absolute top-1/2 flex h-12 w-12 -translate-x-1/2 -translate-y-1/2 cursor-ew-resize items-center justify-center rounded-[10px]"
-          style={{ left: leftPct, backgroundColor: BEZEL_COLOR }}
-        >
-          <ArrowsIcon />
-        </motion.div>
+          <motion.div
+            className="absolute top-1/2 flex h-12 w-12 -translate-x-1/2 -translate-y-1/2 cursor-ew-resize items-center justify-center rounded-[10px]"
+            style={{ left: leftPct, backgroundColor: BEZEL_COLOR }}
+          >
+            <ArrowsIcon />
+          </motion.div>
 
-        <div
-          className="pointer-events-none absolute bottom-4 left-4 rounded-[8px] px-4 py-2 font-sans text-sm text-white"
-          style={{ backgroundColor: LABEL_COLOR }}
-        >
-          Before
-        </div>
-        <div
-          className="pointer-events-none absolute right-4 bottom-4 rounded-[8px] px-4 py-2 font-sans text-sm text-white"
-          style={{ backgroundColor: LABEL_COLOR }}
-        >
-          After
+          <div
+            className="pointer-events-none absolute bottom-4 left-4 rounded-[8px] px-4 py-2 font-sans text-sm text-white"
+            style={{ backgroundColor: LABEL_COLOR }}
+          >
+            Before
+          </div>
+          <div
+            className="pointer-events-none absolute right-4 bottom-4 rounded-[8px] px-4 py-2 font-sans text-sm text-white"
+            style={{ backgroundColor: LABEL_COLOR }}
+          >
+            After
+          </div>
         </div>
       </div>
     </section>

@@ -22,13 +22,16 @@ const INTRO = {
 // video of the prototype... use the one similar to the outline of the
 // slider with the same thickness and corner rounding"), the prototype
 // video reuses the Before & After Overview slider's exact bezel
-// treatment (FramerRedesignBeforeAfter.tsx): #1D1D1D border, 24px
-// thick, rounded-[12px] corners, and the same box-sizing: content-box
-// fix so the border sits uniformly outside a content area sized to
-// the video's own exact aspect ratio rather than being folded into
-// it. Per further direct feedback ("scale it down a bit so it's
-// centered; it doesn't have to go from the right padding to the left
-// padding"), also capped at the same 1100px max-width/mx-auto the
+// treatment (FramerRedesignBeforeAfter.tsx) — see that file's own
+// comments for the full history, including why this moved off
+// `aspect-ratio`/`box-sizing: content-box` entirely (a real-device
+// screenshot showed a clearly asymmetric border in Safari — thick top,
+// thin/cut bottom — that didn't reproduce in this session's own
+// Chromium-based tooling) in favor of the older, browser-independent
+// padding-percentage "responsive embed" technique. Per further direct
+// feedback ("scale it down a bit so it's centered; it doesn't have to
+// go from the right padding to the left padding"), also capped at the
+// same 1148px total footprint (1100px content + 24px border × 2) the
 // slider uses, rather than stretching to the section's full
 // lg:px-[68px] content width.
 //
@@ -43,7 +46,7 @@ const INTRO = {
 // complete 2:03 recording instead — only scaled to 1800px wide,
 // preserving the source's native aspect ratio (no crop needed).
 const PROTOTYPE_BEZEL_COLOR = "#1D1D1D";
-const PROTOTYPE_ASPECT = "1800 / 994";
+const PROTOTYPE_HEIGHT_PERCENT = (994 / 1800) * 100;
 
 // Screen-by-screen breakdown rows, per direct instruction ("this part
 // is formatted the same as the other case study like aig; use the
@@ -124,16 +127,17 @@ export function FramerRedesignFinalDesign() {
       <div
         // Per direct feedback, matches the thinner mobile bezel now used
         // on the Before & After Overview slider (10px vs desktop's
-        // original 24px) — see FramerRedesignBeforeAfter.tsx for why
-        // width and border-width have to move together per breakpoint.
-        className="relative mx-auto mt-24 w-[calc(100%-20px)] max-w-[1100px] touch-none overflow-hidden rounded-[12px] border-[10px] border-solid select-none lg:w-[calc(100%-48px)] lg:border-[24px]"
+        // original 24px). Border-box sizing (the default) means
+        // `w-full` alone already gives the correct total on-screen size
+        // at any border width — see FramerRedesignBeforeAfter.tsx for
+        // the full reasoning behind moving off aspect-ratio/content-box.
+        className="relative mx-auto mt-24 w-full max-w-[1148px] touch-none overflow-hidden rounded-[12px] border-[10px] border-solid select-none lg:border-[24px]"
         style={{
-          aspectRatio: PROTOTYPE_ASPECT,
           borderColor: PROTOTYPE_BEZEL_COLOR,
           backgroundColor: PROTOTYPE_BEZEL_COLOR,
-          boxSizing: "content-box",
         }}
       >
+        <div style={{ paddingTop: `${PROTOTYPE_HEIGHT_PERCENT}%` }} />
         <video
           src={`${BASE_PATH}/projects/framer-redesign-prototype.mp4`}
           autoPlay
@@ -147,7 +151,7 @@ export function FramerRedesignFinalDesign() {
           // than cutting off content) — kept desktop unchanged at
           // object-cover as before, matching "keep the black outline
           // the same thickness."
-          className="h-full w-full object-contain lg:object-cover"
+          className="absolute inset-0 h-full w-full object-contain lg:object-cover"
         />
       </div>
 
