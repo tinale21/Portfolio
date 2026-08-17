@@ -107,7 +107,15 @@ export function AigProjectOverview() {
             <Lines lines={BOLD_STATEMENT_LINES} />
           </Body>
 
-          <div className="mt-[325px]">
+          {/* mt-[325px] is the desktop-tuned Figma gap (see comment above)
+              — unconditional, it left a huge, inconsistent gap next to the
+              51px Problem-to-Solution gap right below it on mobile's
+              single-column stack. Per direct feedback ("make the project
+              overview section and the problem section have the same
+              spacing... as the spacing between the problem section and
+              the solution section, for mobile only"), mobile now matches
+              that same 51px; lg: restores the original desktop value. */}
+          <div className="mt-[51px] lg:mt-[325px]">
             <Eyebrow>The Problem</Eyebrow>
             <Body>
               <Lines lines={PROBLEM_LINES} />

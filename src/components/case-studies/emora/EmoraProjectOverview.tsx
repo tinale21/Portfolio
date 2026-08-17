@@ -90,7 +90,14 @@ export function EmoraProjectOverview() {
             <Lines lines={BOLD_STATEMENT_LINES} />
           </Body>
 
-          <div className="mt-[321px]">
+          {/* mt-[321px] is the desktop-tuned Figma gap (see comment above)
+              — per direct feedback ("make the project overview section
+              and the problem section have the same spacing... as the
+              spacing between the problem section and the solution
+              section, for mobile only"), mobile now matches the 51px
+              Problem-to-Solution gap right below; lg: restores the
+              original desktop value. */}
+          <div className="mt-[51px] lg:mt-[321px]">
             <Eyebrow>The Problem</Eyebrow>
             <Body>
               <Lines lines={PROBLEM_LINES} />
