@@ -79,7 +79,11 @@ export function ConnectMobileSection() {
             className="absolute left-1/2 z-[100] -translate-x-1/2 -translate-y-1/2 whitespace-nowrap font-serif font-bold text-white"
             style={{
               top: headingCenterYPx !== null ? `${headingCenterYPx}px` : "50%",
-              fontSize: `clamp(1.75rem, ${MOBILE_HEADING_FONT_SIZE_VW}vw, 2.75rem)`,
+              // calc(...) around the whole clamp (not just tweaking the
+              // clamp's own min/max) so it's exactly 2px smaller at every
+              // viewport width, per direct feedback — not just at
+              // whichever single breakpoint happened to be tested.
+              fontSize: `calc(clamp(1.75rem, ${MOBILE_HEADING_FONT_SIZE_VW}vw, 2.75rem) - 2px)`,
             }}
           >
             {HEADING}
