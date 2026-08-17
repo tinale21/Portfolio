@@ -81,21 +81,19 @@ export function AboutEntry({
       >
         <div className="flex flex-col items-center gap-2 text-center lg:w-[300px] lg:shrink-0 lg:items-end lg:gap-[44px] lg:text-right">
           <p
-            className="relative z-10 font-serif text-black italic"
+            className="relative z-10 font-serif text-black italic lg:translate-x-[75px] lg:-translate-y-[53px]"
             style={{
               fontSize: "clamp(1.3rem, 2.2vw, 2.2rem)",
               fontWeight: 300,
-              transform: "translate(75px, -53px)",
             }}
           >
             {SIGNATURE}
           </p>
           <p
-            className="relative z-10 font-serif text-black italic"
+            className="relative z-10 font-serif text-black italic lg:translate-x-[10px] lg:-translate-y-[55px]"
             style={{
               fontSize: "clamp(2rem, 3.75vw, 3.25rem)",
               fontWeight: 400,
-              transform: "translate(10px, -55px)",
             }}
           >
             <Lines lines={traitLines} />
@@ -119,14 +117,14 @@ export function AboutEntry({
 
         <div className="flex flex-col items-center gap-3 text-center lg:w-[300px] lg:shrink-0 lg:items-start lg:gap-[112px] lg:text-left">
           <p
-            className="font-sans text-black"
-            style={{ fontSize: "clamp(0.95rem, 1.5vw, 1.5rem)", transform: "translateX(-35px)" }}
+            className="font-sans text-black lg:-translate-x-[35px]"
+            style={{ fontSize: "clamp(0.95rem, 1.5vw, 1.5rem)" }}
           >
             <Lines lines={taglineLines} />
           </p>
           <p
-            className="font-sans text-black"
-            style={{ fontSize: "clamp(0.85rem, 1vw, 0.95rem)", transform: "translate(-50px, 25px)" }}
+            className="font-sans text-black lg:-translate-x-[50px] lg:translate-y-[25px]"
+            style={{ fontSize: "clamp(0.85rem, 1vw, 0.95rem)" }}
           >
             <Lines lines={captionLines} />
           </p>
