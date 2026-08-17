@@ -11,6 +11,20 @@ const NAV_LINKS = [
   { label: "About", href: "/about" },
 ];
 
+// Per direct instruction, clicking the nav item for the page you're
+// already on scrolls back to the top instead of being a dead click —
+// Next.js's own <Link> doesn't navigate (and so doesn't reset scroll
+// position) when its href matches the current route. Deliberately
+// scoped to an *exact* pathname match: on a case study page like
+// /work/aig, "Work" still navigates to the /work list as normal (per
+// direct instruction, clicking "Work" there should go to the list,
+// not scroll the case study page itself) — only /work's own "Work"
+// link (and "/"'s own Home/logo, "/about"'s own About) gets the
+// scroll-to-top behavior.
+function scrollToTopSmooth() {
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
 function NavLink({
   href,
   label,
@@ -27,7 +41,13 @@ function NavLink({
   return (
     <Link
       href={href}
-      onClick={onClick}
+      onClick={(e) => {
+        onClick?.();
+        if (active) {
+          e.preventDefault();
+          scrollToTopSmooth();
+        }
+      }}
       aria-label={label}
       aria-current={active ? "page" : undefined}
       className={`text-sm tracking-normal uppercase transition-colors duration-300 ${
@@ -107,6 +127,12 @@ export function NavBar() {
       <div className="flex h-[64px] items-center justify-between px-5 sm:px-8 lg:px-[68px]">
         <Link
           href="/"
+          onClick={(e) => {
+            if (pathname === "/") {
+              e.preventDefault();
+              scrollToTopSmooth();
+            }
+          }}
           aria-label="Home"
           className={`shrink-0 transition-colors duration-300 ${dark ? "text-white" : "text-black"}`}
         >
