@@ -95,10 +95,17 @@ export function Lightbox({
             </button>
 
             <div className="relative max-h-full max-w-full" onClick={(e) => e.stopPropagation()}>
+              {/* Per direct feedback, the enlarged view shouldn't be
+                  downloadable. Not airtight (dev tools bypass either),
+                  but blocks the two obvious paths: right-click "Save
+                  Image/Video As" (onContextMenu) and the browser's own
+                  drag-to-save / native video download button. */}
               {media.type === "image" ? (
                 <Image
                   src={media.src}
                   alt={media.alt}
+                  draggable={false}
+                  onContextMenu={(e) => e.preventDefault()}
                   className="w-auto rounded-[10px] object-contain shadow-2xl"
                   // Per direct feedback, some images (Exploration &
                   // Iterations' 1696x1024 sources are the lowest-res of
@@ -132,6 +139,8 @@ export function Lightbox({
                   muted
                   playsInline
                   controls
+                  controlsList="nodownload"
+                  onContextMenu={(e) => e.preventDefault()}
                   className="max-h-[85vh] w-auto max-w-[85vw] rounded-[10px] object-contain shadow-2xl"
                 />
               )}
