@@ -8,7 +8,6 @@ import { CURSOR_WIDTH, PREFIX, TypewriterHeadline } from "./TypewriterHeadline";
 const PHRASES = [
   "I'm Tina Le!",
   "I'm a designer",
-  "I'm a dreamer",
   "I'm a creative",
 ];
 
@@ -126,7 +125,7 @@ export function HeroSection() {
   // than exactly HOLD past where the headline actually settles.
   const [pinWrapperHeightPx, setPinWrapperHeightPx] = useState<number | null>(null);
   // Every phrase types in from the same fixed starting point, so left-
-  // aligning them all makes shorter phrases ("I'm a dreamer") sit
+  // aligning them all makes shorter phrases ("I'm a creative") sit
   // noticeably left of where longer ones ("I'm a designer") end up. To
   // make the *longest* phrase land centered in the available width
   // instead — everything else then reads as "growing outward from
