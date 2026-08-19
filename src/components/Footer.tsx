@@ -62,6 +62,10 @@ export function Footer() {
           </Link>
         </div>
       </div>
+
+      <p className="mt-7 font-sans text-[13px] font-normal text-[#9AA1AF] lg:mt-12">
+        &copy; 2026 Tina Le
+      </p>
     </footer>
   );
 }

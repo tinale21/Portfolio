@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { useLenis } from "lenis/react";
 import { LogoMark } from "@/components/icons/LogoMark";
 
 const NAV_LINKS = [
@@ -21,8 +22,20 @@ const NAV_LINKS = [
 // not scroll the case study page itself) — only /work's own "Work"
 // link (and "/"'s own Home/logo, "/about"'s own About) gets the
 // scroll-to-top behavior.
-function scrollToTopSmooth() {
-  window.scrollTo({ top: 0, behavior: "smooth" });
+//
+// Routed through Lenis's own scrollTo (not a raw window.scrollTo) now
+// that the site has site-wide Lenis smoothing (see layout.tsx) — Lenis
+// keeps its own internal target/animated scroll state and drives the
+// native scroll position from that every frame, so a native
+// `behavior: "smooth"` call bypasses Lenis entirely and the two fight
+// (Lenis's next frame snaps the scroll back toward its own, stale,
+// target). `lenis?.` falls back to nothing in the split-second before
+// the root ReactLenis instance mounts, which native scrollTo covered
+// naturally — vanishingly unlikely to matter since nothing is
+// scrollable to click away from that early, but kept as a safety net.
+function scrollToTop(lenis: ReturnType<typeof useLenis>) {
+  if (lenis) lenis.scrollTo(0);
+  else window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
 function NavLink({
@@ -30,12 +43,14 @@ function NavLink({
   label,
   active,
   dark,
+  lenis,
   onClick,
 }: {
   href: string;
   label: string;
   active: boolean;
   dark: boolean;
+  lenis: ReturnType<typeof useLenis>;
   onClick?: () => void;
 }) {
   return (
@@ -45,7 +60,7 @@ function NavLink({
         onClick?.();
         if (active) {
           e.preventDefault();
-          scrollToTopSmooth();
+          scrollToTop(lenis);
         }
       }}
       aria-label={label}
@@ -61,6 +76,7 @@ function NavLink({
 
 export function NavBar() {
   const pathname = usePathname();
+  const lenis = useLenis();
   const [menuOpen, setMenuOpen] = useState(false);
   const [dark, setDark] = useState(false);
   const headerRef = useRef<HTMLElement>(null);
@@ -130,7 +146,7 @@ export function NavBar() {
           onClick={(e) => {
             if (pathname === "/") {
               e.preventDefault();
-              scrollToTopSmooth();
+              scrollToTop(lenis);
             }
           }}
           aria-label="Home"
@@ -156,6 +172,7 @@ export function NavBar() {
                 label={link.label}
                 active={isActive(link.href)}
                 dark={dark}
+                lenis={lenis}
               />
             </span>
           ))}
@@ -232,6 +249,7 @@ export function NavBar() {
               label={link.label}
               active={isActive(link.href)}
               dark={dark}
+              lenis={lenis}
               onClick={() => setMenuOpen(false)}
             />
           ))}

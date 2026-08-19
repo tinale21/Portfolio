@@ -2,6 +2,7 @@
 
 import { cloneElement, isValidElement, useEffect, useState, type ReactElement } from "react";
 import { createPortal } from "react-dom";
+import { useLenis } from "lenis/react";
 import Image, { type StaticImageData } from "next/image";
 
 // Desktop-only "click a photo/video to view it full-size" feature, per
@@ -39,6 +40,7 @@ export function Lightbox({
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isDesktop, setIsDesktop] = useState(false);
+  const lenis = useLenis();
 
   useEffect(() => {
     const mql = window.matchMedia(DESKTOP_QUERY);
@@ -56,11 +58,20 @@ export function Lightbox({
     window.addEventListener("keydown", onKeyDown);
     const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
+    // Lenis's own auto-stop-on-overflow:hidden watches document.
+    // documentElement (<html>), not <body> — this modal locks scroll
+    // via <body>'s overflow instead (the classic technique, works fine
+    // without Lenis), so without this explicit stop()/start() pair
+    // Lenis would keep hijacking wheel/touch input and smoothly
+    // scrolling the page in the background, invisible behind the
+    // backdrop but still very much happening.
+    lenis?.stop();
     return () => {
       window.removeEventListener("keydown", onKeyDown);
       document.body.style.overflow = prevOverflow;
+      lenis?.start();
     };
-  }, [isOpen]);
+  }, [isOpen, lenis]);
 
   if (!isValidElement(children)) return children;
 
