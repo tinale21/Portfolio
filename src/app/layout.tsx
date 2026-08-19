@@ -31,13 +31,14 @@ export const metadata: Metadata = {
   // resolve to an absolute, publicly-reachable URL — without this, Next
   // defaults to "http://localhost:3000" (a real build warning), which
   // would silently ship a broken share-preview image link on the actual
-  // deployed site. Just the domain root, no /Portfolio suffix — Next's
-  // own `basePath` config (see next.config.ts) already prepends BASE_PATH
-  // when resolving these file-convention image URLs against
-  // metadataBase; setting it here too produced a doubled
-  // "/Portfolio/Portfolio/..." URL (confirmed in the built HTML) before
-  // this was caught.
-  metadataBase: new URL("https://tinale21.github.io"),
+  // deployed site. This is the live production domain (a Vercel deploy,
+  // confirmed via DNS + response headers — the GitHub Pages build at
+  // tinale21.github.io/Portfolio is a separate, secondary deployment of
+  // this same repo, not what visitors actually land on) — using that
+  // GitHub Pages URL here instead previously shipped a share-preview
+  // image link that 404'd for real visitors, since it doesn't share a
+  // domain with where the image is actually hosted.
+  metadataBase: new URL("https://www.tinanle.com"),
   title: "Tina Le — Portfolio",
   description: "Portfolio of Tina Le",
   // Per direct instruction, the browser-tab favicon should follow the
@@ -57,12 +58,27 @@ export const metadata: Metadata = {
   // load under matching `prefers-color-scheme`, with the original
   // favicon.ico (still black-on-transparent, unconditional) as a
   // fallback for anything that ignores the `media` attribute entirely.
+  //
+  // Same override-drops-the-file-convention behavior bit again with
+  // `apple-icon.png`: iOS's tab switcher/bookmarks/home-screen icon
+  // reads `apple-touch-icon`, not the regular favicon, and Next does
+  // auto-detect an `app/apple-icon.png` file into that link tag on its
+  // own — but only when `metadata.icons` isn't otherwise declared.
+  // Since it already is here (for the light/dark favicon split above),
+  // that auto-detection silently doesn't run at all, same failure mode
+  // as the icon.svg/favicon.ico conflict — confirmed via the built HTML
+  // having zero apple-touch-icon tags despite `/apple-icon.png` still
+  // being generated as its own route. Declaring it here explicitly,
+  // dark-brand-background/white-logo (no transparency — iOS composites
+  // this onto its own background and adds its own corner rounding, so a
+  // transparent or pre-rounded source looks wrong there).
   icons: {
     icon: [
       { url: `${BASE_PATH}/favicon-light.png`, media: "(prefers-color-scheme: light)", type: "image/png" },
       { url: `${BASE_PATH}/favicon-dark.png`, media: "(prefers-color-scheme: dark)", type: "image/png" },
       { url: `${BASE_PATH}/favicon.ico`, sizes: "any" },
     ],
+    apple: [{ url: `${BASE_PATH}/apple-icon.png`, sizes: "180x180", type: "image/png" }],
   },
 };
 
