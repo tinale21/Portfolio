@@ -3,6 +3,7 @@ import { Inter, Inria_Serif } from "next/font/google";
 import Script from "next/script";
 import { Footer } from "@/components/Footer";
 import { NavBar } from "@/components/NavBar";
+import { ScrollToTopOnNavigate } from "@/components/ScrollToTopOnNavigate";
 import { SmoothScroll } from "@/components/SmoothScroll";
 import { BASE_PATH } from "@/lib/base-path";
 import "lenis/dist/lenis.css";
@@ -115,6 +116,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             etc.) keeps working unmodified on desktop — confirmed by
             reading the library's own `setScroll()` implementation. */}
         <SmoothScroll>
+          <ScrollToTopOnNavigate />
           <NavBar />
           {children}
           <Footer />
