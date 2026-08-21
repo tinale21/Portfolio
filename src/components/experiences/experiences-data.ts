@@ -7,15 +7,21 @@
 export type Experience = {
   title: string;
   company: string;
+  // Optional shorter form shown below the `lg` breakpoint instead of
+  // `company` — per direct instruction, only the Georgia International
+  // Convention Center row needed this (its full name doesn't fit as
+  // comfortably on a phone-width row as the other companies' names do).
+  mobileCompany?: string;
   date: string;
   location: string;
 };
 
 export const EXPERIENCES: Experience[] = [
-  { title: "UX Designer Intern", company: "Delta Air Lines", date: "Sep 2026 - Nov 2026", location: "Atlanta, GA" },
+  { title: "UX Designer", company: "SCADpro x Delta Air Lines", date: "Sep 2026 - Nov 2026", location: "Atlanta, GA" },
   {
-    title: "UX Designer Intern",
-    company: "Georgia International Convention Center",
+    title: "UX Designer",
+    company: "SCADpro x Georgia International Convention Center",
+    mobileCompany: "SCADpro x GICC",
     date: "Jun 2026 - July 2026",
     location: "College Park, GA",
   },
@@ -26,5 +32,5 @@ export const EXPERIENCES: Experience[] = [
     date: "Sep 2025 - Nov 2025",
     location: "Atlanta, GA",
   },
-  { title: "UX Designer Intern", company: "AIG", date: "Sep 2025 - Nov 2025", location: "Atlanta, GA" },
+  { title: "UX Designer", company: "SCADpro x AIG", date: "Sep 2025 - Nov 2025", location: "Atlanta, GA" },
 ];
