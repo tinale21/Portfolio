@@ -1,8 +1,8 @@
 import { StaticImageData } from "next/image";
-import about1 from "@/assets/about/about1.png";
-import about2 from "@/assets/about/about2.png";
-import about3 from "@/assets/about/about3.png";
-import about4 from "@/assets/about/about4.png";
+import about1 from "@/assets/about/about1.jpg";
+import about2 from "@/assets/about/about2.jpg";
+import about3 from "@/assets/about/about3.jpg";
+import about4 from "@/assets/about/about4.jpg";
 
 // Motion reference (video + justharshal/parashux-style live sites) confirmed
 // via direct Puppeteer measurement that this "case study list" pattern is
