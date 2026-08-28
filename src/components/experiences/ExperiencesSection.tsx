@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { getConnectExitTiming } from "@/components/connect/connect-data";
+import { EDUCATION } from "./education-data";
 import { EXPERIENCES } from "./experiences-data";
 import { ExperienceRow } from "./ExperienceRow";
 
@@ -44,7 +45,28 @@ export function ExperiencesSection() {
       style={{ marginTop: `-${pull}px` }}
       className="relative bg-white px-5 pt-[45px] pb-10 sm:px-8 sm:pt-[61px] sm:pb-14 lg:px-[68px] lg:pt-[77px] lg:pb-16"
     >
-      <h2 className="font-serif text-[26px] font-bold text-black">Experiences</h2>
+      {/* Education renders inside this same pulled <section> — rather than
+          as its own top-level section in page.tsx, which is where it
+          conceptually belongs — because the negative margin-top above only
+          has this element's own natural content height to safely absorb
+          before it starts dragging whatever comes *after* it up into
+          Connect's still-dark pinned area (see getConnectExitTiming's
+          comment on the 750px pull cap vs. "this section's own ~780px
+          height"). A standalone one-row Education section would be far
+          shorter than the pull's own 300px minimum, guaranteeing that
+          overshoot; keeping it combined with Experiences means the section
+          directly after Connect stays tall enough regardless. */}
+      <h2 className="font-serif text-[26px] font-bold text-black">Education</h2>
+
+      <div className="mt-4">
+        {EDUCATION.map((entry, i) => (
+          <div key={i} className={i > 0 ? "border-t border-[#E5E5E5]" : undefined}>
+            <ExperienceRow {...entry} />
+          </div>
+        ))}
+      </div>
+
+      <h2 className="mt-12 font-serif text-[26px] font-bold text-black sm:mt-14 lg:mt-16">Experiences</h2>
 
       <div className="mt-4">
         {EXPERIENCES.map((experience, i) => (
