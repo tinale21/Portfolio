@@ -27,7 +27,7 @@ export const EXPERIENCES: Experience[] = [
   },
   { title: "UX Designer Intern", company: "Ziora Copilot", date: "Jan 2026 - Apr 2026", location: "Remote" },
   {
-    title: "UX Designer Intern (Lead)",
+    title: "UX Design Lead (Contract)",
     company: "Ronald McDonald House",
     date: "Sep 2025 - Nov 2025",
     location: "Atlanta, GA",
