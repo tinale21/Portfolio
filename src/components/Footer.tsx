@@ -63,7 +63,7 @@ export function Footer() {
         </div>
       </div>
 
-      <p className="mt-7 font-sans text-[13px] font-normal text-[#9AA1AF] lg:mt-12">
+      <p className="mt-4 font-sans text-[13px] font-normal text-[#9AA1AF] lg:mt-6">
         &copy; 2026 Tina Le
       </p>
     </footer>
