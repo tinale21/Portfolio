@@ -64,9 +64,7 @@ export function Footer() {
       </div>
 
       <p className="mt-4 font-sans text-[13px] font-normal text-[#9AA1AF] lg:mt-6">
-        &copy; 2026 Tina Le
-        <br />
-        All Rights Reserved.
+        &copy; 2026 Tina Le. All Rights Reserved.
       </p>
     </footer>
   );
