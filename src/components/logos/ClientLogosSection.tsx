@@ -60,7 +60,17 @@ export function ClientLogosSection() {
 
         <div className="min-w-0 flex-1 overflow-hidden">
           <div
-            className="flex w-max items-center motion-safe:animate-[logo-marquee_28s_linear_infinite]"
+            // Per direct instruction, always animates regardless of the
+            // visitor's prefers-reduced-motion setting — this previously
+            // used Tailwind's `motion-safe:` variant, which reports as a
+            // completely frozen, static row of logos for anyone with that
+            // OS-level preference on (confirmed via
+            // page.emulateMediaFeatures — the animation is disabled
+            // outright, not just slowed). That's the standard accessible
+            // default, but it read as "broken" to a visitor who had the
+            // setting on for unrelated reasons, so this trades that
+            // accessibility default for always-consistent motion instead.
+            className="flex w-max items-center animate-[logo-marquee_28s_linear_infinite]"
             style={{
               columnGap: GAP * LOGO_SCALE,
               // @ts-expect-error -- custom property, not a known CSS key
