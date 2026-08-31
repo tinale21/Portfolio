@@ -57,7 +57,7 @@ export function ProjectsSection() {
           shared styling. The descriptor below it was removed in that same
           pass, then restored per direct follow-up feedback — same text and
           spacing (mt-2) as before the rename. */}
-      <h2 className="font-serif text-[32px] font-bold text-black">My Work</h2>
+      <h2 className="font-serif text-[32px] font-bold text-black">My Works</h2>
       <p className="mt-2 max-w-[746px] font-sans text-lg font-extralight text-[#6D6B6B]">
         A small collection of work exploring clarity, care, and
         human-centered design.
