@@ -55,23 +55,27 @@ export function ExperiencesSection() {
           height"). A standalone one-row Education section would be far
           shorter than the pull's own 300px minimum, guaranteeing that
           overshoot; keeping it combined with Experiences means the section
-          directly after Connect stays tall enough regardless. */}
-      <h2 className="font-serif text-[26px] font-bold text-black">Education</h2>
-
-      <div className="mt-4">
-        {EDUCATION.map((entry, i) => (
-          <div key={i} className={i > 0 ? "border-t border-[#E5E5E5]" : undefined}>
-            <ExperienceRow {...entry} />
-          </div>
-        ))}
-      </div>
-
-      <h2 className="mt-12 font-serif text-[26px] font-bold text-black sm:mt-14 lg:mt-16">Experiences</h2>
+          directly after Connect stays tall enough regardless.
+          Order is Experiences then Education per direct instruction —
+          Experiences no longer needs its own top margin (nothing precedes
+          it in this section any more) and that mt-12/14/16 moved to
+          Education instead, since it's now the second heading. */}
+      <h2 className="font-serif text-[26px] font-bold text-black">Experiences</h2>
 
       <div className="mt-4">
         {EXPERIENCES.map((experience, i) => (
           <div key={i} className={i > 0 ? "border-t border-[#E5E5E5]" : undefined}>
             <ExperienceRow {...experience} />
+          </div>
+        ))}
+      </div>
+
+      <h2 className="mt-12 font-serif text-[26px] font-bold text-black sm:mt-14 lg:mt-16">Education</h2>
+
+      <div className="mt-4">
+        {EDUCATION.map((entry, i) => (
+          <div key={i} className={i > 0 ? "border-t border-[#E5E5E5]" : undefined}>
+            <ExperienceRow {...entry} />
           </div>
         ))}
       </div>
