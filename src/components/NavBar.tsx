@@ -158,23 +158,17 @@ export function NavBar() {
         {/* Desktop nav */}
         <nav
           aria-label="Primary"
-          className="hidden items-center gap-4 md:flex"
+          className="hidden items-center gap-6 md:flex"
         >
-          {NAV_LINKS.map((link, i) => (
-            <span key={link.href} className="flex items-center gap-4">
-              {i > 0 && (
-                <span aria-hidden="true" className="select-none text-[#7A7575]">
-                  /
-                </span>
-              )}
-              <NavLink
-                href={link.href}
-                label={link.label}
-                active={isActive(link.href)}
-                dark={dark}
-                lenis={lenis}
-              />
-            </span>
+          {NAV_LINKS.map((link) => (
+            <NavLink
+              key={link.href}
+              href={link.href}
+              label={link.label}
+              active={isActive(link.href)}
+              dark={dark}
+              lenis={lenis}
+            />
           ))}
         </nav>
 
