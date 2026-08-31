@@ -17,21 +17,3 @@ body {
   color: var(--foreground);
   font-family: var(--font-sans);
 }
-
-/* Client-logos marquee (ClientLogosSection): the track renders two back-
-   to-back copies of the logo sequence with a uniform gap between every
-   logo, including the seam between copies. That seam gap makes a plain
-   -50% translate slightly wrong (it'd assume the copy boundary sits
-   exactly at the halfway point, but the trailing gap shifts it) — the
-   translate distance is one full copy's width plus its trailing gap.
-   Set via the --logo-marquee-distance custom property (computed in
-   ClientLogosSection from LOGO_SCALE) so the two stay in sync
-   automatically instead of needing a hand-matched px value here. */
-@keyframes logo-marquee {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(var(--logo-marquee-distance));
-  }
-}
