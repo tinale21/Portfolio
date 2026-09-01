@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useLenis } from "lenis/react";
 import { LogoMark } from "@/components/icons/LogoMark";
+import { BASE_PATH } from "@/lib/base-path";
 
 const NAV_LINKS = [
   { label: "Home", href: "/" },
@@ -38,6 +39,37 @@ function scrollToTop(lenis: ReturnType<typeof useLenis>) {
   else window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
+// Per direct instruction: a solid white pill button that downloads the
+// resume PDF (rather than navigating to it) via the `download` attribute.
+// Kept a fixed white/black color scheme regardless of the nav's own
+// light/dark theme (matching the provided reference image exactly), with a
+// light gray border that only shows up when the nav is in its light/white
+// state — without it, a white-on-white button would have no visible edge
+// there, the same reasoning as the "My Toolbox" icons' own conditional
+// outline for a white icon on a white background.
+function ResumeButton({ dark }: { dark: boolean }) {
+  return (
+    <a
+      href={`${BASE_PATH}/Tina_Le_Resume.pdf`}
+      download="Tina_Le_Resume.pdf"
+      className={`flex shrink-0 items-center gap-1.5 rounded-full bg-white py-2 pr-3 pl-4 text-sm font-semibold text-black transition-colors duration-300 hover:bg-[#F2F2F2] ${
+        dark ? "" : "border border-[#E5E5E5]"
+      }`}
+    >
+      Resume
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path
+          d="M3.5 10.5L10.5 3.5M10.5 3.5H4.5M10.5 3.5V9.5"
+          stroke="black"
+          strokeWidth="1.4"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    </a>
+  );
+}
+
 function NavLink({
   href,
   label,
@@ -67,7 +99,7 @@ function NavLink({
       aria-current={active ? "page" : undefined}
       className={`text-sm tracking-normal uppercase transition-colors duration-300 ${
         dark ? "text-white" : "text-black"
-      } ${active ? "font-medium" : "font-light"}`}
+      } ${active ? "font-medium" : "font-normal"}`}
     >
       {label}
     </Link>
@@ -140,7 +172,14 @@ export function NavBar() {
         dark ? "border-[#313132] bg-[#262626]" : "border-[#E7E9EB] bg-white"
       }`}
     >
-      <div className="flex h-[64px] items-center justify-between px-5 sm:px-8 lg:px-[68px]">
+      {/* flex on mobile (2 visible items: logo + hamburger, everything else
+          hidden below md so justify-between still works with just those
+          two), md:grid md:grid-cols-3 on desktop so the nav links can sit
+          truly centered in the row rather than centered-in-the-remaining-
+          space after the logo — the hamburger toggle is md:hidden so it
+          drops out of the grid entirely there, leaving exactly 3 cells:
+          logo, nav, resume button. */}
+      <div className="flex h-[64px] items-center justify-between px-5 sm:px-8 md:grid md:grid-cols-3 lg:px-[68px]">
         <Link
           href="/"
           onClick={(e) => {
@@ -150,7 +189,7 @@ export function NavBar() {
             }
           }}
           aria-label="Home"
-          className={`shrink-0 transition-colors duration-300 ${dark ? "text-white" : "text-black"}`}
+          className={`shrink-0 transition-colors duration-300 md:justify-self-start ${dark ? "text-white" : "text-black"}`}
         >
           <LogoMark className="h-[28px] w-auto" />
         </Link>
@@ -158,7 +197,7 @@ export function NavBar() {
         {/* Desktop nav */}
         <nav
           aria-label="Primary"
-          className="hidden items-center gap-6 md:flex"
+          className="hidden items-center gap-6 md:flex md:justify-self-center"
         >
           {NAV_LINKS.map((link) => (
             <NavLink
@@ -171,6 +210,10 @@ export function NavBar() {
             />
           ))}
         </nav>
+
+        <div className="hidden md:flex md:justify-self-end">
+          <ResumeButton dark={dark} />
+        </div>
 
         {/* Mobile menu toggle */}
         <button
@@ -233,7 +276,7 @@ export function NavBar() {
         aria-label="Primary"
         className={`overflow-hidden border-t transition-[max-height,background-color,border-color] duration-300 ease-in-out md:hidden ${
           dark ? "border-[#313132] bg-[#262626]" : "border-[#E7E9EB] bg-white"
-        } ${menuOpen ? "max-h-60" : "max-h-0 border-t-0"}`}
+        } ${menuOpen ? "max-h-80" : "max-h-0 border-t-0"}`}
       >
         <div className="flex flex-col gap-6 px-5 py-6 sm:px-8">
           {NAV_LINKS.map((link) => (
@@ -247,6 +290,7 @@ export function NavBar() {
               onClick={() => setMenuOpen(false)}
             />
           ))}
+          <ResumeButton dark={dark} />
         </div>
       </nav>
     </header>
