@@ -70,6 +70,24 @@ function ResumeButton({ dark }: { dark: boolean }) {
   );
 }
 
+// Per direct instruction: mobile's menu shows "Resume" as plain text
+// matching Home/Work/About's own styling (not the white pill button, which
+// stays desktop-only) — same download behavior, just a different look for
+// this one context.
+function MobileResumeLink({ dark }: { dark: boolean }) {
+  return (
+    <a
+      href={`${BASE_PATH}/Tina_Le_Resume.pdf`}
+      download="Tina_Le_Resume.pdf"
+      className={`text-sm font-normal tracking-normal uppercase transition-colors duration-300 ${
+        dark ? "text-white" : "text-black"
+      }`}
+    >
+      Resume
+    </a>
+  );
+}
+
 function NavLink({
   href,
   label,
@@ -276,7 +294,7 @@ export function NavBar() {
         aria-label="Primary"
         className={`overflow-hidden border-t transition-[max-height,background-color,border-color] duration-300 ease-in-out md:hidden ${
           dark ? "border-[#313132] bg-[#262626]" : "border-[#E7E9EB] bg-white"
-        } ${menuOpen ? "max-h-80" : "max-h-0 border-t-0"}`}
+        } ${menuOpen ? "max-h-60" : "max-h-0 border-t-0"}`}
       >
         <div className="flex flex-col gap-6 px-5 py-6 sm:px-8">
           {NAV_LINKS.map((link) => (
@@ -290,7 +308,7 @@ export function NavBar() {
               onClick={() => setMenuOpen(false)}
             />
           ))}
-          <ResumeButton dark={dark} />
+          <MobileResumeLink dark={dark} />
         </div>
       </nav>
     </header>

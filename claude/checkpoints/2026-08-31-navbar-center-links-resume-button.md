@@ -59,3 +59,27 @@ Same-day.
 
 - Puppeteer: confirmed computed `font-weight` is `500` for the active link and `400` for both inactive links.
 - Full overflow sweep across all 7 pages, both breakpoints, still 0px. `npx tsc --noEmit`, `npx eslint .`, and `npm run build` all clean.
+
+## Follow-up -- mobile Resume as plain text, refreshed resume file
+
+Same-day.
+
+### Human directions
+
+- "for mobile, can you make the resume not a button but just a text like the home, work, and about (this is only for mobile). can you also change the resume download to this for both desktop and mobile though: /Users/tinale/Library/Mobile Documents/com~apple~Pages/Documents/Tina_Le_Resume.pdf"
+
+### Records of resistance / things I got wrong and had to correct
+
+- Checked whether the resume file at the given path had actually changed before just re-copying it — compared file size/mtime/MD5 against the copy already in `public/`, confirmed it was a genuinely different, newer file (65KB vs the old 75KB, different hash) rather than assuming and re-copying blindly.
+
+### State at this checkpoint
+
+- **Replaced** `public/Tina_Le_Resume.pdf` with the latest version from the user's Pages document path — used for both the desktop pill button and the new mobile text link, since it's the same underlying file referenced by both.
+- **Modified** `src/components/NavBar.tsx`: added a new `MobileResumeLink` component (plain `<a>` styled identically to `NavLink`'s own text treatment — `text-sm font-normal tracking-normal uppercase`, theme-aware color — rather than reusing `ResumeButton`) and swapped it in for `ResumeButton` inside the mobile menu panel only; the desktop `ResumeButton` (white pill) is untouched. Also tightened the mobile panel's `max-h-80` back down to `max-h-60` now that the bulkier pill button is gone from that context (measured actual content height first: 200px, comfortably under the 240px cap).
+
+### Verification
+
+- Puppeteer: confirmed the mobile menu's Resume item renders as plain uppercase text (`font-weight: 400`, matching Work/About) rather than a button, with the correct `download`/`href` attributes intact.
+- Confirmed the desktop pill button is unchanged via screenshot.
+- Confirmed via MD5 hash that the dev server now serves the exact same file as the user's source path, not the stale prior version.
+- Full overflow sweep across all 7 pages, both breakpoints, still 0px. `npx tsc --noEmit`, `npx eslint .`, and `npm run build` all clean.
