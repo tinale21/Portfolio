@@ -83,3 +83,7 @@ Same-day.
 - Confirmed the desktop pill button is unchanged via screenshot.
 - Confirmed via MD5 hash that the dev server now serves the exact same file as the user's source path, not the stale prior version.
 - Full overflow sweep across all 7 pages, both breakpoints, still 0px. `npx tsc --noEmit`, `npx eslint .`, and `npm run build` all clean.
+
+## Follow-up -- refresh resume file again
+
+- "can you actually change the resume download to this one: /Users/tinale/Library/Mobile Documents/com~apple~Pages/Documents/Tina_Le_Resume.pdf" — same source path as the prior round, but the file had changed again (confirmed via MD5/mtime before copying, not assumed). Replaced `public/Tina_Le_Resume.pdf` with the new version and confirmed via MD5 that the dev server serves an exact match. Pure asset swap, no code changes.
