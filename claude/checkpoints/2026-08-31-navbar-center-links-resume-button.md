@@ -87,3 +87,7 @@ Same-day.
 ## Follow-up -- refresh resume file again
 
 - "can you actually change the resume download to this one: /Users/tinale/Library/Mobile Documents/com~apple~Pages/Documents/Tina_Le_Resume.pdf" — same source path as the prior round, but the file had changed again (confirmed via MD5/mtime before copying, not assumed). Replaced `public/Tina_Le_Resume.pdf` with the new version and confirmed via MD5 that the dev server serves an exact match. Pure asset swap, no code changes.
+
+## Follow-up -- source switched to Downloads folder
+
+- "can you change the resume pdf download to this one actually: /Users/tinale/Downloads/Tina_Le_Resume.pdf" — a new source location (not the Pages document path used in prior rounds), confirmed via MD5 to be a genuinely different file before copying. Replaced `public/Tina_Le_Resume.pdf` and confirmed via MD5 that the dev server serves an exact match to this new source. Pure asset swap, no code changes.
