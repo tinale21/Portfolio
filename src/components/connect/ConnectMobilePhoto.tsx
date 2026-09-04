@@ -55,7 +55,10 @@ export function ConnectMobilePhoto({
         opacity,
       }}
     >
-      <Image src={src} alt={alt} fill sizes="40vw" className="object-cover" />
+      {/* eager (not lazy) — same reasoning as ConnectPhoto.tsx: the scroll
+          reveal leaves no time to lazy-fetch, and the WebP files are small
+          enough to load all six up front. */}
+      <Image src={src} alt={alt} fill sizes="40vw" loading="eager" className="object-cover" />
     </motion.div>
   );
 }

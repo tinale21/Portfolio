@@ -45,7 +45,12 @@ export function ConnectPhoto({
         opacity,
       }}
     >
-      <Image src={src} alt={alt} fill sizes="20vw" className="object-cover" />
+      {/* eager (not the next/image default lazy) so these begin downloading
+          on page load rather than only when scrolled into view — the scroll
+          reveal gives no lead time to fetch otherwise, so they popped in
+          late. Files are small WebP now (see connect-data.ts), so eager-
+          loading all six up front is cheap. */}
+      <Image src={src} alt={alt} fill sizes="20vw" loading="eager" className="object-cover" />
     </motion.div>
   );
 }

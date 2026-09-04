@@ -1,10 +1,19 @@
 import { StaticImageData } from "next/image";
-import photo1 from "@/assets/connect/photo1.png";
-import photo2 from "@/assets/connect/photo2.png";
-import photo3 from "@/assets/connect/photo3.png";
-import photo4 from "@/assets/connect/photo4.png";
-import photo5 from "@/assets/connect/photo5.png";
-import photo6 from "@/assets/connect/photo6.png";
+// Resized to 800px-wide WebP (from the original ~1000-1900px-wide multi-MB
+// PNGs) — this section ships images unoptimized (static export, no
+// image-optimization server; see next.config.ts), so the browser downloads
+// these source files as-is. At ~250px display width the originals were
+// ~10-40x larger than needed, and being lazy-loaded they only began
+// downloading as each photo scrolled into view, so they visibly popped in
+// late during the scroll reveal. WebP at this size is ~20-170KB each
+// (~670KB total, down from ~12MB) and pairs with loading="eager" on the
+// photos so they're fetched up front, well before the reveal.
+import photo1 from "@/assets/connect/photo1.webp";
+import photo2 from "@/assets/connect/photo2.webp";
+import photo3 from "@/assets/connect/photo3.webp";
+import photo4 from "@/assets/connect/photo4.webp";
+import photo5 from "@/assets/connect/photo5.webp";
+import photo6 from "@/assets/connect/photo6.webp";
 
 // Figma dev-mode inspect: "Frame 4" is 1512x982, dark background constant
 // across the whole section. Each photo's width/height came straight off
