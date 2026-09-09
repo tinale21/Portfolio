@@ -54,18 +54,18 @@ export const SIGNATURE = "Tina Le";
 // wrap points differ from the earlier balanced-guess version.
 export const ABOUT_ENTRIES: AboutEntry[] = [
   {
-    traitLines: ["Explorer"],
-    taglineLines: ["led by", "curiosity"],
-    captionLines: ["City views hit different", "in Chicago."],
-    image: about1,
-    alt: "Tina Le on a bridge over the Chicago River, with the city skyline in the background",
-  },
-  {
     traitLines: ["Foodie"],
     taglineLines: ["finding", "good", "experiences"],
     captionLines: ["Good food makes every", "day better."],
     image: about2,
-    alt: "Tina Le eating a breakfast sandwich at an outdoor cafe table",
+    alt: "Tina Le taking a bite of a sandwich at a window counter inside eggslut",
+  },
+  {
+    traitLines: ["Explorer"],
+    taglineLines: ["led by", "curiosity"],
+    captionLines: ["City views hit different", "in Chicago."],
+    image: about1,
+    alt: "A downtown Chicago street with fire escapes climbing an old building and skyscrapers beyond",
   },
   {
     traitLines: ["Potterhead"],
