@@ -83,7 +83,17 @@ function Lines({ lines }: { lines: string[] }) {
       {lines.map((line, i) => (
         <span key={i}>
           {line}
-          {i < lines.length - 1 && <br />}
+          {/* These are Figma's desktop line breaks. On mobile the column is
+              far narrower, so forcing them produced ragged orphan lines
+              ("traditional wayfinding." etc.). Below lg the break collapses
+              to a normal space so the text wraps naturally to the mobile
+              width; lg+ keeps the exact Figma breaks. */}
+          {i < lines.length - 1 && (
+            <>
+              {" "}
+              <br className="hidden lg:block" />
+            </>
+          )}
         </span>
       ))}
     </>

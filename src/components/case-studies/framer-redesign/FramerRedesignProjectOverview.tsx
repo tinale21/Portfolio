@@ -68,7 +68,16 @@ function Lines({ lines }: { lines: string[] }) {
       {lines.map((line, i) => (
         <span key={i}>
           {line}
-          {i < lines.length - 1 && <br />}
+          {/* Figma's desktop line breaks; below lg they collapse to a
+              normal space so the text wraps naturally on the narrow mobile
+              column instead of breaking into ragged orphan lines. See
+              AigProjectOverview for the fuller rationale. */}
+          {i < lines.length - 1 && (
+            <>
+              {" "}
+              <br className="hidden lg:block" />
+            </>
+          )}
         </span>
       ))}
     </>
