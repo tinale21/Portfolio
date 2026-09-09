@@ -1,5 +1,6 @@
 import { BASE_PATH } from "@/lib/base-path";
 import { Lightbox } from "@/components/case-studies/Lightbox";
+import { ScrollPlayVideo } from "@/components/case-studies/ScrollPlayVideo";
 
 // Structure and copy transcribed directly from the composite reference
 // screenshot (source: Screenshot 2026-08-13 at 10.42.24 PM.png). Per
@@ -125,12 +126,8 @@ export function EmoraFinalDesignImplementation() {
                 className="relative w-full overflow-hidden rounded-[10px] lg:ml-auto lg:flex-1 lg:max-w-[597px]"
                 style={{ aspectRatio: "597 / 455" }}
               >
-                <video
+                <ScrollPlayVideo
                   src={`${BASE_PATH}${screen.video}`}
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
                   className="h-full w-full object-cover"
                 />
               </div>
