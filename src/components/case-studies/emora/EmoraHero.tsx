@@ -37,7 +37,11 @@ export function EmoraHero() {
 
       <h1 className="mt-6 font-sans text-[32px] font-normal text-black">Emora</h1>
 
-      <div className="mt-6 flex flex-wrap gap-x-[203px] gap-y-6">
+      {/* Below lg: left-aligned vertical stack; lg+: original single row
+          with the 203px column gap. See AigHero for the full rationale —
+          kept identical across all four case-study heroes so their meta
+          rows stay consistent regardless of each one's value widths. */}
+      <div className="mt-6 flex flex-col gap-6 lg:flex-row lg:flex-wrap lg:gap-x-[203px] lg:gap-y-6">
         {META.map((item) => (
           <div key={item.label} className="flex flex-col gap-3">
             <span className="font-sans text-sm text-[#707682]">{item.label}</span>

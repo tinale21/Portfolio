@@ -42,7 +42,15 @@ export function AigHero() {
         American International Group
       </h1>
 
-      <div className="mt-6 flex flex-wrap gap-x-[203px] gap-y-6">
+      {/* Below lg: a left-aligned vertical stack. Above lg: the original
+          single row with a 203px gap between columns (only fits cleanly at
+          lg+, where the row's ~921px content width has room). The old
+          `flex-wrap gap-x-[203px]` alone let two narrow columns pair up on
+          one mobile row and the huge gap flung the second one to the right
+          edge — content-dependent, so AIG's "Platform" and Wayve's "Team
+          Size" ended up right-aligned while wider-valued heroes happened to
+          stack fine. Explicit flex-col below lg makes all four consistent. */}
+      <div className="mt-6 flex flex-col gap-6 lg:flex-row lg:flex-wrap lg:gap-x-[203px] lg:gap-y-6">
         {META.map((item) => (
           <div key={item.label} className="flex flex-col gap-3">
             <span className="font-sans text-sm text-[#707682]">{item.label}</span>
