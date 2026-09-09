@@ -61,11 +61,11 @@ export const ABOUT_ENTRIES: AboutEntry[] = [
     alt: "Tina Le taking a bite of a sandwich at a window counter inside eggslut",
   },
   {
-    traitLines: ["Explorer"],
-    taglineLines: ["led by", "curiosity"],
-    captionLines: ["City views hit different", "in Chicago."],
+    traitLines: ["Wanderer"],
+    taglineLines: ["led by", "connection"],
+    captionLines: ["Good memories hit different", "with friends."],
     image: about1,
-    alt: "A downtown Chicago street with fire escapes climbing an old building and skyscrapers beyond",
+    alt: "A hand holding up three photo-booth strips of friends outdoors on a sunny day",
   },
   {
     traitLines: ["Potterhead"],
