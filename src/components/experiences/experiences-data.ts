@@ -17,6 +17,7 @@ export type Experience = {
 };
 
 export const EXPERIENCES: Experience[] = [
+  { title: "Visual Designer", company: "SCAD FLUX ATL", date: "Sep 2026 - Present", location: "Atlanta, GA" },
   { title: "UX Designer", company: "SCADpro x Delta Air Lines", date: "Sep 2026 - Nov 2026", location: "Atlanta, GA" },
   {
     title: "UX Designer",
