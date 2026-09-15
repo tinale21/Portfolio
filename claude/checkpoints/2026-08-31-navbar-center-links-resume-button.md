@@ -95,3 +95,7 @@ Same-day.
 ## Follow-up -- refresh resume from Downloads again
 
 - "can you change the resume pdf download to this one: /Users/tinale/Downloads/Tina_Le_Resume.pdf" — same Downloads path, file updated again (confirmed via MD5 it differed from the deployed copy before replacing). Copied over and confirmed via MD5 the dev server serves an exact match. Pure asset swap, no code changes.
+
+## Follow-up -- refresh resume from Downloads (2026-09-15)
+
+- "can you change the resume pdf download to this one: /Users/tinale/Downloads/Tina_Le_Resume.pdf" — same Downloads path, updated file (MD5 confirmed different from deployed before replacing). Copied over; dev server serves an exact MD5 match. Pure asset swap, no code changes.
