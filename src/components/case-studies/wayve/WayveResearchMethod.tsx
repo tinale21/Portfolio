@@ -108,7 +108,7 @@ export function WayveResearchMethod() {
             transition={{ duration: 0.6, ease: "easeOut" }}
           >
             <p className="flex items-baseline gap-2 font-sans text-black">
-              <span className="flex text-[127px] leading-none font-semibold">
+              <span className="flex text-[112px] leading-none font-semibold min-[360px]:text-[127px]">
                 {item.number.split("").map((ch, i) => (
                   <RollingDigit key={i} digit={ch} />
                 ))}

@@ -125,7 +125,7 @@ export function FramerRedesignProjectOverview() {
         </div>
 
         <div className="lg:flex-1">
-          <div className="flex flex-col gap-4 lg:ml-auto lg:w-[650px]">
+          <div className="flex flex-col gap-4 lg:ml-auto lg:w-full lg:max-w-[650px]">
             {PARAGRAPHS.map((paragraph, i) => (
               <p key={i} className="font-sans text-sm font-medium text-[#6E7681]">
                 {paragraph}
@@ -135,7 +135,7 @@ export function FramerRedesignProjectOverview() {
 
           <Lightbox media={{ type: "video", src: `${BASE_PATH}/projects/framer-redesign-overview.mp4` }}>
             <div
-              className="relative mt-[111px] w-full overflow-hidden rounded-[10px] lg:ml-auto lg:w-[650px]"
+              className="relative mt-[111px] w-full overflow-hidden rounded-[10px] lg:ml-auto lg:w-full lg:max-w-[650px]"
               style={{ aspectRatio: "597 / 301" }}
             >
               <video

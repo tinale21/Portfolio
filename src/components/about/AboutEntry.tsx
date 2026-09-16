@@ -75,13 +75,20 @@ export function AboutEntry({
           measured off Figma dev-mode (text starting 23-30% down the
           photo's height) to match the reference pixel-for-pixel, but the
           simpler centered composition was preferred once seen rendered. */}
+      {/* Side-by-side (name column / photo / tagline column) turns on at
+          xl, not lg: the two 300px text columns plus the 318px photo need
+          ~1180px of content width, so at lg (1024-1279) they overflowed the
+          viewport by a few px. Below xl the entry stacks (the same clean
+          centered composition mobile already uses, with none of the
+          side-by-side translate offsets). The photo keeps its lg size — a
+          318px photo centered in the stacked layout is fine. */}
       <div
-        className="flex w-full max-w-[1100px] flex-col items-center gap-8 lg:flex-row lg:items-center lg:justify-center lg:gap-16"
+        className="flex w-full max-w-[1100px] flex-col items-center gap-8 xl:flex-row xl:items-center xl:justify-center xl:gap-16"
         style={{ transform: "translateY(-10px)" }}
       >
-        <div className="flex flex-col items-center gap-2 text-center lg:w-[300px] lg:shrink-0 lg:items-end lg:gap-[44px] lg:text-right">
+        <div className="flex flex-col items-center gap-2 text-center xl:w-[300px] xl:shrink-0 xl:items-end xl:gap-[44px] xl:text-right">
           <p
-            className="relative z-10 font-serif text-black italic lg:translate-x-[75px] lg:-translate-y-[53px]"
+            className="relative z-10 font-serif text-black italic xl:translate-x-[75px] xl:-translate-y-[53px]"
             style={{
               fontSize: "clamp(1.3rem, 2.2vw, 2.2rem)",
               fontWeight: 300,
@@ -90,7 +97,7 @@ export function AboutEntry({
             {SIGNATURE}
           </p>
           <p
-            className="relative z-10 font-serif text-black italic lg:translate-x-[10px] lg:-translate-y-[55px]"
+            className="relative z-10 font-serif text-black italic xl:translate-x-[10px] xl:-translate-y-[55px]"
             style={{
               fontSize: "clamp(2rem, 3.75vw, 3.25rem)",
               fontWeight: 400,
@@ -115,15 +122,15 @@ export function AboutEntry({
           </motion.div>
         </div>
 
-        <div className="flex flex-col items-center gap-3 text-center lg:w-[300px] lg:shrink-0 lg:items-start lg:gap-[112px] lg:text-left">
+        <div className="flex flex-col items-center gap-3 text-center xl:w-[300px] xl:shrink-0 xl:items-start xl:gap-[112px] xl:text-left">
           <p
-            className="font-sans text-black lg:-translate-x-[35px]"
+            className="font-sans text-black xl:-translate-x-[35px]"
             style={{ fontSize: "clamp(0.95rem, 1.5vw, 1.5rem)" }}
           >
             <Lines lines={taglineLines} />
           </p>
           <p
-            className="font-sans text-black lg:-translate-x-[50px] lg:translate-y-[25px]"
+            className="font-sans text-black xl:-translate-x-[50px] xl:translate-y-[25px]"
             style={{ fontSize: "clamp(0.85rem, 1vw, 0.95rem)" }}
           >
             <Lines lines={captionLines} />

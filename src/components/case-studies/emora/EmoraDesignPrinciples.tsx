@@ -58,11 +58,17 @@ export function EmoraDesignPrinciples() {
         Our Design Principles
       </p>
 
-      <div className="mt-8 flex flex-col gap-8 px-5 sm:flex-row sm:gap-6 sm:px-8 lg:px-[68px]">
+      {/* 1 col on mobile, 2 on tablet, 4 across on desktop. Was
+          flex-row from sm up (4 side-by-side), but four cards with px-10
+          padding + a 64px icon couldn't shrink small enough between sm and
+          lg, overflowing the viewport (~48px at 768px). A responsive grid
+          fits each breakpoint; min-w-0 lets the cells shrink below their
+          content's intrinsic width so long words never force overflow. */}
+      <div className="mt-8 grid grid-cols-1 gap-8 px-5 sm:grid-cols-2 sm:gap-6 sm:px-8 lg:grid-cols-4 lg:px-[68px]">
         {PRINCIPLES.map((item, i) => (
           <div
             key={item.text}
-            className="flex w-full flex-1 flex-col items-start gap-6 rounded-[10px] border-2 border-[#F9FAFB] bg-white px-10 pt-10 pb-20 shadow-[0px_4px_10px_-4px_rgba(0,0,0,0.15)]"
+            className="flex min-w-0 flex-col items-start gap-6 rounded-[10px] border-2 border-[#F9FAFB] bg-white px-10 pt-10 pb-20 shadow-[0px_4px_10px_-4px_rgba(0,0,0,0.15)]"
           >
             <Image src={item.icon} alt="" className="h-16 w-16" />
             <div className="flex flex-col gap-3">
