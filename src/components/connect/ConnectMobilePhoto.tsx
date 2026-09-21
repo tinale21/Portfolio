@@ -43,9 +43,15 @@ export function ConnectMobilePhoto({
   );
   const opacity = useTransform(progress, [0, arrival], [0, 1]);
 
+  // Polaroid frame — same treatment as ConnectPhoto.tsx (white card, thin
+  // top/side border, thicker bottom, soft shadow; photo inset in the window
+  // inside). The frame padding lives on an inner wrapper so its % resolves
+  // against the card's own width, not the big Connect frame's — see
+  // ConnectPhoto.tsx for the fuller note. Keeps the exact footprint/position
+  // so the layout and motion are unchanged.
   return (
     <motion.div
-      className="absolute overflow-hidden rounded-[10px]"
+      className="absolute rounded-[2px] bg-white"
       style={{
         left: `${(x / MOBILE_FIGMA_WIDTH) * 100}%`,
         top,
@@ -53,12 +59,18 @@ export function ConnectMobilePhoto({
         height: `${(h / MOBILE_FIGMA_HEIGHT) * 100}%`,
         zIndex: z,
         opacity,
+        boxShadow: "0 10px 26px rgba(0,0,0,0.4)",
       }}
     >
-      {/* eager (not lazy) — same reasoning as ConnectPhoto.tsx: the scroll
-          reveal leaves no time to lazy-fetch, and the WebP files are small
-          enough to load all six up front. */}
-      <Image src={src} alt={alt} fill sizes="40vw" loading="eager" className="object-cover" />
+      {/* Padding via inline style — see ConnectPhoto.tsx note. */}
+      <div className="flex h-full w-full flex-col" style={{ padding: "9% 9% 26%" }}>
+        <div className="relative w-full flex-1 overflow-hidden">
+          {/* eager (not lazy) — same reasoning as ConnectPhoto.tsx: the scroll
+              reveal leaves no time to lazy-fetch, and the WebP files are small
+              enough to load all six up front. */}
+          <Image src={src} alt={alt} fill sizes="40vw" loading="eager" className="object-cover" />
+        </div>
+      </div>
     </motion.div>
   );
 }

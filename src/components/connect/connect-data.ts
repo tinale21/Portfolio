@@ -51,9 +51,15 @@ export const CONNECT_PHOTOS: ConnectPhotoData[] = [
   { src: photo1, alt: "", x: 1098, y: 139, w: 248, h: 349, z: 10, arrival: 0.15 },
   { src: photo2, alt: "", x: 68, y: 476, w: 264, h: 409, z: 20, arrival: 0.29 },
   { src: photo3, alt: "", x: 463, y: 484, w: 218, h: 269, z: 30, arrival: 0.43 },
-  { src: photo4, alt: "", x: 1210, y: 369, w: 232, h: 458, z: 40, arrival: 0.57 },
+  // h reduced from 458 -> 340 per direct feedback: at 458 this photo's box
+  // (aspect ~0.51) was much taller than the rest (~0.64-0.81) and over-
+  // cropped the image vertically, so its polaroid read as too long. 340
+  // (~0.68) matches the other cards' proportions.
+  { src: photo4, alt: "", x: 1210, y: 369, w: 232, h: 340, z: 40, arrival: 0.57 },
   { src: photo5, alt: "", x: 145, y: 400, w: 249, h: 348, z: 50, arrival: 0.71 },
-  { src: photo6, alt: "", x: 955, y: 557, w: 152, h: 191, z: 60, arrival: 0.85 },
+  // Bumped up slightly (152x191 -> 178x224, same ~0.79 aspect) per direct
+  // feedback that it read a bit small relative to the others.
+  { src: photo6, alt: "", x: 955, y: 557, w: 178, h: 224, z: 60, arrival: 0.85 },
 ];
 
 // Motion doesn't stop once a photo reaches its resting spot — confirmed by
@@ -119,8 +125,11 @@ export const MOBILE_CONNECT_PHOTOS: ConnectPhotoData[] = [
   { src: photo3, alt: "", x: 20, y: 340, w: 135, h: 167, z: 30, arrival: 0.71 },
   // Right column (desktop photo1, photo4, photo6 — all had x >= 756)
   { src: photo1, alt: "", x: 205, y: 90, w: 145, h: 204, z: 10, arrival: 0.29 },
-  { src: photo6, alt: "", x: 215, y: 210, w: 110, h: 138, z: 60, arrival: 0.57 },
-  { src: photo4, alt: "", x: 210, y: 310, w: 130, h: 257, z: 40, arrival: 0.85 },
+  // Bumped up slightly to match desktop's photo6 size fix (110x138 -> 128x161).
+  { src: photo6, alt: "", x: 215, y: 210, w: 128, h: 161, z: 60, arrival: 0.57 },
+  // h reduced 257 -> 191 to match desktop's proportion fix (same photo was
+  // the tall outlier here too, aspect ~0.51 -> ~0.68).
+  { src: photo4, alt: "", x: 210, y: 310, w: 130, h: 191, z: 40, arrival: 0.85 },
 ];
 
 export const MOBILE_ENTRY_BEFORE =
