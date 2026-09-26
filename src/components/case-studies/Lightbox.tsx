@@ -4,6 +4,7 @@ import { cloneElement, isValidElement, useEffect, useState, type ReactElement } 
 import { createPortal } from "react-dom";
 import { useLenis } from "lenis/react";
 import Image, { type StaticImageData } from "next/image";
+import { ExpandCursor } from "./ExpandCursor";
 
 // Desktop-only "click a photo/video to view it full-size" feature, per
 // direct instruction, modeled on a reference recording of another
@@ -36,10 +37,21 @@ export function Lightbox({
   children,
 }: {
   media: LightboxMedia;
-  children: ReactElement<{ className?: string; onClick?: (e: React.MouseEvent) => void }>;
+  children: ReactElement<{
+    className?: string;
+    onClick?: (e: React.MouseEvent) => void;
+    onMouseEnter?: (e: React.MouseEvent) => void;
+    onMouseLeave?: (e: React.MouseEvent) => void;
+  }>;
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isDesktop, setIsDesktop] = useState(false);
+  // Custom "Click to expand!" cursor: shown only while the pointer is over
+  // the media (desktop, not already open). `enterPos` seeds ExpandCursor's
+  // starting position from the mouseenter so it appears at the pointer with
+  // no flash before the first mousemove.
+  const [hovered, setHovered] = useState(false);
+  const [enterPos, setEnterPos] = useState({ x: 0, y: 0 });
   const lenis = useLenis();
 
   useEffect(() => {
@@ -79,15 +91,33 @@ export function Lightbox({
     ? cloneElement(children, {
         onClick: (e: React.MouseEvent) => {
           children.props.onClick?.(e);
+          setHovered(false);
           setIsOpen(true);
         },
-        className: `${children.props.className ?? ""} cursor-zoom-in`,
+        onMouseEnter: (e: React.MouseEvent) => {
+          children.props.onMouseEnter?.(e);
+          setEnterPos({ x: e.clientX, y: e.clientY });
+          setHovered(true);
+        },
+        onMouseLeave: (e: React.MouseEvent) => {
+          children.props.onMouseLeave?.(e);
+          setHovered(false);
+        },
+        // Keep the native cursor visible (as the default arrow) and let the
+        // ExpandCursor label ride alongside it — NOT cursor-none. Hiding it
+        // would double up the pointer for visitors with an OS-customized
+        // cursor (browsers ignore `cursor: none` then). See ExpandCursor.
+        className: `${children.props.className ?? ""} cursor-default`,
       })
     : children;
 
   return (
     <>
       {trigger}
+
+      {hovered && isDesktop && !isOpen && (
+        <ExpandCursor initialX={enterPos.x} initialY={enterPos.y} />
+      )}
 
       {isOpen &&
         isDesktop &&
