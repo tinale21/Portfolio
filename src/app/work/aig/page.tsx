@@ -5,6 +5,7 @@ import { AigKeyContribution } from "@/components/case-studies/aig/AigKeyContribu
 import { AigKeyFindings } from "@/components/case-studies/aig/AigKeyFindings";
 import { AigProjectOverview } from "@/components/case-studies/aig/AigProjectOverview";
 import { AigResearchMethod } from "@/components/case-studies/aig/AigResearchMethod";
+import { AigSecondaryResearch } from "@/components/case-studies/aig/AigSecondaryResearch";
 import { AigTakeaway } from "@/components/case-studies/aig/AigTakeaway";
 import { AigVisualDirections } from "@/components/case-studies/aig/AigVisualDirections";
 import { TryTheseProjects } from "@/components/case-studies/TryTheseProjects";
@@ -16,6 +17,7 @@ export default function AigCaseStudy() {
       <AigProjectOverview />
       <AigKeyContribution />
       <AigResearchMethod />
+      <AigSecondaryResearch />
       <AigKeyFindings />
       <AigVisualDirections />
       <AigExplorationIterations />
