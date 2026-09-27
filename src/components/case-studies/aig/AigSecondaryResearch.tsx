@@ -86,7 +86,7 @@ const LAYOUT = [
   { left: 63, top: 28, width: 32, z: 14 }, // gfmag card (right)
   { left: 11.12, top: 93.65, width: 27, z: 15 }, // gokorbyt pill — behind medium card (swapped w/ aimultiple)
   { left: 56.98, top: 22.81, width: 27, z: 52 }, // robinpowered pill — +80px y, -10px x
-  { left: 28, top: 12, width: 27, z: 50 }, // aimultiple pill — top center (swapped w/ gokorbyt)
+  { left: 28, top: 15.7, width: 27, z: 50 }, // aimultiple pill — top center (swapped w/ gokorbyt), +20px y
   { left: 16, top: 54, width: 35, z: 53 }, // finovate pill (lower left)
   { left: 26.23, top: 77.74, width: 35, z: 54 }, // toponetouch pill — -135px x total, +85px y
   { left: 58, top: 52, width: 30, z: 55 }, // crowntv pill (lower right)

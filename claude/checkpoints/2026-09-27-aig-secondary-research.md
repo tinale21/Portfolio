@@ -60,6 +60,23 @@ New section in the AIG case study, placed between Research Method and Key Findin
 - Screenshot: now reads as the reference's tight, centered, overlapping cluster (cards overlapping, pills layered over them).
 - Overflow sweep `/work/aig` at 1512/1280/1024/768/390: 0px. `tsc`/`eslint`/`build` clean.
 
+## Follow-up -- interactive position tuning + remove tilt
+
+Same-day, iterative (many small "move X by Npx" requests). Converted px nudges
+to % of the fixed cluster box (960x540: 1px x = ~0.102%, 1px y = ~0.185%).
+
+- Removed the per-item tilt (dropped `rotate` from `LAYOUT` and the motion
+  props) so every card/pill sits straight, per direct request.
+- Fine-tuned individual positions/z-index one at a time (medium card lower,
+  toponetouch pill repositioned onto the museum image, robinpowered onto the
+  gfmag card, etc.), including sending some pills behind/in front of the
+  medium card via z-index.
+- Swapped the gokorbyt and aimultiple pill positions, then nudged aimultiple
+  down (currently `top: 15.7`, top-center).
+
+Positions remain all-`%` in `LAYOUT` (left + width <= ~95) so overflow stays
+0px at every width. This state is committed so a cloud session can pick it up.
+
 ## Remaining work
 
 - The other 6 sources remain URL pills (no thumbnails/titles supplied). If any should become cards too, provide an image + title and move it to a `card` item. Scatter positions live in the `LAYOUT` array (indexed to `ITEMS`), easy to re-tune.
