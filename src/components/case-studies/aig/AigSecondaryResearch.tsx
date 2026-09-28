@@ -50,7 +50,6 @@ const ITEMS: Item[] = [
     title: "The Innovators 2024—Best Financial Innovation Labs",
     source: "gfmag.com",
   },
-  { kind: "pill", href: "https://www.gokorbyt.com/", display: "https://www.gokorbyt.com/" },
   { kind: "pill", href: "https://robinpowered.com/", display: "https://robinpowered.com/" },
   {
     kind: "pill",
@@ -84,9 +83,8 @@ const LAYOUT = [
   { left: 4, top: 30, width: 33, z: 12 }, // visix card (left)
   { left: 33, top: 46.25, width: 34, z: 20 }, // medium card (center, front) — +50px total (1.85% per 10px of 540)
   { left: 63, top: 28, width: 32, z: 14 }, // gfmag card (right)
-  { left: 11.12, top: 93.65, width: 27, z: 15 }, // gokorbyt pill — behind medium card (swapped w/ aimultiple)
   { left: 56.98, top: 22.81, width: 27, z: 52 }, // robinpowered pill — +80px y, -10px x
-  { left: 28, top: 15.7, width: 27, z: 50 }, // aimultiple pill — top center (swapped w/ gokorbyt), +20px y
+  { left: 28, top: 31.43, width: 27, z: 50 }, // aimultiple pill — top center (swapped w/ gokorbyt), +105px y
   { left: 16, top: 54, width: 35, z: 53 }, // finovate pill (lower left)
   { left: 26.23, top: 77.74, width: 35, z: 54 }, // toponetouch pill — -135px x total, +85px y
   { left: 58, top: 52, width: 30, z: 55 }, // crowntv pill (lower right)
@@ -158,7 +156,7 @@ function renderItem(item: Item) {
 
 export function AigSecondaryResearch() {
   return (
-    <section data-nav-theme="light" className="bg-white pt-16 pb-16">
+    <section data-nav-theme="light" className="bg-white pt-16 pb-32">
       <p className="px-5 font-sans text-base text-[#707682] sm:px-8 lg:px-[68px]">
         Secondary Research
       </p>

@@ -72,7 +72,11 @@ to % of the fixed cluster box (960x540: 1px x = ~0.102%, 1px y = ~0.185%).
   gfmag card, etc.), including sending some pills behind/in front of the
   medium card via z-index.
 - Swapped the gokorbyt and aimultiple pill positions, then nudged aimultiple
-  down (currently `top: 15.7`, top-center).
+  down repeatedly (top-center, now `top: 31.43`, overlapping the visix card).
+- Removed the gokorbyt pill entirely (per follow-up); collage is now 3 cards
+  + 5 pills (aimultiple, robinpowered, finovate, toponetouch, crowntv).
+- Section bottom padding bumped `pb-16` -> `pb-32` for more space before
+  Key Findings.
 
 Positions remain all-`%` in `LAYOUT` (left + width <= ~95) so overflow stays
 0px at every width. This state is committed so a cloud session can pick it up.
