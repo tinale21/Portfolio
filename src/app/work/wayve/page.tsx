@@ -7,6 +7,7 @@ import { WayveKeyContribution } from "@/components/case-studies/wayve/WayveKeyCo
 import { WayveKeyFindings } from "@/components/case-studies/wayve/WayveKeyFindings";
 import { WayveProjectOverview } from "@/components/case-studies/wayve/WayveProjectOverview";
 import { WayveResearchMethod } from "@/components/case-studies/wayve/WayveResearchMethod";
+import { WayveSecondaryResearch } from "@/components/case-studies/wayve/WayveSecondaryResearch";
 import { WayveTakeaway } from "@/components/case-studies/wayve/WayveTakeaway";
 
 export default function WayveCaseStudy() {
@@ -16,6 +17,7 @@ export default function WayveCaseStudy() {
       <WayveProjectOverview />
       <WayveKeyContribution />
       <WayveResearchMethod />
+      <WayveSecondaryResearch />
       <WayveKeyFindings />
       <WayveExplorationIterations />
       <WayveFinalDesignImplementation />
