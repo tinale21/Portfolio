@@ -6,6 +6,7 @@ import { EmoraKeyContribution } from "@/components/case-studies/emora/EmoraKeyCo
 import { EmoraKeyFindings } from "@/components/case-studies/emora/EmoraKeyFindings";
 import { EmoraProjectOverview } from "@/components/case-studies/emora/EmoraProjectOverview";
 import { EmoraResearchMethod } from "@/components/case-studies/emora/EmoraResearchMethod";
+import { EmoraSecondaryResearch } from "@/components/case-studies/emora/EmoraSecondaryResearch";
 import { EmoraTakeaway } from "@/components/case-studies/emora/EmoraTakeaway";
 
 export default function EmoraCaseStudy() {
@@ -15,6 +16,7 @@ export default function EmoraCaseStudy() {
       <EmoraProjectOverview />
       <EmoraKeyContribution />
       <EmoraResearchMethod />
+      <EmoraSecondaryResearch />
       <EmoraKeyFindings />
       <EmoraDesignPrinciples />
       <EmoraFinalDesignImplementation />
