@@ -180,7 +180,10 @@ export function AigSecondaryResearch() {
           other; pills layer on top). Narrow max-w so it sits centered with
           whitespace on either side, like the reference. */}
       <div className="mt-12 hidden px-[68px] lg:block">
-        <div className="relative mx-auto h-[540px] max-w-[980px]">
+        {/* isolate = new stacking context so the pills' z-index values (up to
+            55) stay scoped here and can't paint over the sticky nav (z-50)
+            when scrolled past. */}
+        <div className="relative isolate mx-auto h-[540px] max-w-[980px]">
           {ITEMS.map((item, i) => {
             const p = LAYOUT[i];
             return (
