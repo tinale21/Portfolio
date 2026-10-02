@@ -48,10 +48,15 @@ const ENTRY_HOLD = 40;
 // the available width. Fixed px font sizes (the clamp() maxes desktop hits on
 // a big screen) are used instead of the desktop's vw-based clamps, since vw
 // resolves against the tiny mobile viewport, not the design stage — so they'd
-// come out wrong once scaled. 1046 = the two 300px text columns + the 318px
-// photo + two 64px (gap-16) gaps.
-const MOBILE_DESIGN_W = 1046;
-const MOBILE_DESIGN_H = 480;
+// come out wrong once scaled.
+//
+// Per direct feedback the mobile render read too small, so the photo box is
+// enlarged (400x592 vs desktop's 318x471, same 0.675 crop ratio) and the gap
+// tightened (gap-8 = 32) — giving the photo a bigger share of the width, so it
+// renders larger once scaled. 1064 = two 300px text columns + the 400px photo
+// + two 32px gaps; 600 comfortably holds the 592px photo.
+const MOBILE_DESIGN_W = 1064;
+const MOBILE_DESIGN_H = 600;
 
 // Renders each array entry on its own line via an explicit <br/> rather
 // than letting the browser wrap — see the traitLines/taglineLines/
@@ -152,20 +157,20 @@ export function AboutEntry({
             className="absolute left-0 top-0 origin-top-left"
             style={{ width: MOBILE_DESIGN_W, height: MOBILE_DESIGN_H, transform: `scale(${mobileScale})` }}
           >
-            <div className="flex h-full w-full items-center justify-center gap-16">
+            <div className="flex h-full w-full items-center justify-center gap-8">
               <div className="flex w-[300px] shrink-0 flex-col items-end text-right">
                 <p className="font-serif italic text-black" style={{ fontSize: "3.25rem", fontWeight: 400 }}>
                   <Lines lines={traitLines} />
                 </p>
               </div>
 
-              <div className="relative h-[471px] w-[318px] shrink-0 overflow-hidden">
+              <div className="relative h-[592px] w-[400px] shrink-0 overflow-hidden">
                 <motion.div className="absolute inset-0" style={{ y }}>
                   <Image
                     src={image}
                     alt={alt}
                     fill
-                    sizes="318px"
+                    sizes="400px"
                     className="object-cover"
                     style={{ transform: `scale(${photoScale}) translateX(${photoPanX}%)` }}
                   />

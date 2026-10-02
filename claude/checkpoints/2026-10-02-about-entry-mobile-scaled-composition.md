@@ -23,6 +23,10 @@
 - Desktop (1512): unchanged (verified against the prior screenshot). lg-range (1100): still stacks, unchanged.
 - Overflow 0px at 390/1100/1512; `tsc`/`eslint`/`build` clean.
 
+## Follow-up — make the mobile images bigger
+
+- "it not scale exactly right on mobile, make the images a little bigger for mobile" → enlarged the mobile photo box (318x471 → 400x592, same 0.675 ratio) and tightened the composition gap (gap-16 → gap-8), so the photo takes a bigger share of the design width and renders ~20%+ larger once scaled. `MOBILE_DESIGN_W` 1046 → 1064, `MOBILE_DESIGN_H` 480 → 600. Text columns kept at 300 (symmetric; "Potterhead", the longest single-line trait, still fits without wrapping — verified). Desktop untouched. Verified Foodie + Potterhead on mobile (bigger photo, no clipping), 0px overflow, `tsc`/`eslint`/`build` clean.
+
 ## Remaining work
 
 - Minor quirk at the 1024–1279 (iPad-landscape / small-laptop) range: it keeps the existing STACKED layout, so resizing goes scaled-side-by-side (<1024) → stacked (1024–1279) → side-by-side (1280+). Kept this to honor "don't change desktop" (everything ≥1024 is untouched). If a consistent scaled look up to 1280 is preferred, switch the breakpoint from `lg` to `xl` — easy follow-up.
