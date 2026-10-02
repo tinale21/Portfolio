@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import Image, { type StaticImageData } from "next/image";
 import { motion } from "framer-motion";
 import museumImg from "@/assets/case-studies/aig/secondary/museum.webp";
@@ -154,26 +155,78 @@ function renderItem(item: Item) {
   );
 }
 
+// The overlapping cluster's design size (matches the desktop box: h-[540px],
+// max-w-[980px]). The mobile view renders this exact cluster and scales it
+// down to fit, so positions/text/images all shrink uniformly rather than
+// relisting the links one by one.
+const DESIGN_W = 980;
+const DESIGN_H = 540;
+
+// The absolutely-positioned collage items, shared by the desktop box and the
+// scaled mobile stage. Percentages are relative to whatever box contains it,
+// so it renders identically at any box width.
+function CollageItems() {
+  return (
+    <>
+      {ITEMS.map((item, i) => {
+        const p = LAYOUT[i];
+        return (
+          <motion.div
+            key={item.href}
+            className="absolute"
+            style={{ left: `${p.left}%`, top: `${p.top}%`, width: `${p.width}%`, zIndex: p.z }}
+            initial={{ opacity: 0, y: 22 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: false, amount: 0.4 }}
+            transition={{ duration: 0.5, ease: "easeOut", delay: i * 0.05 }}
+          >
+            {renderItem(item)}
+          </motion.div>
+        );
+      })}
+    </>
+  );
+}
+
 export function AigSecondaryResearch() {
+  // Mobile scales the full DESIGN_W-wide cluster down to the available width.
+  const mobileRef = useRef<HTMLDivElement>(null);
+  const [mobileScale, setMobileScale] = useState(0.36);
+
+  useEffect(() => {
+    const el = mobileRef.current;
+    if (!el) return;
+    const update = () => setMobileScale(el.clientWidth / DESIGN_W);
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
   return (
     <section data-nav-theme="light" className="bg-white pt-16 pb-32">
       <p className="px-5 font-sans text-base text-[#707682] sm:px-8 lg:px-[68px]">
         Secondary Research
       </p>
 
-      {/* Mobile / tablet: stacked feed. */}
-      <div className="mt-8 flex flex-col gap-4 px-5 sm:px-8 lg:hidden">
-        {ITEMS.map((item, i) => (
-          <motion.div
-            key={item.href}
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: false, amount: 0.3 }}
-            transition={{ duration: 0.4, ease: "easeOut", delay: i * 0.04 }}
+      {/* Mobile / tablet: the same overlapping cluster as desktop, scaled down
+          to fit (per direct feedback — keep the stacked/overlapping look, not
+          a one-by-one list). The scaled stage is absolutely positioned inside
+          an overflow-hidden box so its full DESIGN_W layout width can't cause
+          page horizontal overflow. */}
+      <div className="mt-8 px-5 sm:px-8 lg:hidden">
+        <div
+          ref={mobileRef}
+          className="relative mx-auto overflow-hidden"
+          style={{ height: DESIGN_H * mobileScale }}
+        >
+          <div
+            className="absolute left-0 top-0 isolate origin-top-left"
+            style={{ width: DESIGN_W, height: DESIGN_H, transform: `scale(${mobileScale})` }}
           >
-            {renderItem(item)}
-          </motion.div>
-        ))}
+            <CollageItems />
+          </div>
+        </div>
       </div>
 
       {/* Desktop: a tight, centered, overlapping cluster (cards overlap each
@@ -184,22 +237,7 @@ export function AigSecondaryResearch() {
             55) stay scoped here and can't paint over the sticky nav (z-50)
             when scrolled past. */}
         <div className="relative isolate mx-auto h-[540px] max-w-[980px]">
-          {ITEMS.map((item, i) => {
-            const p = LAYOUT[i];
-            return (
-              <motion.div
-                key={item.href}
-                className="absolute"
-                style={{ left: `${p.left}%`, top: `${p.top}%`, width: `${p.width}%`, zIndex: p.z }}
-                initial={{ opacity: 0, y: 22 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: false, amount: 0.4 }}
-                transition={{ duration: 0.5, ease: "easeOut", delay: i * 0.05 }}
-              >
-                {renderItem(item)}
-              </motion.div>
-            );
-          })}
+          <CollageItems />
         </div>
       </div>
     </section>
