@@ -41,6 +41,18 @@ const NAV_HEIGHT = 64;
 // feedback — just a brief catch before the entry releases.
 const ENTRY_HOLD = 40;
 
+// Below lg, the entry shows the SAME side-by-side composition as desktop,
+// scaled down to fit (per direct instruction — not the stacked, one-by-one
+// layout), the same approach as the Secondary Research collage. The
+// composition is laid out at this fixed design size and transform-scaled to
+// the available width. Fixed px font sizes (the clamp() maxes desktop hits on
+// a big screen) are used instead of the desktop's vw-based clamps, since vw
+// resolves against the tiny mobile viewport, not the design stage — so they'd
+// come out wrong once scaled. 1046 = the two 300px text columns + the 318px
+// photo + two 64px (gap-16) gaps.
+const MOBILE_DESIGN_W = 1046;
+const MOBILE_DESIGN_H = 480;
+
 // Renders each array entry on its own line via an explicit <br/> rather
 // than letting the browser wrap — see the traitLines/taglineLines/
 // captionLines comment in about-data.ts for why the line count needs to be
@@ -94,6 +106,23 @@ export function AboutEntry({
     return () => window.removeEventListener("resize", updatePinHeight);
   }, []);
 
+  // Scale factor for the below-lg scaled composition (available width ÷ design
+  // width). Measured via ResizeObserver on the mobile box.
+  const mobileRef = useRef<HTMLDivElement>(null);
+  const [mobileScale, setMobileScale] = useState(0.33);
+
+  useEffect(() => {
+    const el = mobileRef.current;
+    if (!el) return;
+    const update = () => {
+      if (el.clientWidth) setMobileScale(el.clientWidth / MOBILE_DESIGN_W);
+    };
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
   return (
     <div
       ref={wrapperRef}
@@ -106,21 +135,63 @@ export function AboutEntry({
         className="sticky flex min-h-[calc(100vh-64px)] items-center justify-center px-5 py-16 sm:px-8 lg:px-[68px]"
         style={{ top: NAV_HEIGHT }}
       >
-      {/* Row is vertically centered as a group (name column / photo /
-          tagline column all share the same center line) per direct
-          feedback — an earlier pass top-aligned everything using offsets
-          measured off Figma dev-mode (text starting 23-30% down the
-          photo's height) to match the reference pixel-for-pixel, but the
-          simpler centered composition was preferred once seen rendered. */}
-      {/* Side-by-side (name column / photo / tagline column) turns on at
-          xl, not lg: the two 300px text columns plus the 318px photo need
-          ~1180px of content width, so at lg (1024-1279) they overflowed the
-          viewport by a few px. Below xl the entry stacks (the same clean
-          centered composition mobile already uses, with none of the
-          side-by-side translate offsets). The photo keeps its lg size — a
-          318px photo centered in the stacked layout is fine. */}
+      {/* Below lg: the same side-by-side composition as desktop, scaled down
+          to fit the viewport width (per direct instruction — not a stacked,
+          one-by-one layout). The scaled stage is absolutely positioned inside
+          an overflow-hidden box so its MOBILE_DESIGN_W layout width can't
+          cause page horizontal overflow; the box's height is the scaled
+          design height, and the sticky's items-center keeps it vertically
+          centered like desktop. */}
+      <div className="w-full lg:hidden">
+        <div
+          ref={mobileRef}
+          className="relative mx-auto overflow-hidden"
+          style={{ height: MOBILE_DESIGN_H * mobileScale }}
+        >
+          <div
+            className="absolute left-0 top-0 origin-top-left"
+            style={{ width: MOBILE_DESIGN_W, height: MOBILE_DESIGN_H, transform: `scale(${mobileScale})` }}
+          >
+            <div className="flex h-full w-full items-center justify-center gap-16">
+              <div className="flex w-[300px] shrink-0 flex-col items-end text-right">
+                <p className="font-serif italic text-black" style={{ fontSize: "3.25rem", fontWeight: 400 }}>
+                  <Lines lines={traitLines} />
+                </p>
+              </div>
+
+              <div className="relative h-[471px] w-[318px] shrink-0 overflow-hidden">
+                <motion.div className="absolute inset-0" style={{ y }}>
+                  <Image
+                    src={image}
+                    alt={alt}
+                    fill
+                    sizes="318px"
+                    className="object-cover"
+                    style={{ transform: `scale(${photoScale}) translateX(${photoPanX}%)` }}
+                  />
+                </motion.div>
+              </div>
+
+              <div className="flex w-[300px] shrink-0 flex-col items-start gap-[112px] text-left">
+                <p className="font-sans text-black" style={{ fontSize: "1.5rem" }}>
+                  <Lines lines={taglineLines} />
+                </p>
+                <p className="font-sans text-black" style={{ fontSize: "0.95rem" }}>
+                  <Lines lines={captionLines} />
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Desktop (lg+): unchanged. Row is vertically centered as a group (name
+          column / photo / tagline column share the same center line). Side-by-
+          side (flex-row) turns on at xl; at lg-xl it stacks (the two 300px
+          text columns + 318px photo need ~1180px, which lg widths don't have).
+          Hidden below lg, where the scaled composition above takes over. */}
       <div
-        className="flex w-full max-w-[1100px] flex-col items-center gap-8 xl:flex-row xl:items-center xl:justify-center xl:gap-16"
+        className="hidden w-full max-w-[1100px] flex-col items-center gap-8 lg:flex xl:flex-row xl:items-center xl:justify-center xl:gap-16"
         style={{ transform: "translateY(-10px)" }}
       >
         {/* The "Tina Le" signature line above each trait was removed per
