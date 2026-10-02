@@ -135,9 +135,13 @@ export function AboutEntry({
       style={pinWrapperHeightPx !== null ? { height: pinWrapperHeightPx } : undefined}
       className="relative bg-white"
     >
+      {/* Full-viewport "porthole" height only at lg+ (desktop, unchanged). On
+          mobile the scaled composition is short, so a full-viewport min-height
+          left big white gaps between entries — below lg the entry is just
+          content-sized (modest py), so entries sit closer together. */}
       <div
         ref={stickyRef}
-        className="sticky flex min-h-[calc(100vh-64px)] items-center justify-center px-5 py-16 sm:px-8 lg:px-[68px]"
+        className="sticky flex items-center justify-center px-5 py-10 sm:px-8 lg:min-h-[calc(100vh-64px)] lg:px-[68px] lg:py-16"
         style={{ top: NAV_HEIGHT }}
       >
       {/* Below lg: the same side-by-side composition as desktop, scaled down

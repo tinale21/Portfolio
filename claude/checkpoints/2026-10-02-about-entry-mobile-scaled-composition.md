@@ -27,6 +27,10 @@
 
 - "it not scale exactly right on mobile, make the images a little bigger for mobile" → enlarged the mobile photo box (318x471 → 400x592, same 0.675 ratio) and tightened the composition gap (gap-16 → gap-8), so the photo takes a bigger share of the design width and renders ~20%+ larger once scaled. `MOBILE_DESIGN_W` 1046 → 1064, `MOBILE_DESIGN_H` 480 → 600. Text columns kept at 300 (symmetric; "Potterhead", the longest single-line trait, still fits without wrapping — verified). Desktop untouched. Verified Foodie + Potterhead on mobile (bigger photo, no clipping), 0px overflow, `tsc`/`eslint`/`build` clean.
 
+## Follow-up — reduce white space between mobile entries
+
+- "for mobile, there is too much white space between each" → the gaps came from each entry being a full viewport tall (`min-h-[calc(100vh-64px)]`) with the short scaled composition centered in it. Made the full-viewport min-height and `py-16` apply only at `lg+` (desktop porthole unchanged); below lg the entry is now content-sized with `py-10`. Mobile entry height dropped ~820px → 318px, so entries sit close together. Desktop entry still 876px (= 100vh-64 + 40 hold), verified unchanged. 0px overflow; `tsc`/`eslint`/`build` clean.
+
 ## Remaining work
 
 - Minor quirk at the 1024–1279 (iPad-landscape / small-laptop) range: it keeps the existing STACKED layout, so resizing goes scaled-side-by-side (<1024) → stacked (1024–1279) → side-by-side (1280+). Kept this to honor "don't change desktop" (everything ≥1024 is untouched). If a consistent scaled look up to 1280 is preferred, switch the breakpoint from `lg` to `xl` — easy follow-up.
