@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { AboutEntry as AboutEntryData, SIGNATURE } from "./about-data";
+import { AboutEntry as AboutEntryData } from "./about-data";
 
 // Cross-correlating the motion-reference video frame-by-frame (image ROI vs
 // adjacent text ROI) mostly showed them moving at the identical rate — i.e.
@@ -123,16 +123,9 @@ export function AboutEntry({
         className="flex w-full max-w-[1100px] flex-col items-center gap-8 xl:flex-row xl:items-center xl:justify-center xl:gap-16"
         style={{ transform: "translateY(-10px)" }}
       >
+        {/* The "Tina Le" signature line above each trait was removed per
+            direct instruction — just the trait word remains in this column. */}
         <div className="flex flex-col items-center gap-2 text-center xl:w-[300px] xl:shrink-0 xl:items-end xl:gap-[44px] xl:text-right">
-          <p
-            className="relative z-10 font-serif text-black italic xl:translate-x-[75px] xl:-translate-y-[53px]"
-            style={{
-              fontSize: "clamp(1.3rem, 2.2vw, 2.2rem)",
-              fontWeight: 300,
-            }}
-          >
-            {SIGNATURE}
-          </p>
           <p
             className="relative z-10 font-serif text-black italic xl:translate-x-[10px] xl:-translate-y-[55px]"
             style={{
