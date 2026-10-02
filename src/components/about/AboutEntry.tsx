@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { AboutEntry as AboutEntryData, SIGNATURE } from "./about-data";
 
@@ -29,6 +29,18 @@ const PARALLAX_RANGE_PX = 80;
 // source aspect ratio already nearly matches the 365:513 box.
 const BASE_PHOTO_SCALE = 1.6;
 
+// Matches NavBar's height — each entry pins just below the nav.
+const NAV_HEIGHT = 64;
+
+// Per direct instruction, each trait entry (Foodie / Wanderer / Potterhead /
+// Animal Friend) gets a sticky pin-hold like HeroSection's "Hi, I'm Tina!"
+// intro — it sticks in place for this many px of extra scroll before
+// releasing — but noticeably shorter than the Hero's (INTRO_HOLD = 1050).
+// Same mechanism: a wrapper sized to (pinned content height) + ENTRY_HOLD,
+// with the content sticky at top: NAV_HEIGHT. Kept very short per direct
+// feedback — just a brief catch before the entry releases.
+const ENTRY_HOLD = 40;
+
 // Renders each array entry on its own line via an explicit <br/> rather
 // than letting the browser wrap — see the traitLines/taglineLines/
 // captionLines comment in about-data.ts for why the line count needs to be
@@ -55,20 +67,45 @@ export function AboutEntry({
   photoZoom = 1,
   photoPanX = 0,
 }: AboutEntryData) {
-  const sectionRef = useRef<HTMLElement>(null);
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const stickyRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
-    target: sectionRef,
+    target: wrapperRef,
     offset: ["start end", "end start"],
   });
   const y = useTransform(scrollYProgress, [0, 1], [PARALLAX_RANGE_PX, -PARALLAX_RANGE_PX]);
   const photoScale = BASE_PHOTO_SCALE * photoZoom;
 
+  // Pin wrapper sized to (sticky content height) + ENTRY_HOLD so the content
+  // stays stuck for ENTRY_HOLD px before releasing — same pattern as
+  // HeroSection's intro. Falls back to a plain height before the first
+  // measurement so there's no zero-height flash on load.
+  const [pinWrapperHeightPx, setPinWrapperHeightPx] = useState<number | null>(null);
+
+  useEffect(() => {
+    function updatePinHeight() {
+      const sticky = stickyRef.current;
+      if (!sticky) return;
+      setPinWrapperHeightPx(sticky.getBoundingClientRect().height + ENTRY_HOLD);
+    }
+
+    updatePinHeight();
+    window.addEventListener("resize", updatePinHeight);
+    return () => window.removeEventListener("resize", updatePinHeight);
+  }, []);
+
   return (
-    <section
-      ref={sectionRef}
+    <div
+      ref={wrapperRef}
       data-nav-theme="light"
-      className="flex min-h-screen items-center justify-center bg-white px-5 py-16 sm:px-8 lg:px-[68px]"
+      style={pinWrapperHeightPx !== null ? { height: pinWrapperHeightPx } : undefined}
+      className="relative bg-white"
     >
+      <div
+        ref={stickyRef}
+        className="sticky flex min-h-[calc(100vh-64px)] items-center justify-center px-5 py-16 sm:px-8 lg:px-[68px]"
+        style={{ top: NAV_HEIGHT }}
+      >
       {/* Row is vertically centered as a group (name column / photo /
           tagline column all share the same center line) per direct
           feedback — an earlier pass top-aligned everything using offsets
@@ -137,6 +174,7 @@ export function AboutEntry({
           </p>
         </div>
       </div>
-    </section>
+      </div>
+    </div>
   );
 }

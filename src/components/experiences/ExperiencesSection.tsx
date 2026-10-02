@@ -1,65 +1,20 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import { getConnectExitTiming } from "@/components/connect/connect-data";
 import { EDUCATION } from "./education-data";
 import { EXPERIENCES } from "./experiences-data";
 import { ExperienceRow } from "./ExperienceRow";
 
+// Moved to the About page (before the mission quote) per direct instruction.
+// Previously this sat right after the home page's Connect section and used a
+// viewport-derived negative margin-top (getConnectExitTiming's `pull`) to
+// sweep its white background up over Connect's pinned heading. There's no
+// Connect section on the About page, so that pull was removed and this is now
+// a plain section in normal flow. Education still renders inside this same
+// section (Experiences heading then Education heading) as before.
 export function ExperiencesSection() {
-  // Pulled up to overlap Connect's tail end so this section's opaque white
-  // background visibly sweeps up and covers Connect's centered heading
-  // while it's still perfectly stationary (pinned), rather than the
-  // heading exiting on its own first and this section simply arriving
-  // afterward into empty dark space. The needed pull depends on the
-  // actual viewport height (a shorter browser window moves Connect's
-  // now-truly-centered heading, changing how far this has to reach) — see
-  // getConnectExitTiming in connect-data.ts for the derivation. A fixed
-  // px value here broke the moment Connect's heading centering was fixed
-  // to track the real viewport instead of its aspect-ratio box.
-  //
-  // Ceiling on this number: getConnectExitTiming caps it below this
-  // section's own natural content height (measured at 780px). A negative
-  // top margin shifts every *later* sibling up by the same amount too
-  // (Client Logos, the Footer) — as long as this section's own height
-  // exceeds the pull, its natural bottom edge still lands at/after
-  // Connect's true end, so nothing after it bleeds into Connect's
-  // still-active wrapper. An earlier fixed value (-1450px) overshot this,
-  // and Client Logos ended up rendering inside Connect's dark section
-  // instead of after it.
-  const [pull, setPull] = useState(600);
-
-  useEffect(() => {
-    function update() {
-      setPull(getConnectExitTiming(window.innerWidth, window.innerHeight).pull);
-    }
-
-    update();
-    window.addEventListener("resize", update);
-    return () => window.removeEventListener("resize", update);
-  }, []);
-
   return (
     <section
       data-nav-theme="light"
-      style={{ marginTop: `-${pull}px` }}
-      className="relative bg-white px-5 pt-[45px] pb-10 sm:px-8 sm:pt-[61px] sm:pb-14 lg:px-[68px] lg:pt-[77px] lg:pb-16"
+      className="bg-white px-5 pt-[45px] pb-10 sm:px-8 sm:pt-[61px] sm:pb-14 lg:px-[68px] lg:pt-[77px] lg:pb-16"
     >
-      {/* Education renders inside this same pulled <section> — rather than
-          as its own top-level section in page.tsx, which is where it
-          conceptually belongs — because the negative margin-top above only
-          has this element's own natural content height to safely absorb
-          before it starts dragging whatever comes *after* it up into
-          Connect's still-dark pinned area (see getConnectExitTiming's
-          comment on the 750px pull cap vs. "this section's own ~780px
-          height"). A standalone one-row Education section would be far
-          shorter than the pull's own 300px minimum, guaranteeing that
-          overshoot; keeping it combined with Experiences means the section
-          directly after Connect stays tall enough regardless.
-          Order is Experiences then Education per direct instruction —
-          Experiences no longer needs its own top margin (nothing precedes
-          it in this section any more) and that mt-12/14/16 moved to
-          Education instead, since it's now the second heading. */}
       <h2 className="font-serif text-[26px] font-bold text-black">Experiences</h2>
 
       <div className="mt-4">
