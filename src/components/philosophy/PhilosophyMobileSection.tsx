@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, useMotionValue, useTransform } from "framer-motion";
+import { getConnectExitTiming } from "@/components/connect/connect-data";
 import {
   MOBILE_CLUSTER_CENTER_Y,
   MOBILE_FIGMA_HEIGHT,
@@ -61,6 +62,13 @@ export function PhilosophyMobileSection() {
   const progress = useMotionValue(0);
   const quoteOpacity = useTransform(progress, [0.3, 1], [0, 1]);
   const quoteScale = useTransform(progress, [0.3, 1], [0.9, 1]);
+  // Same sweep-up-over-ConnectMobileSection pull the desktop section uses
+  // (see PhilosophySection / getConnectExitTiming) — this follows the mobile
+  // Connect section on the home page, so it pulls up to cover that section's
+  // pinned heading and consume its `hold` dark gap instead of leaving it
+  // empty. Progress is measured off the live wrapperTop, which already
+  // accounts for the margin, so the image-spread timing self-corrects.
+  const [pull, setPull] = useState(0);
 
   useEffect(() => {
     function update() {
@@ -70,6 +78,7 @@ export function PhilosophyMobileSection() {
       const wrapperTop = wrapper.getBoundingClientRect().top + window.scrollY;
       const raw = (window.scrollY - wrapperTop) / MOBILE_PIN_SCROLL_DISTANCE;
       progress.set(Math.min(1, Math.max(0, raw)));
+      setPull(getConnectExitTiming(window.innerWidth, window.innerHeight).pull);
     }
 
     update();
@@ -85,7 +94,7 @@ export function PhilosophyMobileSection() {
     <div
       ref={wrapperRef}
       data-nav-theme="light"
-      style={{ height: `calc(100vh + ${MOBILE_PIN_SCROLL_DISTANCE}px)` }}
+      style={{ height: `calc(100vh + ${MOBILE_PIN_SCROLL_DISTANCE}px)`, marginTop: `-${pull}px` }}
       className="relative bg-white lg:hidden"
     >
       <div className="sticky top-0 flex min-h-screen flex-col justify-center overflow-hidden px-5">

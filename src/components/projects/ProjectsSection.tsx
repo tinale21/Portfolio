@@ -47,7 +47,7 @@ export function ProjectsSection() {
       // than the sweep just starting 200px later after already finishing.
       // Stays well under this section's own natural content height
       // (~962px measured), so it can't bleed into whatever comes after it.
-      className="relative -mt-[838px] bg-white px-5 pt-[45px] pb-10 sm:px-8 sm:pt-[61px] sm:pb-14 lg:px-[68px] lg:pt-[77px] lg:pb-16"
+      className="relative -mt-[838px] bg-white px-5 pt-[45px] pb-24 sm:px-8 sm:pt-[61px] sm:pb-28 lg:px-[68px] lg:pt-[77px] lg:pb-32"
     >
       {/* Per direct instruction, replaces the old "Selected projects,
           thoughtfully curated." title with just "My Work" — the h2's size

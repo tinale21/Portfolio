@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { motion, useMotionValue, useTransform } from "framer-motion";
+import { getConnectExitTiming } from "@/components/connect/connect-data";
 import {
   CLUSTER_CENTER_X,
   CLUSTER_CENTER_Y,
@@ -53,6 +54,19 @@ export function PhilosophySection() {
   // its input range by default, so progress below 0.3 just holds at 0.
   const quoteOpacity = useTransform(progress, [0.3, 1], [0, 1]);
   const quoteScale = useTransform(progress, [0.3, 1], [0.9, 1]);
+  // This section now sits directly after ConnectSection on the home page, so
+  // it inherits the sweep-up-over-Connect exit that ExperiencesSection used
+  // to own: a viewport-derived negative margin-top (getConnectExitTiming's
+  // `pull`, paired with Connect's own `hold`) pulls this white wrapper up to
+  // overlap Connect's tail, so its background rises over Connect's pinned
+  // heading — consuming the dark `hold` gap at the bottom of Connect instead
+  // of leaving it as empty dark space. During the sweep this wrapper's top is
+  // still below the viewport top, so its own `sticky top-0` child hasn't
+  // pinned yet — it rises as a plain opaque block (exactly how Experiences
+  // did), then pins and runs its image-spread once fully in view. The pull is
+  // well under this wrapper's own height (100vh + 1200px), so it can't
+  // overshoot. Desktop-only (this wrapper is hidden on mobile).
+  const [pull, setPull] = useState(0);
 
   useEffect(() => {
     function update() {
@@ -67,6 +81,7 @@ export function PhilosophySection() {
       const scale = container.getBoundingClientRect().width / FIGMA_WIDTH;
       setPxScale(scale);
       setClusterCenterY(window.innerHeight / 2 / scale);
+      setPull(getConnectExitTiming(window.innerWidth, window.innerHeight).pull);
     }
 
     update();
@@ -84,7 +99,7 @@ export function PhilosophySection() {
       <div
         ref={wrapperRef}
         data-nav-theme="light"
-        style={{ height: `calc(100vh + ${PIN_SCROLL_DISTANCE}px)` }}
+        style={{ height: `calc(100vh + ${PIN_SCROLL_DISTANCE}px)`, marginTop: `-${pull}px` }}
         className="relative hidden bg-white lg:block"
       >
         <div className="sticky top-0 overflow-hidden">

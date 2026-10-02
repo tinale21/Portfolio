@@ -140,47 +140,50 @@ export const MOBILE_HEADING_FONT_SIZE_VW = (36 / MOBILE_FIGMA_WIDTH) * 100;
 
 export const MOBILE_PIN_SCROLL_DISTANCE = 700;
 
-// Shared by ConnectSection (which uses `hold`) and ExperiencesSection
-// (which uses `pull`) to produce the "heading scrolls behind the next
-// section" exit effect. Both used to be fixed px constants tuned against
-// one 1512x900 test viewport — that broke the moment the heading's own
-// centering was fixed to track the *real* viewport height (a shorter
-// browser window moves the heading up on screen, which changes how much
-// pull is actually needed to reach it). Deriving both from the live
-// viewport dimensions instead keeps the effect correct at any window
-// size.
+// Shared by ConnectSection (which uses `hold`) and the section that follows
+// Connect — now PhilosophySection (which uses `pull`) — to produce the
+// "the next section's white background sweeps up and fully covers Connect's
+// pinned heading" exit effect. Both derive from the live viewport so the
+// effect stays correct at any window size.
 //
-// Derivation: `pull` needs to be big enough that Experiences' rising
-// white background reaches the heading's on-screen y-position
-// (viewportHeight/2) no later than the moment Connect's pin releases —
-// working through the same wrapper-height/sticky-release algebra as
-// ConnectSection's own comments, that threshold is
-// `stickyHeight - viewportHeight/2`, plus PULL_MARGIN so it happens
-// clearly before release rather than right at the edge. Clamped to stay
-// under ExperiencesSection's own natural content height (~780px measured)
-// so the pull can never overshoot into whatever comes after it (see
-// ExperiencesSection's own comment for what happens if it does).
+// The effect must go ALL THE WAY (per direct feedback: the white should rise
+// to the very top and fully cover the dark heading, not stop at its center):
 //
-// `hold` then needs to buy enough *extra* pinned scroll distance that the
-// reveal (which always takes exactly one viewport height to go from "just
-// touching the bottom edge" to "fully covers") doesn't start until
-// REVEAL_MARGIN past progress reaching 1 (all photos exited). Derived
-// directly from the actual (possibly clamped) `pull` above, not
-// re-approximated, so it stays correct even at the extremes where the
-// clamp kicks in. Both margins were 100px originally — tightened to 20px
-// after feedback that the stretch of plain dark background between
-// "photos gone" and "next section visibly arriving" felt too long. Below
-// ~15-20px risks the reveal starting while the last photo (per its
-// ENTRY_AFTER exit cushion) hasn't fully cleared the frame.
-const PULL_MARGIN = 20;
-const REVEAL_MARGIN = 20;
+// - `pull` is the following white section's negative margin-top. It pulls
+//   that section up to overlap Connect's tail. Set to `stickyHeight`
+//   (Connect's own pinned-content height) plus a small COVER_MARGIN, because
+//   that is exactly the overlap needed for the rising white top to reach the
+//   very top of the viewport (y=0) right before Connect's pin releases —
+//   working through the wrapper-height/sticky-release algebra,
+//   philTop === releaseScroll + stickyHeight - pull, so pull = stickyHeight
+//   lands the white at the top exactly at release (COVER_MARGIN makes it land
+//   slightly before, so it's fully covered then releases cleanly). The old
+//   formula only reached viewportHeight/2 (center) by release, leaving a
+//   dark band above it that lingered as Connect scrolled away after release.
+//
+// - `hold` is extra pinned scroll so the full reveal fits WHILE pinned. The
+//   reveal always takes exactly one viewportHeight of scroll to travel from
+//   "white just touching the bottom edge" to "white fully covering the top".
+//   For that whole travel to happen before the pin releases (so the cover
+//   completes against a still-stationary heading), hold must be a full
+//   viewportHeight, plus REVEAL_MARGIN so the reveal starts a beat AFTER the
+//   photos have exited rather than overlapping them. (REVEAL_MARGIN >
+//   COVER_MARGIN keeps the white's first appearance just after the photos
+//   finish — white-appears-at offset from photos-end = REVEAL_MARGIN -
+//   COVER_MARGIN.)
+//
+// pull is safely under the following section's own height either way
+// (PhilosophySection's wrapper is 100vh + 1200px desktop / 100vh + 500px
+// mobile, both far larger than stickyHeight), so it can't overshoot.
+const COVER_MARGIN = 20;
+const REVEAL_MARGIN = 60;
 
 // Matches Tailwind's `lg` breakpoint, which is what actually switches
 // ConnectSection between its desktop and mobile branches (see
 // ConnectSection.tsx / ConnectMobileSection.tsx) — this function has to
-// agree with that switch, or ExperiencesSection's pull-up (which calls
-// this with the live viewport size, no breakpoint awareness of its own)
-// would use the wrong section's geometry right at the boundary.
+// agree with that switch, or the pull-up (called with the live viewport
+// size, no breakpoint awareness of its own) would use the wrong section's
+// geometry right at the boundary.
 const MOBILE_BREAKPOINT = 1024;
 
 export function getConnectExitTiming(viewportWidth: number, viewportHeight: number) {
@@ -188,7 +191,7 @@ export function getConnectExitTiming(viewportWidth: number, viewportHeight: numb
   const width = isMobile ? MOBILE_FIGMA_WIDTH : FIGMA_WIDTH;
   const height = isMobile ? MOBILE_FIGMA_HEIGHT : FIGMA_HEIGHT;
   const stickyHeight = viewportWidth * (height / width);
-  const pull = Math.min(750, Math.max(300, stickyHeight - viewportHeight / 2 + PULL_MARGIN));
-  const hold = Math.max(100, REVEAL_MARGIN + pull + viewportHeight - stickyHeight);
+  const pull = stickyHeight + COVER_MARGIN;
+  const hold = viewportHeight + REVEAL_MARGIN;
   return { pull, hold };
 }
