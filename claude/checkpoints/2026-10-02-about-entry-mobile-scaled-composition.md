@@ -38,6 +38,10 @@
 - **`AboutSection.tsx`**: added a mobile-only spacer `<div className="h-24 lg:hidden">` before the first entry, for breathing room above Foodie on mobile (desktop entries are full-viewport, so no spacer there).
 - Verified: mobile Foodie scrolls continuously (no pin), sits ~96px lower (space added); desktop Foodie entry still 876px tall and holds on scroll (pin intact), no spacer. 0px overflow; `tsc`/`eslint`/`build` clean.
 
+## Follow-up — trim the space above Foodie (mobile)
+
+- "reduce the white space before foodie a bit for mobile only" → the mobile-only spacer in `AboutSection.tsx` went `h-24` (96px) → `h-14` (56px). Space above Foodie now ~57px (was ~97px). Desktop unaffected (`lg:hidden`). Build/lint clean.
+
 ## Remaining work
 
 - Minor quirk at the 1024–1279 (iPad-landscape / small-laptop) range: it keeps the existing STACKED layout, so resizing goes scaled-side-by-side (<1024) → stacked (1024–1279) → side-by-side (1280+). Kept this to honor "don't change desktop" (everything ≥1024 is untouched). If a consistent scaled look up to 1280 is preferred, switch the breakpoint from `lg` to `xl` — easy follow-up.
