@@ -10,6 +10,11 @@ import { ToolboxSection } from "@/components/toolbox/ToolboxSection";
 export function AboutSection() {
   return (
     <>
+      {/* Mobile-only breathing room above the first (Foodie) entry, per direct
+          instruction — desktop entries are full-viewport so they don't need
+          it. */}
+      <div className="h-24 lg:hidden" aria-hidden="true" />
+
       {ABOUT_ENTRIES.map((entry) => (
         <AboutEntry key={entry.traitLines.join(" ")} {...entry} />
       ))}

@@ -31,6 +31,13 @@
 
 - "for mobile, there is too much white space between each" → the gaps came from each entry being a full viewport tall (`min-h-[calc(100vh-64px)]`) with the short scaled composition centered in it. Made the full-viewport min-height and `py-16` apply only at `lg+` (desktop porthole unchanged); below lg the entry is now content-sized with `py-10`. Mobile entry height dropped ~820px → 318px, so entries sit close together. Desktop entry still 876px (= 100vh-64 + 40 hold), verified unchanged. 0px overflow; `tsc`/`eslint`/`build` clean.
 
+## Follow-up — remove mobile pin-hold + space above Foodie
+
+- "for mobile, on the about section, can you remove the pin hold and also had more white space before the foodie section. don't change anything for desktop"
+- **`AboutEntry.tsx`**: pin-hold is now desktop-only. Added an `isDesktop` (`matchMedia("(min-width:1024px)")`) gate: the fixed pin-wrapper height is applied only when `isDesktop`, and the inner `sticky` became `lg:sticky`. Below lg the entry is a plain in-flow block (no sticky, no hold); at lg+ the pin + full-viewport porthole are unchanged.
+- **`AboutSection.tsx`**: added a mobile-only spacer `<div className="h-24 lg:hidden">` before the first entry, for breathing room above Foodie on mobile (desktop entries are full-viewport, so no spacer there).
+- Verified: mobile Foodie scrolls continuously (no pin), sits ~96px lower (space added); desktop Foodie entry still 876px tall and holds on scroll (pin intact), no spacer. 0px overflow; `tsc`/`eslint`/`build` clean.
+
 ## Remaining work
 
 - Minor quirk at the 1024–1279 (iPad-landscape / small-laptop) range: it keeps the existing STACKED layout, so resizing goes scaled-side-by-side (<1024) → stacked (1024–1279) → side-by-side (1280+). Kept this to honor "don't change desktop" (everything ≥1024 is untouched). If a consistent scaled look up to 1280 is preferred, switch the breakpoint from `lg` to `xl` — easy follow-up.

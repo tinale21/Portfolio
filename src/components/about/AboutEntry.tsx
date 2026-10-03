@@ -111,6 +111,19 @@ export function AboutEntry({
     return () => window.removeEventListener("resize", updatePinHeight);
   }, []);
 
+  // The pin-hold is desktop-only (per direct instruction, removed on mobile).
+  // `isDesktop` gates both the sticky positioning and the fixed pin-wrapper
+  // height so that below lg the entry is just a normal block in flow.
+  const [isDesktop, setIsDesktop] = useState(false);
+
+  useEffect(() => {
+    const mql = window.matchMedia("(min-width: 1024px)");
+    const update = () => setIsDesktop(mql.matches);
+    update();
+    mql.addEventListener("change", update);
+    return () => mql.removeEventListener("change", update);
+  }, []);
+
   // Scale factor for the below-lg scaled composition (available width ÷ design
   // width). Measured via ResizeObserver on the mobile box.
   const mobileRef = useRef<HTMLDivElement>(null);
@@ -132,16 +145,17 @@ export function AboutEntry({
     <div
       ref={wrapperRef}
       data-nav-theme="light"
-      style={pinWrapperHeightPx !== null ? { height: pinWrapperHeightPx } : undefined}
+      // The fixed pin-wrapper height is desktop-only; on mobile the wrapper is
+      // natural-height (no pin-hold).
+      style={isDesktop && pinWrapperHeightPx !== null ? { height: pinWrapperHeightPx } : undefined}
       className="relative bg-white"
     >
-      {/* Full-viewport "porthole" height only at lg+ (desktop, unchanged). On
-          mobile the scaled composition is short, so a full-viewport min-height
-          left big white gaps between entries — below lg the entry is just
-          content-sized (modest py), so entries sit closer together. */}
+      {/* Full-viewport "porthole" height + sticky pin only at lg+ (desktop,
+          unchanged). On mobile the entry is a plain content-sized block (no
+          sticky, no pin-hold), with modest py so entries sit close together. */}
       <div
         ref={stickyRef}
-        className="sticky flex items-center justify-center px-5 py-10 sm:px-8 lg:min-h-[calc(100vh-64px)] lg:px-[68px] lg:py-16"
+        className="flex items-center justify-center px-5 py-10 sm:px-8 lg:sticky lg:min-h-[calc(100vh-64px)] lg:px-[68px] lg:py-16"
         style={{ top: NAV_HEIGHT }}
       >
       {/* Below lg: the same side-by-side composition as desktop, scaled down
