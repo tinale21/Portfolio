@@ -68,10 +68,18 @@ function Note({ text }: { text: string }) {
   // aspect-square gives the real sticky-note shape; text at top, signature pinned
   // to the bottom, blank middle like a partly-filled note. overflow-hidden guards
   // against any note that runs long.
+  //
+  // On hover the note fills with #D3BDFF and its text turns black so it's easy to
+  // read, then returns to the faded resting state on mouse-out (group-hover drives
+  // the child text colors).
   return (
-    <div className="flex aspect-square flex-col justify-between gap-2 overflow-hidden rounded-[2px] border border-[#EEEEEE] bg-white px-4 py-3.5 shadow-[0_2px_10px_rgba(0,0,0,0.05)]">
-      <p className="font-sans text-[11px] leading-[1.5] text-[#B4B4B4]">{text}</p>
-      <span className="font-sans text-[10px] text-[#C8C8C8]">Tina</span>
+    <div className="group flex aspect-square flex-col justify-between gap-2 overflow-hidden rounded-[2px] border border-[#EEEEEE] bg-white px-4 py-3.5 shadow-[0_2px_10px_rgba(0,0,0,0.05)] transition-colors duration-200 hover:border-[#D3BDFF] hover:bg-[#D3BDFF]">
+      <p className="font-sans text-[11px] leading-[1.5] text-[#B4B4B4] transition-colors duration-200 group-hover:text-black">
+        {text}
+      </p>
+      <span className="font-sans text-[10px] text-[#C8C8C8] transition-colors duration-200 group-hover:text-[#4A4A4A]">
+        Tina
+      </span>
     </div>
   );
 }
